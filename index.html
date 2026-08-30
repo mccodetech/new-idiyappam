@@ -16,11 +16,14 @@
 
     <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
         
-        <!-- സെറ്റിംഗ്സ് ഐക്കൺ -->
-        <button onclick="switchTab('settings')" id="settings-icon" class="absolute top-5 right-5 text-xl text-slate-600 hover:text-emerald-700 transition hidden" title="സെറ്റിംഗ്സ്">⚙️</button>
+        <!-- മുകളിൽ വലതുഭാഗത്തുള്ള ഐക്കണുകളും ലോഗ് ഔട്ട് ബട്ടണും (ലോഗിൻ കഴിഞ്ഞാൽ മാത്രം കാണുന്നത്) -->
+        <div id="top-bar" class="absolute top-5 right-5 flex items-center gap-2 hidden">
+            <button onclick="switchTab('settings')" id="settings-icon" class="text-xl text-slate-600 hover:text-emerald-700 transition bg-slate-100 p-1.5 rounded-xl shadow-sm" title="സെറ്റിംഗ്സ്">⚙️</button>
+            <button onclick="confirmLogout()" class="bg-rose-500 text-white px-3 py-1.5 text-xs font-bold rounded-xl hover:bg-rose-600 shadow transition">ലോഗ് ഔട്ട്</button>
+        </div>
 
         <!-- ഹെഡിങ് -->
-        <div class="text-center mb-5">
+        <div class="text-center mb-5 mt-2">
             <h1 class="text-xl font-extrabold text-emerald-800">ന്യൂ ഇടിയപ്പം കമ്പനി</h1>
             <p class="text-xs text-slate-500 font-semibold tracking-wide">ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</p>
         </div>
@@ -44,11 +47,7 @@
 
         <!-- 2. ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
-            <div class="flex justify-between items-center mb-4 bg-emerald-50/80 p-3 rounded-xl border border-emerald-100 shadow-sm">
-                <span id="user-name-display" class="text-xs text-emerald-900 font-bold truncate max-w-[210px]"></span>
-                <button onclick="confirmLogout()" class="bg-rose-500 text-white px-3 py-1.5 text-xs font-bold rounded-lg hover:bg-rose-600 shadow">ലോഗ് ഔട്ട്</button>
-            </div>
-
+            
             <!-- പ്രധാന 3 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ്, റിപ്പോർട്ടുകൾ) -->
             <div class="grid grid-cols-3 gap-1.5 mb-4 text-xs font-bold">
                 <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
@@ -92,7 +91,7 @@
                 </div>
             </div>
 
-            <!-- ടാബ് 3: സെറ്റിംഗ്സ് (ഗിയർ ഐക്കൺ വഴി വരുന്നത്) -->
+            <!-- ടാബ് 3: സെറ്റിംഗ്സ് -->
             <div id="section-settings" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-extrabold text-slate-600 uppercase">സെറ്റിംഗ്സ് & മാനേജ്‌മെന്റ്</h4>
@@ -207,16 +206,12 @@
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
-                document.getElementById('settings-icon').classList.remove('hidden');
-                
-                // ഇമെയിലിന് പകരം ലളിതമായ പേര് അല്ലെങ്കിൽ യൂസർ ഐഡി കാണിക്കാൻ
-                const userName = user.email.split('@')[0];
-                document.getElementById('user-name-display').innerText = `യൂസർ: ${userName}`;
+                document.getElementById('top-bar').classList.remove('hidden');
                 loadStoresDropdown();
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
-                document.getElementById('settings-icon').classList.add('hidden');
+                document.getElementById('top-bar').classList.add('hidden');
             }
         });
 
