@@ -4,111 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</title>
-    <!-- Tailwind CSS for Responsive & Attractive Design -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800">
 
     <div class="max-w-md mx-auto mt-4 mb-10 bg-white p-5 rounded-xl shadow-xl">
         
-        <!-- ഹെഡിങ് -->
         <div class="text-center mb-5">
             <h1 class="text-xl font-bold text-emerald-700">ന്യൂ ഇടിയപ്പം കമ്പനി</h1>
             <p class="text-xs text-slate-500 font-semibold">ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</p>
         </div>
 
-        <!-- 1. ലോഗിൻ സെക്ഷൻ -->
+        <!-- ലോഗിൻ സെക്ഷൻ -->
         <div id="login-section">
             <h3 class="text-sm font-bold mb-3 text-slate-600">അക്കൗണ്ട് ലോഗിൻ ചെയ്യുക</h3>
-            <input type="email" id="email" placeholder="ഇമെയിൽ വിലാസം" class="w-full p-3 mb-3 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-            <input type="password" id="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-3 mb-4 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-            
-            <button onclick="loginUser()" class="w-full bg-emerald-600 text-white p-3 rounded-lg font-bold text-sm hover:bg-emerald-700 shadow-md mb-2">ലോഗിൻ</button>
-            <button onclick="registerUser()" class="w-full bg-slate-700 text-white p-2 rounded-lg text-xs hover:bg-slate-800">പുതിയ അക്കൗണ്ട് സൈൻ അപ്പ്</button>
+            <input type="email" id="email" placeholder="ഇമെയിൽ വിലാസം" class="w-full p-3 mb-3 border rounded-lg text-sm">
+            <input type="password" id="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-3 mb-4 border rounded-lg text-sm">
+            <button onclick="loginUser()" class="w-full bg-emerald-600 text-white p-3 rounded-lg font-bold text-sm mb-2">ലോഗിൻ</button>
+            <button onclick="registerUser()" class="w-full bg-slate-700 text-white p-2 rounded-lg text-xs">പുതിയ അക്കൗണ്ട് സൈൻ അപ്പ്</button>
         </div>
 
-        <!-- 2. ഡാഷ്‌ബോർഡ് (ലോഗിൻ കഴിഞ്ഞാൽ) -->
+        <!-- ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
-            <div class="flex justify-between items-center mb-4 bg-emerald-50 p-2 rounded-lg border border-emerald-200">
-                <span id="user-email-display" class="text-xs text-emerald-800 font-bold truncate max-w-[200px]"></span>
-                <button onclick="logoutUser()" class="bg-rose-500 text-white px-3 py-1 text-xs rounded-md hover:bg-rose-600">ലോഗ് ഔട്ട്</button>
+            <div class="flex justify-between items-center mb-4 bg-emerald-50 p-2 rounded-lg border">
+                <span id="user-email-display" class="text-xs text-emerald-800 font-bold"></span>
+                <button onclick="logoutUser()" class="bg-rose-500 text-white px-3 py-1 text-xs rounded-md">ലോഗ് ഔട്ട്</button>
             </div>
 
-            <!-- ടാബ് നാവിഗേഷൻ -->
+            <!-- നാവിഗേഷൻ ടാബുകൾ -->
             <div class="flex gap-1 mb-4">
-                <button onclick="switchTab('purchase')" id="tab-purchase" class="flex-1 py-2 text-xs font-bold bg-emerald-600 text-white rounded-md shadow">പർച്ചേസ്</button>
-                <button onclick="switchTab('sales')" id="tab-sales" class="flex-1 py-2 text-xs font-bold bg-slate-200 text-slate-700 rounded-md">സെയിൽസ്</button>
-                <button onclick="switchTab('ledger')" id="tab-ledger" class="flex-1 py-2 text-xs font-bold bg-slate-200 text-slate-700 rounded-md">കണക്ക് / ബാലൻസ്</button>
+                <button onclick="switchTab('order')" id="tab-order" class="flex-1 py-2 text-xs font-bold bg-emerald-600 text-white rounded-md">ഓർഡർ / സെയിൽസ്</button>
+                <button onclick="switchTab('stores')" id="tab-stores" class="flex-1 py-2 text-xs font-bold bg-slate-200 text-slate-700 rounded-md">കടകൾ & റേറ്റ്</button>
+                <button onclick="switchTab('ledger')" id="tab-ledger" class="flex-1 py-2 text-xs font-bold bg-slate-200 text-slate-700 rounded-md">കണക്ക്</button>
             </div>
 
-            <!-- ടാബ് 1: പർച്ചേസ് ഓർഡർ -->
-            <div id="section-purchase" class="space-y-3">
-                <h4 class="text-xs font-bold text-slate-600 uppercase">കടകളിൽ നിന്ന് വാങ്ങിയ കണക്ക് (Purchase)</h4>
-                
-                <input type="date" id="p-date" class="w-full p-2 border rounded-lg text-sm">
-                
-                <select id="p-item" class="w-full p-2 border rounded-lg text-sm">
-                    <option value="ഇടിയപ്പം">ഇടിയപ്പം</option>
-                    <option value="വെള്ളപ്പം">വെള്ളപ്പം</option>
-                    <option value="പത്തിരി">പത്തിരി</option>
-                    <option value="പൊറോട്ട">പൊറോട്ട</option>
-                    <option value="ചപ്പാത്തി">ചപ്പാത്തി</option>
-                </select>
+            <!-- ടാബ് 1: കടകളും വിലയും സെറ്റ് ചെയ്യാൻ -->
+            <div id="section-stores" class="space-y-3 hidden">
+                <h4 class="text-xs font-bold text-slate-600 uppercase">പുതിയ കട ചേർക്കാൻ</h4>
+                <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-lg text-sm">
+                <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-lg text-sm">
+                <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-2 rounded-lg text-xs font-bold">കട സേവ് ചെയ്യുക</button>
 
-                <input type="text" id="p-store" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-lg text-sm">
-                <input type="text" id="p-phone" placeholder="കടക്കാരന്റെ മൊബൈൽ നമ്പർ" class="w-full p-2 border rounded-lg text-sm" pattern="[0-9]{10}">
-                <input type="number" id="p-qty" placeholder="എണ്ണം (Quantity)" class="w-full p-2 border rounded-lg text-sm">
-                <input type="number" id="p-amount" placeholder="ആകെ തുക (₹)" class="w-full p-2 border rounded-lg text-sm">
-
-                <button onclick="savePurchase()" class="w-full bg-emerald-600 text-white p-2.5 rounded-lg font-bold text-sm hover:bg-emerald-700 shadow">പർച്ചേസ് സേവ് ചെയ്യുക</button>
+                <hr class="my-2">
+                <h4 class="text-xs font-bold text-slate-600 uppercase">ഐറ്റം വിലകൾ (Rates) സെറ്റ് ചെയ്യുക</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div>ഇടിയപ്പം: <input type="number" id="rate-idiyappam" value="5" class="w-full p-1 border rounded"></div>
+                    <div>വെള്ളപ്പം: <input type="number" id="rate-vellappam" value="6" class="w-full p-1 border rounded"></div>
+                    <div>പത്തിരി: <input type="number" id="rate-pathiri" value="4" class="w-full p-1 border rounded"></div>
+                    <div>പൊറോട്ട: <input type="number" id="rate-porotta" value="10" class="w-full p-1 border rounded"></div>
+                    <div>ചപ്പാത്തി: <input type="number" id="rate-chapati" value="8" class="w-full p-1 border rounded"></div>
+                </div>
             </div>
 
-            <!-- ടാബ് 2: സെയിൽസ് ഓർഡർ (കസ്റ്റമർ ഷമീറിനും മറ്റുള്ളവർക്കും നൽകുന്നത്) -->
-            <div id="section-sales" class="space-y-3 hidden">
-                <h4 class="text-xs font-bold text-slate-600 uppercase">സെയിൽസ് / കസ്റ്റമർ ഓർഡർ (Sales)</h4>
+            <!-- ടാബ് 2: ഓർഡർ / സെയിൽസ് ഫോം (ഒന്നിലധികം സാധനങ്ങൾ ഒന്നിച്ച്) -->
+            <div id="section-order" class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-600 uppercase">സെയിൽസ് / ഓർഡർ എൻട്രി</h4>
+                <input type="date" id="o-date" class="w-full p-2 border rounded-lg text-sm">
                 
-                <input type="date" id="s-date" class="w-full p-2 border rounded-lg text-sm">
-                
-                <select id="s-item" class="w-full p-2 border rounded-lg text-sm">
-                    <option value="ഇടിയപ്പം">ഇടിയപ്പം</option>
-                    <option value="വെള്ളപ്പം">വെള്ളപ്പം</option>
-                    <option value="പത്തിരി">പത്തിരി</option>
-                    <option value="പൊറോട്ട">പൊറോട്ട</option>
-                    <option value="ചപ്പാത്തി">ചപ്പാത്തി</option>
+                <select id="o-store" class="w-full p-2 border rounded-lg text-sm">
+                    <option value="">കട തിരഞ്ഞെടുക്കുക</option>
                 </select>
 
-                <input type="text" id="s-store" placeholder="കസ്റ്റമറുടെ / കടയുടെ പേര് (ഉദാ: ഷമീർ)" class="w-full p-2 border rounded-lg text-sm">
-                <input type="text" id="s-phone" placeholder="മൊബൈൽ നമ്പർ" class="w-full p-2 border rounded-lg text-sm" pattern="[0-9]{10}">
-                <input type="number" id="s-qty" placeholder="എണ്ണം (Quantity)" class="w-full p-2 border rounded-lg text-sm">
-                <input type="number" id="s-amount" placeholder="ആകെ തുക (₹)" class="w-full p-2 border rounded-lg text-sm">
+                <div class="bg-slate-50 p-3 rounded-lg border space-y-2 text-xs">
+                    <div class="flex justify-between items-center"><span>ഇടിയപ്പം (Qty):</span> <input type="number" id="qty-idiyappam" placeholder="0" oninput="calculateTotal()" class="w-20 p-1 border rounded text-center"></div>
+                    <div class="flex justify-between items-center"><span>വെള്ളപ്പം (Qty):</span> <input type="number" id="qty-vellappam" placeholder="0" oninput="calculateTotal()" class="w-20 p-1 border rounded text-center"></div>
+                    <div class="flex justify-between items-center"><span>പത്തിരി (Qty):</span> <input type="number" id="qty-pathiri" placeholder="0" oninput="calculateTotal()" class="w-20 p-1 border rounded text-center"></div>
+                    <div class="flex justify-between items-center"><span>പൊറോട്ട (Qty):</span> <input type="number" id="qty-porotta" placeholder="0" oninput="calculateTotal()" class="w-20 p-1 border rounded text-center"></div>
+                    <div class="flex justify-between items-center"><span>ചപ്പാത്തി (Qty):</span> <input type="number" id="qty-chapati" placeholder="0" oninput="calculateTotal()" class="w-20 p-1 border rounded text-center"></div>
+                </div>
+
+                <div class="text-right font-bold text-sm text-emerald-700">ആകെ തുക: <span id="grand-total">₹0</span></div>
 
                 <div class="flex gap-2">
-                    <button onclick="saveSales()" class="flex-1 bg-blue-600 text-white p-2.5 rounded-lg font-bold text-xs hover:bg-blue-700 shadow">സെയിൽസ് സേവ്</button>
-                    <button onclick="sendWhatsApp()" class="flex-1 bg-green-600 text-white p-2.5 rounded-lg font-bold text-xs hover:bg-green-700 shadow flex items-center justify-center gap-1">വാട്സാപ്പ് അയക്കൂ</button>
+                    <button onclick="saveOrder()" class="flex-1 bg-blue-600 text-white p-2.5 rounded-lg font-bold text-xs">ഓർഡർ സേവ് ചെയ്യുക</button>
+                    <button onclick="sendWhatsAppOrder()" class="flex-1 bg-green-600 text-white p-2.5 rounded-lg font-bold text-xs">വാട്സാപ്പ് അയക്കൂ</button>
                 </div>
             </div>
 
-            <!-- ടാബ് 3: ലെഡ്ജർ & ബാലൻസ് -->
+            <!-- ടാബ് 3: കണക്ക് -->
             <div id="section-ledger" class="space-y-3 hidden">
-                <h4 class="text-xs font-bold text-slate-600 uppercase">മാസാന്ത്യ കണക്കും ബാലൻസും</h4>
-                
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-2">
-                    <div class="flex justify-between font-bold text-slate-700">
-                        <span>ആകെ പർച്ചേസ് തുക:</span>
-                        <span id="total-purchase-amt" class="text-emerald-700">₹0</span>
-                    </div>
-                    <div class="flex justify-between font-bold text-slate-700">
-                        <span>ആകെ സെയിൽസ് തുക:</span>
-                        <span id="total-sales-amt" class="text-blue-700">₹0</span>
-                    </div>
-                    <hr>
-                    <div class="flex justify-between font-bold text-sm">
-                        <span>അന്തിമ വ്യത്യാസം (Balance):</span>
-                        <span id="net-balance" class="text-rose-600">₹0</span>
-                    </div>
+                <h4 class="text-xs font-bold text-slate-600 uppercase">ആകെ കണക്കുകൾ</h4>
+                <div class="bg-slate-50 p-3 rounded-lg border text-xs space-y-2">
+                    <div class="flex justify-between font-bold"><span>ആകെ വിൽപന തുക:</span> <span id="ledger-total" class="text-emerald-700">₹0</span></div>
                 </div>
-
-                <button onclick="loadLedgerData()" class="w-full bg-slate-800 text-white p-2 rounded-lg text-xs hover:bg-slate-900">കണക്കുകൾ റിഫ്രഷ് ചെയ്യുക</button>
+                <button onclick="loadLedger()" class="w-full bg-slate-800 text-white p-2 rounded-lg text-xs">റിഫ്രഷ് ചെയ്യുക</button>
             </div>
 
         </div>
@@ -134,123 +113,111 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        let storesList = [];
+
         window.switchTab = function(tabName) {
-            document.getElementById('section-purchase').classList.add('hidden');
-            document.getElementById('section-sales').classList.add('hidden');
-            document.getElementById('section-ledger').classList.add('hidden');
-            
-            document.getElementById('tab-purchase').className = "flex-1 py-2 text-xs font-bold bg-slate-200 text-slate-700 rounded-md";
-            document.getElementById('tab-sales').className = "flex-1 py-2 text-xs font-bold bg-slate-200 text-slate-700 rounded-md";
-            document.getElementById('tab-ledger').className = "flex-1 py-2 text-xs font-bold bg-slate-200 text-slate-700 rounded-md";
-
+            ['order', 'stores', 'ledger'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "flex-1 py-2 text-xs font-bold bg-slate-200 text-slate-700 rounded-md";
+            });
             document.getElementById(`section-${tabName}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabName}`).className = "flex-1 py-2 text-xs font-bold bg-emerald-600 text-white rounded-md shadow";
-            
-            if(tabName === 'ledger') loadLedgerData();
+            document.getElementById(`tab-${tabName}`).className = "flex-1 py-2 text-xs font-bold bg-emerald-600 text-white rounded-md";
+            if(tabName === 'order') loadStoresDropdown();
         }
 
-        window.loginUser = function() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            signInWithEmailAndPassword(auth, email, password).catch(err => alert("ലോഗിൻ പരാജയം: " + err.message));
-        }
-
-        window.registerUser = function() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            createUserWithEmailAndPassword(auth, email, password).then(() => alert("അക്കൗണ്ട് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!")).catch(err => alert(err.message));
-        }
-
-        window.logoutUser = function() {
-            signOut(auth);
-        }
+        window.loginUser = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).catch(err => alert(err.message));
+        window.registerUser = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).then(() => alert("സെസ്സ്ഫുൾ!")).catch(err => alert(err.message));
+        window.logoutUser = () => signOut(auth);
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
-                document.getElementById('user-email-display',).innerText = `ইউസർ: ${user.email}`;
+                document.getElementById('user-email-display').innerText = `യൂസർ: ${user.email}`;
+                loadStoresDropdown();
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
             }
         });
 
-        window.savePurchase = async function() {
-            const date = document.getElementById('p-date').value;
-            const item = document.getElementById('p-item').value;
-            const store = document.getElementById('p-store').value;
-            const phone = document.getElementById('p-phone').value;
-            const qty = document.getElementById('p-qty').value;
-            const amount = document.getElementById('p-amount').value;
-
-            if(!date || !store || !qty || !amount) {
-                alert("എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക!");
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "purchases"), { date, item, store, phone, qty: Number(qty), amount: Number(amount), user: auth.currentUser.email, timestamp: new Date() });
-                alert("പർച്ചേസ് കണക്ക് സേവ് ചെയ്തു!");
-                document.getElementById('p-store').value = '';
-                document.getElementById('p-phone').value = '';
-                document.getElementById('p-qty').value = '';
-                document.getElementById('p-amount').value = '';
-            } catch(e) {
-                alert("എറർ: " + e.message);
-            }
+        window.saveStore = async function() {
+            const name = document.getElementById('store-name').value;
+            const phone = document.getElementById('store-phone').value;
+            if(!name || !phone) return alert("പേരും ഫോൺ നമ്പറും നൽകുക!");
+            await addDoc(collection(db, "stores"), { name, phone });
+            alert("കട സേവ് ചെയ്തു!");
+            document.getElementById('store-name').value = '';
+            document.getElementById('store-phone').value = '';
+            loadStoresDropdown();
         }
 
-        window.saveSales = async function() {
-            const date = document.getElementById('s-date').value;
-            const item = document.getElementById('s-item').value;
-            const store = document.getElementById('s-store').value;
-            const phone = document.getElementById('s-phone').value;
-            const qty = document.getElementById('s-qty').value;
-            const amount = document.getElementById('s-amount').value;
-
-            if(!date || !store || !qty || !amount) {
-                alert("എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക!");
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "sales"), { date, item, store, phone, qty: Number(qty), amount: Number(amount), user: auth.currentUser.email, timestamp: new Date() });
-                alert("സെയിൽസ് കണക്ക് സേവ് ചെയ്തു!");
-            } catch(e) {
-                alert("എറർ: " + e.message);
-            }
+        async function loadStoresDropdown() {
+            const select = document.getElementById('o-store');
+            select.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
+            storesList = [];
+            const snap = await getDocs(collection(db, "stores"));
+            snap.forEach(doc => {
+                const data = doc.data();
+                storesList.push(data);
+                select.innerHTML += `<option value="${data.name}" data-phone="${data.phone}">${data.name}</option>`;
+            });
         }
 
-        window.sendWhatsApp = function() {
-            const store = document.getElementById('s-store').value;
-            const phone = document.getElementById('s-phone').value;
-            const item = document.getElementById('s-item').value;
-            const qty = document.getElementById('s-qty').value;
-            const amount = document.getElementById('s-amount').value;
+        window.calculateTotal = function() {
+            const rates = {
+                idiyappam: Number(document.getElementById('rate-idiyappam').value) || 0,
+                vellappam: Number(document.getElementById('rate-vellappam').value) || 0,
+                pathiri: Number(document.getElementById('rate-pathiri').value) || 0,
+                porotta: Number(document.getElementById('rate-porotta').value) || 0,
+                chapati: Number(document.getElementById('rate-chapati').value) || 0
+            };
+            let total = 0;
+            ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                let qty = Number(document.getElementById(`qty-${item}`).value) || 0;
+                total += qty * rates[item];
+            });
+            document.getElementById('grand-total').innerText = `₹${total}`;
+            return total;
+        }
 
-            if(!phone || !store || !qty) {
-                alert("പേര്, ഫോൺ നമ്പർ, എണ്ണം എന്നിവ നൽകുക!");
-                return;
-            }
+        window.saveOrder = async function() {
+            const date = document.getElementById('o-date').value;
+            const store = document.getElementById('o-store').value;
+            const total = calculateTotal();
+            if(!date || !store || total === 0) return alert("തീയതി, കട, എണ്ണം എന്നിവ കൃത്യമായി നൽകുക!");
 
-            const msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്*%0Aകസ്റ്റമർ/കട: ${store}%0Aഐറ്റം: ${item}%0Aഎണ്ണം: ${qty}%0Aആകെ തുക: ₹${amount}%0Aനന്ദി!`;
+            let itemsData = {};
+            ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                itemsData[item] = Number(document.getElementById(`qty-${item}`).value) || 0;
+            });
+
+            await addDoc(collection(db, "orders"), { date, store, items: itemsData, totalAmount: total, timestamp: new Date() });
+            alert("ഓർഡർ സേവ് ചെയ്തു!");
+        }
+
+        window.sendWhatsAppOrder = function() {
+            const storeSelect = document.getElementById('o-store');
+            const store = storeSelect.value;
+            const phone = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-phone');
+            const total = calculateTotal();
+
+            if(!phone || !store) return alert("കടയും ഫോൺ നമ്പറും തിരഞ്ഞെടുക്കുക!");
+
+            let msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്*%0Aകട: ${store}%0A-------------------%0A`;
+            ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                let qty = Number(document.getElementById(`qty-${item}`).value) || 0;
+                if(qty > 0) msg += `${item}: ${qty}\n`;
+            });
+            msg += `-------------------%0A*ആകെ തുക: ₹${total}*%0Aനന്ദി!`;
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
 
-        window.loadLedgerData = async function() {
-            let totalPurchase = 0;
-            let totalSales = 0;
-
-            const pSnap = await getDocs(collection(db, "purchases"));
-            pSnap.forEach(doc => { totalPurchase += doc.data().amount || 0; });
-
-            const sSnap = await getDocs(collection(db, "sales"));
-            sSnap.forEach(doc => { totalSales += doc.data().amount || 0; });
-
-            document.getElementById('total-purchase-amt').innerText = `₹${totalPurchase}`;
-            document.getElementById('total-sales-amt').innerText = `₹${totalSales}`;
-            document.getElementById('net-balance').innerText = `₹${totalSales - totalPurchase}`;
+        window.loadLedger = async function() {
+            let total = 0;
+            const snap = await getDocs(collection(db, "orders"));
+            snap.forEach(doc => { total += doc.data().totalAmount || 0; });
+            document.getElementById('ledger-total').innerText = `₹${total}`;
         }
     </script>
 </body>
