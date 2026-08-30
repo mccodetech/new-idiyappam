@@ -117,15 +117,15 @@
                 </div>
                 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                    <input type="hidden" id="edit-store-id" value="">
                     <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-xl text-sm bg-white">
-                    <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow">കട സേവ് ചെയ്യുക</button>
                 </div>
 
-                <div id="stores-list-container" class="space-y-2 max-h-48 overflow-y-auto">
-                    <!-- നിലവിലുള്ള കടകളുടെ ലിസ്റ്റ് ഇവിടെ ഡാറ്റാബേസിൽ നിന്ന് വരുത്തും -->
+                <div id="stores-list-container" class="space-y-2 max-h-40 overflow-y-auto">
+                    <!-- കടകളുടെ ലിസ്റ്റ് -->
                 </div>
 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
@@ -138,6 +138,8 @@
                         <div>ചപ്പാത്തി: <input type="number" id="rate-chapati" value="8" class="w-full p-1 border rounded bg-white"></div>
                     </div>
                 </div>
+
+                <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-emerald-700 transition">കട സേവ് ചെയ്യുക</button>
             </div>
 
             <!-- റിപ്പോർട്ടുകളും എൻട്രി മാനേജ്‌മെന്റും -->
@@ -152,7 +154,7 @@
                     <option value="">കട തിരഞ്ഞെടുക്കുക</option>
                 </select>
 
-                <!-- ഡാറ്റാബേസ് എൻട്രികൾ എഡിറ്റ്/ഡിലീറ്റ് ചെയ്യാൻ കാണിക്കുന്ന ലിസ്റ്റ് -->
+                <!-- ഡാറ്റാബേസ് എൻട്രികൾ എഡിറ്റ്/ഡിലീറ്റ് ചെയ്യാൻ -->
                 <div id="entries-management-list" class="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-xl bg-slate-50 text-xs">
                     <p class="text-gray-400 text-center">കട തിരഞ്ഞെടുക്കുക...</p>
                 </div>
@@ -237,14 +239,22 @@
         });
 
         window.saveStore = async () => {
+            const storeId = document.getElementById('edit-store-id').value;
             const name = document.getElementById('store-name').value;
             const owner = document.getElementById('owner-name').value;
             const place = document.getElementById('store-place').value;
             const phone = document.getElementById('store-phone').value;
             if(!name || !phone) return showAlert("ശ്രദ്ധിക്കുക", "പേരും ഫോൺ നമ്പറും നൽകുക!", false);
             
-            await addDoc(collection(db, "stores"), { name, owner, place, phone });
-            showAlert("വിജയം", "കട സേവ് ചെയ്തു!");
+            if(storeId) {
+                await updateDoc(doc(db, "stores", storeId), { name, owner, place, phone });
+                showAlert("വിജയം", "കടയുടെ വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു!");
+                document.getElementById('edit-store-id').value = '';
+            } else {
+                await addDoc(collection(db, "stores"), { name, owner, place, phone });
+                showAlert("വിജയം", "കട സേവ് ചെയ്തു!");
+            }
+
             document.getElementById('store-name').value = '';
             document.getElementById('owner-name').value = '';
             document.getElementById('store-place').value = '';
@@ -262,9 +272,20 @@
                 container.innerHTML += `
                     <div class="flex justify-between items-center bg-white p-2 border rounded-xl text-xs">
                         <div><b>${data.name}</b> (${data.place || 'വിലാസമില്ല'})</div>
-                        <button onclick="deleteStore('${docSnap.id}')" class="bg-rose-100 text-rose-600 px-2 py-1 rounded font-bold">ഡിലീറ്റ്</button>
+                        <div class="flex gap-1">
+                            <button onclick="editStore('${docSnap.id}', '${data.name}', '${data.owner || ''}', '${data.place || ''}', '${data.phone}')" class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold">എഡിറ്റ്</button>
+                            <button onclick="deleteStore('${docSnap.id}')" class="bg-rose-100 text-rose-600 px-2 py-1 rounded font-bold">ഡിലീറ്റ്</button>
+                        </div>
                     </div>`;
             });
+        }
+
+        window.editStore = (id, name, owner, place, phone) => {
+            document.getElementById('edit-store-id').value = id;
+            document.getElementById('store-name').value = name;
+            document.getElementById('owner-name').value = owner;
+            document.getElementById('store-place').value = place;
+            document.getElementById('store-phone').value = phone;
         }
 
         window.deleteStore = async (id) => {
@@ -306,7 +327,10 @@
                         container.innerHTML += `
                             <div class="flex justify-between items-center bg-white p-2 border rounded-lg mb-1">
                                 <div><b>${data.date}</b> (${colName === 'purchases' ? 'Purchase' : 'Sales'} - ₹${data.totalAmount})</div>
-                                <button onclick="deleteEntry('${colName}', '${docSnap.id}')" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">ഡിലീറ്റ്</button>
+                                <div class="flex gap-1">
+                                    <button onclick="editEntryForm('${colName}', '${docSnap.id}', '${data.date}', '${data.store}', ${data.totalAmount})" class="bg-blue-500 text-white px-2 py-0.5 rounded text-[10px]">എഡിറ്റ്</button>
+                                    <button onclick="deleteEntry('${colName}', '${docSnap.id}')" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">ഡിലീറ്റ്</button>
+                                </div>
                             </div>`;
                     }
                 });
@@ -319,6 +343,15 @@
                 showAlert("വിജയം", "എൻട്രി ഡിലീറ്റ് ചെയ്തു!");
                 loadStoreEntries();
             }
+        }
+
+        window.editEntryForm = (colName, id, date, store, amount) => {
+            switchTab(colName === 'purchases' ? 'purchase' : 'sales');
+            document.getElementById(colName === 'purchases' ? 'p-date' : 's-date').value = date;
+            document.getElementById(colName === 'purchases' ? 'p-store' : 's-store').value = store;
+            // പഴയ എൻട്രി ഡിലീറ്റ് ചെയ്ത് പുതിയത് സേവ് ചെയ്യുന്ന രീതിയിൽ അല്ലെങ്കിൽ അപ്ഡേറ്റ് ചെയ്യാം
+            deleteDoc(doc(db, colName, id));
+            showAlert("ശ്രദ്ധിക്കുക", "ഈ എൻട്രി തിരുത്താനായി ലോഡ് ചെയ്തിട്ടുണ്ട്. ആവശ്യമായ മാറ്റങ്ങൾ വരുത്തി വീണ്ടും സേവ് ചെയ്യുക.");
         }
 
         function getRates() {
@@ -389,7 +422,7 @@
             let tableRows = [], totalInAmt = 0, totalOutAmt = 0;
             const pSnap = await getDocs(collection(db, "purchases"));
             pSnap.forEach(docSnap => {
-                const data = docSnap.doc.data ? docSnap.doc.data() : docSnap.data();
+                const data = docSnap.data();
                 if(data.store === selectedStore) {
                     let itm = data.items || {};
                     totalInAmt += data.totalAmount || 0;
