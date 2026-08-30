@@ -15,7 +15,7 @@
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-3">
 
-    <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
+    <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative mb-10">
         
         <!-- കസ്റ്റം അലേർട്ട് മോഡൽ -->
         <div id="custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
@@ -89,7 +89,6 @@
                     <div class="flex justify-between items-center"><span>പൊറോട്ട:</span> <input type="number" id="p-qty-porotta" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>ചപ്പാത്തി:</span> <input type="number" id="p-qty-chapati" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                 </div>
-                <!-- സേവ് ബട്ടൺ ഏറ്റവും താഴേക്ക് മാറ്റിയിരിക്കുന്നു -->
                 <button onclick="saveTransaction('purchase')" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow mt-3">പർച്ചേസ് സേവ് ചെയ്യുക</button>
             </div>
 
@@ -149,7 +148,6 @@
                     <button onclick="setStoreMode('delete')" id="store-mode-delete" class="py-2 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">DELETE</button>
                 </div>
 
-                <!-- ADD / EDIT ഫോം കണ്ടെയ്നർ -->
                 <div id="store-form-container" class="bg-slate-50 p-3 rounded-xl border space-y-2">
                     <label id="store-form-label" class="block text-xs font-bold text-emerald-700">പുതിയ കട ചേർക്കുക (ADD)</label>
                     <select id="existing-store-select" onchange="fillStoreDataForEdit()" class="w-full p-2 border rounded-xl text-sm bg-white hidden">
@@ -162,7 +160,6 @@
                     <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-xl text-sm bg-white">
                 </div>
 
-                <!-- DELETE കണ്ടെയ്നർ -->
                 <div id="store-delete-container" class="bg-slate-50 p-3 rounded-xl border space-y-2 hidden">
                     <label class="block text-xs font-bold text-rose-600">ഡിലീറ്റ് ചെയ്യേണ്ട കട തിരഞ്ഞെടുക്കുക:</label>
                     <select id="delete-store-select" class="w-full p-2 border rounded-xl text-sm bg-white">
@@ -182,7 +179,6 @@
                     </div>
                 </div>
 
-                <!-- കട സേവ് / എഡിറ്റ് ബട്ടൺ ഏറ്റവും താഴേക്ക് മാറ്റിയിരിക്കുന്നു -->
                 <button onclick="saveStoreAction()" id="store-action-btn" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow mt-2">കട സേവ് ചെയ്യുക</button>
             </div>
 
@@ -408,7 +404,7 @@
                 loadStoresDropdown();
                 setDefaultDate();
             } else {
-                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
             }
