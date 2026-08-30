@@ -60,7 +60,7 @@
         <!-- 2. ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
             
-            <!-- പ്രധാന 2 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ് മാത്രം - സെറ്റിംഗ്സ്/റിപ്പോർട്ട് തുറക്കുമ്പോൾ ഇത് ഹൈഡ് ആകും) -->
+            <!-- പ്രധാന 2 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ് മാത്രം) -->
             <div id="main-tabs" class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold">
                 <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
                 <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">സെയിൽസ്</button>
@@ -112,8 +112,8 @@
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
                     <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
+                    <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ (9847XXXXXX)" class="w-full p-2 border rounded-xl text-sm bg-white">
-                    <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-2 rounded-xl font-bold text-xs shadow">കട സേവ് ചെയ്യുക</button>
                 </div>
 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
@@ -126,6 +126,9 @@
                         <div>ചപ്പാത്തി: <input type="number" id="rate-chapati" value="8" class="w-full p-1 border rounded bg-white"></div>
                     </div>
                 </div>
+
+                <!-- കട സേവ് ചെയ്യാനുള്ള ബട്ടൺ ഏറ്റവും താഴെ -->
+                <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-emerald-700 transition">കട സേവ് ചെയ്യുക</button>
             </div>
 
             <!-- ടാബ് 4: റിപ്പോർട്ടുകൾ -->
@@ -203,7 +206,6 @@
                 targetTab.className = "py-2.5 bg-emerald-600 text-white rounded-xl shadow transition text-xs font-bold";
             }
 
-            // പർച്ചേസ് അല്ലെങ്കിൽ സെയിൽസ് ആണെങ്കിൽ മാത്രം മുകളിലെ പ്രധാന ടാബുകൾ കാണിക്കുക
             const mainTabs = document.getElementById('main-tabs');
             if(tabName === 'purchase' || tabName === 'sales') {
                 mainTabs.classList.remove('hidden');
@@ -249,14 +251,16 @@
         window.saveStore = async function() {
             const name = document.getElementById('store-name').value;
             const owner = document.getElementById('owner-name').value;
+            const place = document.getElementById('store-place').value;
             const phone = document.getElementById('store-phone').value;
             if(!name || !phone) return alert("കടയുടെ പേരും ഫോൺ നമ്പറും നൽകുക!");
             
             try {
-                await addDoc(collection(db, "stores"), { name, owner, phone });
+                await addDoc(collection(db, "stores"), { name, owner, place, phone });
                 alert("കട വിജയകരമായി സേവ് ചെയ്തു!");
                 document.getElementById('store-name').value = '';
                 document.getElementById('owner-name').value = '';
+                document.getElementById('store-place').value = '';
                 document.getElementById('store-phone').value = '';
                 loadStoresDropdown();
             } catch(e) {
@@ -274,7 +278,8 @@
                 const snap = await getDocs(collection(db, "stores"));
                 snap.forEach(doc => {
                     const data = doc.data();
-                    const opt = `<option value="${data.name}" data-owner="${data.owner || ''}" data-phone="${data.phone}">${data.name} (${data.owner || 'ഓണർ'})</option>`;
+                    const placeStr = data.place ? `, ${data.place}` : '';
+                    const opt = `<option value="${data.name}" data-owner="${data.owner || ''}" data-place="${data.place || ''}" data-phone="${data.phone}">${data.name}${placeStr} (${data.owner || 'ഓണർ'})</option>`;
                     pSelect.innerHTML += opt;
                     sSelect.innerHTML += opt;
                 });
@@ -324,13 +329,14 @@
             const storeSelect = document.getElementById('s-store');
             const store = storeSelect.value;
             const owner = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-owner');
+            const place = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-place');
             const phone = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-phone');
 
             if(!phone || !store) return alert("കടയും ഫോൺ നമ്പറും തിരഞ്ഞെടുക്കുക!");
 
             const rates = getRates();
             let total = 0;
-            let msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്*%0Aകട: ${store} ${owner ? '(' + owner + ')' : ''}%0A----------------------------------%0A`;
+            let msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്*%0Aകട: ${store} ${place ? '(' + place + ')' : ''} ${owner ? '- ' + owner : ''}%0A----------------------------------%0A`;
             
             let hasItems = false;
             ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
