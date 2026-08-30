@@ -12,12 +12,18 @@
     <div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">സ്റ്റോർ മാനേജ്മെന്റ് ആപ്പ്</h2>
 
-        <!-- 1. ലോഗിൻ സെക്ഷൻ -->
+        <!-- 1. ലോഗിൻ / സൈൻ അപ്പ് സെക്ഷൻ -->
         <div id="login-section">
-            <h3 class="text-lg font-semibold mb-4 text-gray-600">ലോഗിൻ ചെയ്യുക</h3>
+            <h3 id="form-title" class="text-lg font-semibold mb-4 text-gray-600">ലോഗിൻ ചെയ്യുക</h3>
+            
             <input type="email" id="email" placeholder="ഇമെയിൽ വിലാസം" class="w-full p-3 mb-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-            <input type="password" id="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-3 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-            <button onclick="loginUser()" class="w-full bg-blue-600 text-white p-3 rounded font-semibold hover:bg-blue-700">ലോഗിൻ</button>
+            <input type="password" id="password" placeholder="പാസ്‌വേർഡ് (കുറഞ്ഞത് 6 അക്ഷരം)" class="w-full p-3 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+            
+            <!-- ലോഗിൻ ബട്ടൺ -->
+            <button id="login-btn" onclick="loginUser()" class="w-full bg-blue-600 text-white p-3 rounded font-semibold hover:bg-blue-700 mb-2">ലോഗിൻ</button>
+            
+            <!-- പുതിയ അക്കൗണ്ട് ഉണ്ടാക്കാൻ (Sign Up) ബട്ടൺ -->
+            <button id="signup-btn" onclick="registerUser()" class="w-full bg-green-600 text-white p-3 rounded font-semibold hover:bg-green-700">പുതിയ അക്കൗണ്ട് ഉണ്ടാക്കുക (Sign Up)</button>
         </div>
 
         <!-- 2. ഡാഷ്‌ബോർഡ് / ട്രാൻസ്ഫർ സെക്ഷൻ (ലോഗിൻ കഴിഞ്ഞാൽ കാണുന്നത്) -->
@@ -57,14 +63,14 @@
         </div>
     </div>
 
-    <!-- ഫയർബേസും ലോജിക് കോഡും (Firebase SDK v10 Modules) -->
+    <!-- ഫയർബേസും ലോജിക് കോഡും -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-        // നിങ്ങൾ നൽകിയ ഒറിജിനൽ ഫയർബേസ് കോൺഫിഗറേഷൻ
+        // ഫയർബേസ് കോൺഫിഗറേഷൻ
         const firebaseConfig = {
             apiKey: "AIzaSyAM9SV2IvvcjBTCZRc1F6xawdMh2zFnczY",
             authDomain: "new-idiyappam.firebaseapp.com",
@@ -75,13 +81,12 @@
             measurementId: "G-98MPHCF5MB"
         };
 
-        // ഫയർബേസ് ഇനിഷ്യലൈസ് ചെയ്യുന്നു
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const analytics = getAnalytics(app);
 
-        // ലോഗിൻ ഫങ്ഷൻ
+        // 1. ലോഗിൻ ചെയ്യാനുള്ള ഫങ്ഷൻ
         window.loginUser = function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -95,7 +100,26 @@
                 });
         }
 
-        // ലോഗ് ഔട്ട് ഫങ്ഷൻ
+        // 2. പുതിയ അക്കൗണ്ട് ഉണ്ടാക്കാനുള്ള ഫങ്ഷൻ (Sign Up)
+        window.registerUser = function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if(!email || !password) {
+                alert("ദയവായി ഇമെയിലും പാസ്‌വേർഡും നൽകുക!");
+                return;
+            }
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    alert("അക്കൗണ്ട് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
+                })
+                .catch((error) => {
+                    alert("അക്കൗണ്ട് ഉണ്ടാക്കുന്നതിൽ പരാജയപ്പെട്ടു: " + error.message);
+                });
+        }
+
+        // 3. ലോഗ് ഔട്ട് ഫങ്ഷൻ
         window.logoutUser = function() {
             signOut(auth).then(() => {
                 alert("ലോഗ് ഔട്ട് ചെയ്തു.");
@@ -104,19 +128,19 @@
             });
         }
 
-        // യൂട്യൂബ്/ബ്രൗസർ ലോഗിൻ സ്റ്റാറ്റസ് മാറുന്നത് നിരീക്ഷിക്കാൻ
+        // 4. ഓട്ടോമാറ്റിക് ലോഗിൻ സ്റ്റാറ്റസ് ചെക്ക്
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
-                document.getElementById('user-email-display').innerText = `I D: ${user.email}`;
+                document.getElementById('user-email-display').innerText = `ID: ${user.email}`;
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
             }
         });
 
-        // ഡാറ്റ ഫയർബേസ് ഡാറ്റാബേസിലേക്ക് സേവ് ചെയ്യാൻ (Firestore)
+        // 5. ഡാറ്റ ഫയർബേസിലേക്ക് സേവ് ചെയ്യാൻ
         window.saveTransaction = async function() {
             const date = document.getElementById('trans-date').value;
             const item = document.getElementById('item-name').value;
@@ -138,7 +162,6 @@
                 });
                 alert("കണക്ക് വിജയകരമായി സേവ് ചെയ്യപ്പെട്ടു!");
                 
-                // ഫോം ക്ലിയർ ചെയ്യുക
                 document.getElementById('quantity').value = '';
                 document.getElementById('transfer-note').value = '';
             } catch (e) {
