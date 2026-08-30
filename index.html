@@ -60,8 +60,8 @@
         <!-- 2. ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
             
-            <!-- പ്രധാന 2 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ് മാത്രം) -->
-            <div class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold">
+            <!-- പ്രധാന 2 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ് മാത്രം - സെറ്റിംഗ്സ്/റിപ്പോർട്ട് തുറക്കുമ്പോൾ ഇത് ഹൈഡ് ആകും) -->
+            <div id="main-tabs" class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold">
                 <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
                 <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">സെയിൽസ്</button>
             </div>
@@ -102,7 +102,7 @@
                 </div>
             </div>
 
-            <!-- ടാബ് 3: കടകൾ ചേർക്കാനുള്ള സെറ്റിംഗ്സ് പേജ് (മെനു വഴി വരുന്നത്) -->
+            <!-- ടാബ് 3: കടകൾ ചേർക്കാനുള്ള സെറ്റിംഗ്സ് പേജ് -->
             <div id="section-stores" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകൾ ചേർക്കുക</h4>
@@ -203,7 +203,14 @@
                 targetTab.className = "py-2.5 bg-emerald-600 text-white rounded-xl shadow transition text-xs font-bold";
             }
 
-            if(tabName === 'purchase' || tabName === 'sales') loadStoresDropdown();
+            // പർച്ചേസ് അല്ലെങ്കിൽ സെയിൽസ് ആണെങ്കിൽ മാത്രം മുകളിലെ പ്രധാന ടാബുകൾ കാണിക്കുക
+            const mainTabs = document.getElementById('main-tabs');
+            if(tabName === 'purchase' || tabName === 'sales') {
+                mainTabs.classList.remove('hidden');
+                loadStoresDropdown();
+            } else {
+                mainTabs.classList.add('hidden');
+            }
         }
 
         window.loginUser = () => {
