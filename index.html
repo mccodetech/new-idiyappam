@@ -4,14 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</title>
+    <!-- Google Fonts for Malayalam -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- jsPDF for Report Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body { font-family: 'Noto Sans Malayalam', sans-serif; }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen font-sans text-slate-800 p-3">
+<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-3">
 
-    <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100">
+    <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
         
+        <!-- സെറ്റിംഗ്സ് ഐക്കൺ (മുകളിൽ വലതുഭാഗത്ത്) -->
+        <button onclick="switchTab('settings')" class="absolute top-5 right-5 text-xl text-slate-600 hover:text-emerald-700 transition" title="സെറ്റിംഗ്സ്">⚙️</button>
+
         <!-- ഹെഡിങ് -->
         <div class="text-center mb-5">
             <h1 class="text-xl font-extrabold text-emerald-800">ന്യൂ ഇടിയപ്പം കമ്പനി</h1>
@@ -42,15 +49,14 @@
                 <button onclick="confirmLogout()" class="bg-rose-500 text-white px-3 py-1.5 text-xs font-bold rounded-lg hover:bg-rose-600 shadow transition">ലോഗ് ഔട്ട്</button>
             </div>
 
-            <!-- 4 ടാബുകൾ -->
-            <div class="grid grid-cols-2 gap-1.5 mb-4 text-xs font-bold">
+            <!-- പ്രധാന 3 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ്, റിപ്പോർട്ടുകൾ) -->
+            <div class="grid grid-cols-3 gap-1.5 mb-4 text-xs font-bold">
                 <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow transition">പർച്ചേസ്</button>
                 <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition">സെയിൽസ്</button>
-                <button onclick="switchTab('stores')" id="tab-stores" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition">സെറ്റിംഗ്സ് (കടകൾ)</button>
                 <button onclick="switchTab('reports')" id="tab-reports" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition">റിപ്പോർട്ടുകൾ</button>
             </div>
 
-            <!-- ടാബ് 1: പർച്ചേസ് & പർച്ചേസ് ഓർഡർ -->
+            <!-- ടാബ് 1: പർച്ചേസ് -->
             <div id="section-purchase" class="space-y-3">
                 <h4 class="text-xs font-extrabold text-slate-600 uppercase">പർച്ചേസ് / പർച്ചേസ് ഓർഡർ</h4>
                 <input type="date" id="p-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
@@ -66,7 +72,7 @@
                 <button onclick="saveTransaction('purchase')" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">പർച്ചേസ് സേവ് ചെയ്യുക</button>
             </div>
 
-            <!-- ടാബ് 2: സെയിൽസ് & സെയിൽസ് ഓർഡർ -->
+            <!-- ടാബ് 2: സെയിൽസ് -->
             <div id="section-sales" class="space-y-3 hidden">
                 <h4 class="text-xs font-extrabold text-slate-600 uppercase">സെയിൽസ് / സെയിൽസ് ഓർഡർ</h4>
                 <input type="date" id="s-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
@@ -86,8 +92,8 @@
                 </div>
             </div>
 
-            <!-- ടാബ് 3: സെറ്റിംഗ്സ് (കടകളും വിലയും) -->
-            <div id="section-stores" class="space-y-3 hidden">
+            <!-- ടാബ് 3: സെറ്റിംഗ്സ് പേജ് (Gear Icon വഴി തുറക്കുന്നത്) -->
+            <div id="section-settings" class="space-y-3 hidden">
                 <h4 class="text-xs font-extrabold text-slate-600 uppercase">പുതിയ കട ചേർക്കാൻ</h4>
                 <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
                 <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
@@ -147,12 +153,24 @@
         }
 
         window.switchTab = function(tabName) {
-            ['purchase', 'sales', 'stores', 'reports'].forEach(t => {
-                document.getElementById(`section-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).className = "py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition text-xs font-bold";
+            ['purchase', 'sales', 'settings', 'reports'].forEach(t => {
+                const el = document.getElementById(`section-${t}`);
+                if(el) el.classList.add('hidden');
+                
+                const tabEl = document.getElementById(`tab-${t}`);
+                if(tabEl) {
+                    tabEl.className = "py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition text-xs font-bold";
+                }
             });
-            document.getElementById(`section-${tabName}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabName}`).className = "py-2.5 bg-emerald-600 text-white rounded-xl shadow transition text-xs font-bold";
+
+            const targetSection = document.getElementById(`section-${tabName}`);
+            if(targetSection) targetSection.classList.remove('hidden');
+
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if(targetTab) {
+                targetTab.className = "py-2.5 bg-emerald-600 text-white rounded-xl shadow transition text-xs font-bold";
+            }
+
             if(tabName === 'purchase' || tabName === 'sales') loadStoresDropdown();
         }
 
@@ -171,7 +189,7 @@
         }
 
         window.confirmLogout = function() {
-            if(confirm("നിങ്ങൾക്ക് തീർച്ചയായും ലോഗ് ഔട്ട് ചെയ്യണമെന്നുണ്ടോ?")) {
+            if(confirm("തീർച്ചയായും ലോഗ് ഔട്ട് ചെയ്യണമെന്നുണ്ടോ?")) {
                 signOut(auth);
             }
         }
