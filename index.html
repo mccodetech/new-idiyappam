@@ -42,7 +42,8 @@
             <div id="section-stores" class="space-y-3 hidden">
                 <h4 class="text-xs font-bold text-slate-600 uppercase">പുതിയ കട ചേർക്കാൻ</h4>
                 <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-lg text-sm">
-                <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-lg text-sm">
+                <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-lg text-sm">
+                <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ (ഉദാ: 9847XXXXXX)" class="w-full p-2 border rounded-lg text-sm">
                 <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-2 rounded-lg text-xs font-bold">കട സേവ് ചെയ്യുക</button>
 
                 <hr class="my-2">
@@ -56,7 +57,7 @@
                 </div>
             </div>
 
-            <!-- ടാബ് 2: ഓർഡർ / സെയിൽസ് ഫോം (ഒന്നിലധികം സാധനങ്ങൾ ഒന്നിച്ച്) -->
+            <!-- ടാബ് 2: ഓർഡർ / സെയിൽസ് ഫോം -->
             <div id="section-order" class="space-y-3">
                 <h4 class="text-xs font-bold text-slate-600 uppercase">സെയിൽസ് / ഓർഡർ എൻട്രി</h4>
                 <input type="date" id="o-date" class="w-full p-2 border rounded-lg text-sm">
@@ -113,8 +114,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let storesList = [];
-
         window.switchTab = function(tabName) {
             ['order', 'stores', 'ledger'].forEach(t => {
                 document.getElementById(`section-${t}`).classList.add('hidden');
@@ -123,10 +122,11 @@
             document.getElementById(`section-${tabName}`).classList.remove('hidden');
             document.getElementById(`tab-${tabName}`).className = "flex-1 py-2 text-xs font-bold bg-emerald-600 text-white rounded-md";
             if(tabName === 'order') loadStoresDropdown();
+            if(tabName === 'ledger') loadLedger();
         }
 
         window.loginUser = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).catch(err => alert(err.message));
-        window.registerUser = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).then(() => alert("സെസ്സ്ഫുൾ!")).catch(err => alert(err.message));
+        window.registerUser = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).then(() => alert("വിജയകരമായി അക്കൗണ്ട് ക്രിയേറ്റ് ചെയ്തു!")).catch(err => alert(err.message));
         window.logoutUser = () => signOut(auth);
 
         onAuthStateChanged(auth, (user) => {
@@ -143,11 +143,13 @@
 
         window.saveStore = async function() {
             const name = document.getElementById('store-name').value;
+            const owner = document.getElementById('owner-name').value;
             const phone = document.getElementById('store-phone').value;
-            if(!name || !phone) return alert("പേരും ഫോൺ നമ്പറും നൽകുക!");
-            await addDoc(collection(db, "stores"), { name, phone });
-            alert("കട സേവ് ചെയ്തു!");
+            if(!name || !phone) return alert("കടയുടെ പേരും ഫോൺ നമ്പറും നൽകുക!");
+            await addDoc(collection(db, "stores"), { name, owner, phone });
+            alert("കട വിജയകരമായി സേവ് ചെയ്തു!");
             document.getElementById('store-name').value = '';
+            document.getElementById('owner-name').value = '';
             document.getElementById('store-phone').value = '';
             loadStoresDropdown();
         }
@@ -155,12 +157,10 @@
         async function loadStoresDropdown() {
             const select = document.getElementById('o-store');
             select.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
-            storesList = [];
             const snap = await getDocs(collection(db, "stores"));
             snap.forEach(doc => {
                 const data = doc.data();
-                storesList.push(data);
-                select.innerHTML += `<option value="${data.name}" data-phone="${data.phone}">${data.name}</option>`;
+                select.innerHTML += `<option value="${data.name}" data-owner="${data.owner || ''}" data-phone="${data.phone}">${data.name} (${data.owner || 'ഓണർ'})</option>`;
             });
         }
 
@@ -183,7 +183,8 @@
 
         window.saveOrder = async function() {
             const date = document.getElementById('o-date').value;
-            const store = document.getElementById('o-store').value;
+            const storeSelect = document.getElementById('o-store');
+            const store = storeSelect.value;
             const total = calculateTotal();
             if(!date || !store || total === 0) return alert("തീയതി, കട, എണ്ണം എന്നിവ കൃത്യമായി നൽകുക!");
 
@@ -199,17 +200,26 @@
         window.sendWhatsAppOrder = function() {
             const storeSelect = document.getElementById('o-store');
             const store = storeSelect.value;
+            const owner = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-owner');
             const phone = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-phone');
             const total = calculateTotal();
 
             if(!phone || !store) return alert("കടയും ഫോൺ നമ്പറും തിരഞ്ഞെടുക്കുക!");
 
-            let msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്*%0Aകട: ${store}%0A-------------------%0A`;
+            let msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്*%0Aകട: ${store} ${owner ? '(' + owner + ')' : ''}%0A----------------------------------%0A`;
+            
+            let hasItems = false;
             ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                 let qty = Number(document.getElementById(`qty-${item}`).value) || 0;
-                if(qty > 0) msg += `${item}: ${qty}\n`;
+                if(qty > 0) {
+                    hasItems = true;
+                    msg += `${item}: ${qty}%0A`;
+                }
             });
-            msg += `-------------------%0A*ആകെ തുക: ₹${total}*%0Aനന്ദി!`;
+
+            if(!hasItems) return alert("കുറഞ്ഞത് ഒരു സാധനമെങ്കിലും എണ്ണം നൽകുക!");
+
+            msg += `----------------------------------%0A*ആകെ തുക: ₹${total}*%0Aനന്ദി!`;
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
 
