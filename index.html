@@ -39,7 +39,9 @@
                 </div>
                 <div class="space-y-3 font-bold text-xs">
                     <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🏪 കടകൾ മാനേജ് ചെയ്യുക</button>
-                    <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ & മാനേജ്‌മെന്റ്</button>
+                    <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-blue-50 rounded-xl transition text-blue-700">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
+                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition text-emerald-700">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
+                    <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ</button>
                 </div>
             </div>
             <button onclick="confirmLogout()" class="w-full bg-rose-500 text-white p-2.5 rounded-xl text-xs font-bold shadow hover:bg-rose-600 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
@@ -75,7 +77,8 @@
 
             <!-- പർച്ചേസ് -->
             <div id="section-purchase" class="space-y-3">
-                <h4 class="text-xs font-extrabold text-slate-600 uppercase">പർച്ചേസ് എൻട്രി</h4>
+                <h4 class="text-xs font-extrabold text-slate-600 uppercase" id="p-form-title">പർച്ചേസ് എൻട്രി</h4>
+                <input type="hidden" id="edit-purchase-id" value="">
                 <input type="date" id="p-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
                 <select id="p-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
                 
@@ -91,7 +94,8 @@
 
             <!-- സെയിൽസ് -->
             <div id="section-sales" class="space-y-3 hidden">
-                <h4 class="text-xs font-extrabold text-slate-600 uppercase">സെയിൽസ് / ഓർഡർ</h4>
+                <h4 class="text-xs font-extrabold text-slate-600 uppercase" id="s-form-title">സെയിൽസ് / ഓർഡർ</h4>
+                <input type="hidden" id="edit-sales-id" value="">
                 <input type="date" id="s-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
                 <select id="s-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
                 
@@ -106,6 +110,36 @@
                 <div class="flex gap-2">
                     <button onclick="saveTransaction('sales')" class="flex-1 bg-blue-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-blue-700 shadow">സെയിൽസ് സേവ്</button>
                     <button onclick="sendWhatsAppOrder()" class="flex-1 bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">വാട്സാപ്പ് അയക്കൂ</button>
+                </div>
+            </div>
+
+            <!-- സെയിൽസ് എഡിറ്റ് ലിസ്റ്റ് പേജ് -->
+            <div id="section-edit-sales" class="space-y-3 hidden">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-xs font-extrabold text-blue-700 uppercase">സെയിൽസ് എഡിറ്റ് ചെയ്യുക</h4>
+                    <button onclick="switchTab('sales')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
+                </div>
+                <label class="block text-xs font-bold text-slate-600">കട തിരഞ്ഞെടുക്കുക:</label>
+                <select id="edit-sales-store-select" onchange="loadEditList('sales')" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
+                    <option value="">കട തിരഞ്ഞെടുക്കുക</option>
+                </select>
+                <div id="edit-sales-list" class="space-y-2 max-h-56 overflow-y-auto border p-2 rounded-xl bg-slate-50 text-xs">
+                    <p class="text-gray-400 text-center">കട തിരഞ്ഞെടുക്കുക...</p>
+                </div>
+            </div>
+
+            <!-- പർച്ചേസ് എഡിറ്റ് ലിസ്റ്റ് പേജ് -->
+            <div id="section-edit-purchase" class="space-y-3 hidden">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-xs font-extrabold text-emerald-700 uppercase">പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
+                </div>
+                <label class="block text-xs font-bold text-slate-600">കട തിരഞ്ഞെടുക്കുക:</label>
+                <select id="edit-purchase-store-select" onchange="loadEditList('purchases')" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
+                    <option value="">കട തിരഞ്ഞെടുക്കുക</option>
+                </select>
+                <div id="edit-purchase-list" class="space-y-2 max-h-56 overflow-y-auto border p-2 rounded-xl bg-slate-50 text-xs">
+                    <p class="text-gray-400 text-center">കട തിരഞ്ഞെടുക്കുക...</p>
                 </div>
             </div>
 
@@ -124,9 +158,7 @@
                     <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-xl text-sm bg-white">
                 </div>
 
-                <div id="stores-list-container" class="space-y-2 max-h-40 overflow-y-auto">
-                    <!-- കടകളുടെ ലിസ്റ്റ് -->
-                </div>
+                <div id="stores-list-container" class="space-y-2 max-h-40 overflow-y-auto"></div>
 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
                     <h5 class="text-xs font-bold text-slate-700">ഐറ്റം വിലകൾ (Rates)</h5>
@@ -142,22 +174,17 @@
                 <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-emerald-700 transition">കട സേവ് ചെയ്യുക</button>
             </div>
 
-            <!-- റിപ്പോർട്ടുകളും എൻട്രി മാനേജ്‌മെന്റും -->
+            <!-- റിപ്പോർട്ടുകൾ -->
             <div id="section-reports" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ട് & എൻട്രി മാനേജ്മെന്റ്</h4>
+                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ട് ഡൗൺലോഡ്</h4>
                     <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
                 
                 <label class="block text-xs font-bold text-slate-600">കട തിരഞ്ഞെടുക്കുക:</label>
-                <select id="report-store" onchange="loadStoreEntries()" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
+                <select id="report-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
                     <option value="">കട തിരഞ്ഞെടുക്കുക</option>
                 </select>
-
-                <!-- ഡാറ്റാബേസ് എൻട്രികൾ എഡിറ്റ്/ഡിലീറ്റ് ചെയ്യാൻ -->
-                <div id="entries-management-list" class="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-xl bg-slate-50 text-xs">
-                    <p class="text-gray-400 text-center">കട തിരഞ്ഞെടുക്കുക...</p>
-                </div>
 
                 <button onclick="generatePDFReport()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow mt-2">PDF ലെഡ്ജർ റിപ്പോർട്ട് ഡൗൺലോഡ്</button>
             </div>
@@ -200,7 +227,7 @@
         }
 
         window.switchTab = (tabName) => {
-            ['purchase', 'sales', 'stores', 'reports'].forEach(t => {
+            ['purchase', 'sales', 'stores', 'reports', 'edit-sales', 'edit-purchase'].forEach(t => {
                 const el = document.getElementById(`section-${t}`);
                 if(el) el.classList.add('hidden');
                 const tabEl = document.getElementById(`tab-${t}`);
@@ -218,6 +245,7 @@
                 mainTabs.classList.add('hidden');
                 if(tabName === 'stores') loadStoresManagementList();
                 if(tabName === 'reports') loadStoresDropdown();
+                if(tabName === 'edit-sales' || tabName === 'edit-purchase') loadEditStoresDropdown(tabName === 'edit-sales' ? 'sales' : 'purchases');
             }
         }
 
@@ -232,7 +260,7 @@
                 document.getElementById('menu-btn').classList.remove('hidden');
                 loadStoresDropdown();
             } else {
-                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
             }
@@ -306,52 +334,74 @@
             const snap = await getDocs(collection(db, "stores"));
             snap.forEach(doc => {
                 const data = doc.data();
-                const opt = `<option value="${data.name}" data-owner="${data.owner || ''}" data-place="${data.place || ''}" data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
+                const opt = `<option value="${data.name}" data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
                 pSelect.innerHTML += opt;
                 sSelect.innerHTML += opt;
                 rSelect.innerHTML += opt;
             });
         }
 
-        window.loadStoreEntries = async () => {
-            const storeName = document.getElementById('report-store').value;
-            const container = document.getElementById('entries-management-list');
-            container.innerHTML = '';
-            if(!storeName) return container.innerHTML = '<p class="text-gray-400 text-center">കട തിരഞ്ഞെടുക്കുക...</p>';
-
-            ['purchases', 'sales'].forEach(async (colName) => {
-                const snap = await getDocs(collection(db, colName));
-                snap.forEach(docSnap => {
-                    const data = docSnap.data();
-                    if(data.store === storeName) {
-                        container.innerHTML += `
-                            <div class="flex justify-between items-center bg-white p-2 border rounded-lg mb-1">
-                                <div><b>${data.date}</b> (${colName === 'purchases' ? 'Purchase' : 'Sales'} - ₹${data.totalAmount})</div>
-                                <div class="flex gap-1">
-                                    <button onclick="editEntryForm('${colName}', '${docSnap.id}', '${data.date}', '${data.store}', ${data.totalAmount})" class="bg-blue-500 text-white px-2 py-0.5 rounded text-[10px]">എഡിറ്റ്</button>
-                                    <button onclick="deleteEntry('${colName}', '${docSnap.id}')" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">ഡിലീറ്റ്</button>
-                                </div>
-                            </div>`;
-                    }
-                });
+        async function loadEditStoresDropdown(colName) {
+            const selectId = colName === 'sales' ? 'edit-sales-store-select' : 'edit-purchase-store-select';
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
+            const snap = await getDocs(collection(db, "stores"));
+            snap.forEach(doc => {
+                const data = doc.data();
+                select.innerHTML += `<option value="${data.name}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
             });
         }
 
-        window.deleteEntry = async (colName, id) => {
+        window.loadEditList = async (colName) => {
+            const storeName = document.getElementById(colName === 'sales' ? 'edit-sales-store-select' : 'edit-purchase-store-select').value;
+            const container = document.getElementById(colName === 'sales' ? 'edit-sales-list' : 'edit-purchase-list');
+            container.innerHTML = '';
+            if(!storeName) return container.innerHTML = '<p class="text-gray-400 text-center">കട തിരഞ്ഞെടുക്കുക...</p>';
+
+            const snap = await getDocs(collection(db, colName));
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                if(data.store === storeName) {
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-white p-2 border rounded-lg mb-1">
+                            <div><b>${data.date}</b> (₹${data.totalAmount})</div>
+                            <div class="flex gap-1">
+                                <button onclick="editEntry('${colName}', '${docSnap.id}', '${data.date}', '${data.store}', ${JSON.stringify(data.items).replace(/"/g, '&quot;')})" class="bg-blue-500 text-white px-2 py-0.5 rounded text-[10px]">എഡിറ്റ്</button>
+                                <button onclick="deleteEntry('${colName}', '${docSnap.id}', '${storeName}')" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">ഡിലീറ്റ്</button>
+                            </div>
+                        </div>`;
+                }
+            });
+        }
+
+        window.deleteEntry = async (colName, id, storeName) => {
             if(confirm("ഈ എൻട്രി ഡിലീറ്റ് ചെയ്യണോ?")) {
                 await deleteDoc(doc(db, colName, id));
                 showAlert("വിജയം", "എൻട്രി ഡിലീറ്റ് ചെയ്തു!");
-                loadStoreEntries();
+                loadEditList(colName);
             }
         }
 
-        window.editEntryForm = (colName, id, date, store, amount) => {
-            switchTab(colName === 'purchases' ? 'purchase' : 'sales');
-            document.getElementById(colName === 'purchases' ? 'p-date' : 's-date').value = date;
-            document.getElementById(colName === 'purchases' ? 'p-store' : 's-store').value = store;
-            // പഴയ എൻട്രി ഡിലീറ്റ് ചെയ്ത് പുതിയത് സേവ് ചെയ്യുന്ന രീതിയിൽ അല്ലെങ്കിൽ അപ്ഡേറ്റ് ചെയ്യാം
-            deleteDoc(doc(db, colName, id));
-            showAlert("ശ്രദ്ധിക്കുക", "ഈ എൻട്രി തിരുത്താനായി ലോഡ് ചെയ്തിട്ടുണ്ട്. ആവശ്യമായ മാറ്റങ്ങൾ വരുത്തി വീണ്ടും സേവ് ചെയ്യുക.");
+        window.editEntry = (colName, id, date, store, items) => {
+            switchTab(colName === 'sales' ? 'sales' : 'purchase');
+            if(colName === 'sales') {
+                document.getElementById('edit-sales-id').value = id;
+                document.getElementById('s-date').value = date;
+                document.getElementById('s-store').value = store;
+                ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                    document.getElementById(`s-qty-${item}`).value = items[item] || '';
+                });
+                document.getElementById('s-form-title').innerText = "സെയിൽസ് എഡിറ്റ് മോഡ്";
+            } else {
+                document.getElementById('edit-purchase-id').value = id;
+                document.getElementById('p-date').value = date;
+                document.getElementById('p-store').value = store;
+                ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                    document.getElementById(`p-qty-${item}`).value = items[item] || '';
+                });
+                document.getElementById('p-form-title').innerText = "പർച്ചേസ് എഡിറ്റ് മോഡ്";
+            }
+            showAlert("ശ്രദ്ധിക്കുക", "ഫീൽഡിൽ ഡാറ്റ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി വീണ്ടും സേവ് ചെയ്യുക.");
         }
 
         function getRates() {
@@ -365,6 +415,7 @@
         }
 
         window.saveTransaction = async (type) => {
+            const editId = document.getElementById(type === 'purchase' ? 'edit-purchase-id' : 'edit-sales-id').value;
             const dateInput = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-date`);
             const storeSelect = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-store`);
             if(!dateInput.value || !storeSelect.value) return showAlert("ശ്രദ്ധിക്കുക", "തീയതിയും കടയും തിരഞ്ഞെടുക്കുക!", false);
@@ -379,12 +430,20 @@
 
             if(totalAmount === 0) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനത്തിന്റെ എങ്കിലും എണ്ണം നൽകുക!", false);
 
-            await addDoc(collection(db, type === 'purchase' ? "purchases" : "sales"), {
+            const colName = type === 'purchase' ? 'purchases' : 'sales';
+            if(editId) {
+                await deleteDoc(doc(db, colName, editId)); // പഴയത് ഒഴിവാക്കി പുതിയത് അപ്ഡേറ്റ് ചെയ്യുന്നു
+            }
+
+            await addDoc(collection(db, colName), {
                 date: dateInput.value, store: storeSelect.value, items: itemsData, totalAmount, timestamp: new Date()
             });
             
-            showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} സേവ് ചെയ്തു!`);
+            showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
             dateInput.value = storeSelect.value = '';
+            if(type === 'purchase') document.getElementById('edit-purchase-id').value = '';
+            else document.getElementById('edit-sales-id').value = '';
+
             ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                 document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value = '';
             });
