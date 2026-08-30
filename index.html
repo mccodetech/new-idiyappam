@@ -27,10 +27,8 @@
                     <button onclick="toggleSidebar()" class="text-sm font-bold text-slate-500 hover:text-rose-500">✕ അടയ്ക്കുക</button>
                 </div>
                 <div class="space-y-3 font-bold text-xs">
-                    <button onclick="switchTab('purchase'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📦 പർച്ചേസ്</button>
-                    <button onclick="switchTab('sales'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🛒 സെയിൽസ്</button>
+                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🏪 കടകൾ ചേർക്കുക (Manage Stores)</button>
                     <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ</button>
-                    <button onclick="switchTab('settings'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">⚙️ സെറ്റിംഗ്സ് (കടകളും വിലയും)</button>
                 </div>
             </div>
             <button onclick="confirmLogout()" class="w-full bg-rose-500 text-white p-2.5 rounded-xl text-xs font-bold shadow hover:bg-rose-600 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
@@ -62,11 +60,10 @@
         <!-- 2. ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
             
-            <!-- പ്രധാന ടാബുകൾ (പർച്ചേസ്, സെയിൽസ്, റിപ്പോർട്ടുകൾ) -->
-            <div class="grid grid-cols-3 gap-1.5 mb-4 text-xs font-bold">
+            <!-- പ്രധാന 2 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ് മാത്രം) -->
+            <div class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold">
                 <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
                 <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">സെയിൽസ്</button>
-                <button onclick="switchTab('reports')" id="tab-reports" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">റിപ്പോർട്ടുകൾ</button>
             </div>
 
             <!-- ടാബ് 1: പർച്ചേസ് -->
@@ -105,15 +102,14 @@
                 </div>
             </div>
 
-            <!-- ടാബ് 3: സെറ്റിംഗ്സ് (മെനു വഴി വരുന്നത്) -->
-            <div id="section-settings" class="space-y-3 hidden">
+            <!-- ടാബ് 3: കടകൾ ചേർക്കാനുള്ള സെറ്റിംഗ്സ് പേജ് (മെനു വഴി വരുന്നത്) -->
+            <div id="section-stores" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">സെറ്റിംഗ്സ് & മാനേജ്‌മെന്റ്</h4>
+                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകൾ ചേർക്കുക</h4>
                     <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ പോവുക</button>
                 </div>
                 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
-                    <h5 class="text-xs font-bold text-slate-700">പുതിയ കട ചേർക്കാൻ</h5>
                     <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ (9847XXXXXX)" class="w-full p-2 border rounded-xl text-sm bg-white">
@@ -134,7 +130,10 @@
 
             <!-- ടാബ് 4: റിപ്പോർട്ടുകൾ -->
             <div id="section-reports" class="space-y-3 hidden">
-                <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ടുകൾ ഡൗൺലോഡ് ചെയ്യുക</h4>
+                <div class="flex justify-between items-center">
+                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ടുകൾ</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ പോവുക</button>
+                </div>
                 
                 <select id="report-type" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
                     <option value="daily">ഡെയ്‌ലി റിപ്പോർട്ട് (Daily Report)</option>
@@ -186,7 +185,7 @@
         }
 
         window.switchTab = function(tabName) {
-            ['purchase', 'sales', 'settings', 'reports'].forEach(t => {
+            ['purchase', 'sales', 'stores', 'reports'].forEach(t => {
                 const el = document.getElementById(`section-${t}`);
                 if(el) el.classList.add('hidden');
                 
