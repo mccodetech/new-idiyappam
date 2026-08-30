@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- jsPDF AutoTable plugin for Tables -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
         body { font-family: 'Noto Sans Malayalam', sans-serif; }
@@ -142,23 +141,23 @@
                 <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-emerald-700 transition">കട സേവ് ചെയ്യുക</button>
             </div>
 
-            <!-- ടാബ് 4: റിപ്പോർട്ടുകൾ (Specific Store Option Added) -->
+            <!-- ടാബ് 4: റിപ്പോർട്ടുകൾ -->
             <div id="section-reports" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ടുകൾ</h4>
                     <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ പോവുക</button>
                 </div>
                 
-                <select id="report-type" class="w-full p-2.5 border rounded-xl text-sm bg-slate-550">
-                    <option value="all">എല്ലാ കടകളുടെയും മൊത്തം റിപ്പോർട്ട്</option>
+                <select id="report-type" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
+                    <option value="all">ഇതുവരെയുള്ള മൊത്തം റിപ്പോർട്ട്</option>
                 </select>
 
-                <label class="block text-xs font-bold text-slate-600 mt-2">നിർദ്ദിഷ്ട കട തിരഞ്ഞെടുക്കുക (ഓപ്ഷണൽ):</label>
+                <label class="block text-xs font-bold text-slate-600 mt-2">കട തിരഞ്ഞെടുക്കുക (നിർബന്ധം):</label>
                 <select id="report-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
-                    <option value="">എല്ലാ കടകളും (All Stores)</option>
+                    <option value="">കട തിരഞ്ഞെടുക്കുക</option>
                 </select>
 
-                <button onclick="generatePDFReport()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow mt-3">PDF റിപ്പോർട്ട് ഡൗൺലോഡ്</button>
+                <button onclick="generatePDFReport()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow mt-3">PDF ലെഡ്ജർ റിപ്പോർട്ട് ഡൗൺലോഡ്</button>
             </div>
 
         </div>
@@ -267,7 +266,7 @@
                 document.getElementById('menu-btn').classList.remove('hidden');
                 loadStoresDropdown();
             } else {
-                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
             }
@@ -300,7 +299,7 @@
             
             pSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
             sSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
-            rSelect.innerHTML = '<option value="">എല്ലാ കടകളും (All Stores)</option>';
+            rSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
             
             try {
                 const snap = await getDocs(collection(db, "stores"));
@@ -388,7 +387,7 @@
                 }
             });
 
-            if(!hasItems) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനമെങ്കിലും എണ്ണം നൽകുക!", false);
+            if(!hasItems) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനമെങ്കിലും എണ്ണം നൽകുക!");
 
             msg += `----------------------------------%0A*ആകെ തുക: ₹${total}*%0Aനന്ദി!`;
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
@@ -397,44 +396,84 @@
         window.generatePDFReport = async function() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            const reportType = document.getElementById('report-type').value;
             const selectedStore = document.getElementById('report-store').value;
 
+            if(!selectedStore) return showAlert("ശ്രദ്ധിക്കുക", "ദയവായി ഒരു കട തിരഞ്ഞെടുക്കുക!", false);
+
             doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
-            doc.text(`Report Type: ${reportType.toUpperCase()}`, 14, 28);
-            if(selectedStore) {
-                doc.text(`Store: ${selectedStore}`, 14, 36);
-            }
+            doc.text(`Store Ledger Report: ${selectedStore}`, 14, 28);
 
             let tableRows = [];
+            let totalInQty = { idiyappam: 0, vellappam: 0, pathiri: 0, porotta: 0, chapati: 0 };
+            let totalOutQty = { idiyappam: 0, vellappam: 0, pathiri: 0, porotta: 0, chapati: 0 };
+            let totalInAmt = 0;
+            let totalOutAmt = 0;
+
             try {
-                const snap = await getDocs(collection(db, "sales"));
-                snap.forEach(docSnap => {
+                // പർച്ചേസ് ഡാറ്റ (In / Purchase)
+                const pSnap = await getDocs(collection(db, "purchases"));
+                pSnap.forEach(docSnap => {
                     const data = docSnap.data();
-                    
-                    // കട സെലക്ട് ചെയ്തിട്ടുണ്ടെങ്കിൽ ആ കടയുടെ ഡാറ്റ മാത്രം എടുക്കുക
-                    if(!selectedStore || data.store === selectedStore) {
-                        let items = data.items || {};
+                    if(data.store === selectedStore) {
+                        let itm = data.items || {};
+                        totalInQty.idiyappam += itm.idiyappam || 0;
+                        totalInQty.vellappam += itm.vellappam || 0;
+                        totalInQty.pathiri += itm.pathiri || 0;
+                        totalInQty.porotta += itm.porotta || 0;
+                        totalInQty.chapati += itm.chapati || 0;
+                        totalInAmt += data.totalAmount || 0;
+
                         tableRows.push([
                             data.date || '',
-                            data.store || '',
-                            items.idiyappam || 0,
-                            items.vellappam || 0,
-                            items.pathiri || 0,
-                            items.porotta || 0,
-                            items.chapati || 0,
+                            'Purchase (In)',
+                            itm.idiyappam || 0,
+                            itm.vellappam || 0,
+                            itm.pathiri || 0,
+                            itm.porotta || 0,
+                            itm.chapati || 0,
+                            `Rs.${data.totalAmount || 0}`
+                        ]);
+                    }
+                });
+
+                // സെയിൽസ് ഡാറ്റ (Out / Sales)
+                const sSnap = await getDocs(collection(db, "sales"));
+                sSnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if(data.store === selectedStore) {
+                        let itm = data.items || {};
+                        totalOutQty.idiyappam += itm.idiyappam || 0;
+                        totalOutQty.vellappam += itm.vellappam || 0;
+                        totalOutQty.pathiri += itm.pathiri || 0;
+                        totalOutQty.porotta += itm.porotta || 0;
+                        totalOutQty.chapati += itm.chapati || 0;
+                        totalOutAmt += data.totalAmount || 0;
+
+                        tableRows.push([
+                            data.date || '',
+                            'Sales (Out)',
+                            itm.idiyappam || 0,
+                            itm.vellappam || 0,
+                            itm.pathiri || 0,
+                            itm.porotta || 0,
+                            itm.chapati || 0,
                             `Rs.${data.totalAmount || 0}`
                         ]);
                     }
                 });
 
                 doc.autoTable({
-                    startY: selectedStore ? 42 : 38,
-                    head: [['Date', 'Store', 'Idiyappam', 'Vellappam', 'Pathiri', 'Porotta', 'Chapati', 'Total']],
+                    startY: 36,
+                    head: [['Date', 'Type', 'Idiyappam', 'Vellappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount']],
                     body: tableRows,
                 });
 
-                doc.save(`Idiyappam_${selectedStore ? selectedStore : 'All_Stores'}_Report.pdf`);
+                let finalY = doc.lastAutoTable.finalY + 10;
+                doc.text(`Total Purchase (In) Amount: Rs.${totalInAmt}`, 14, finalY);
+                doc.text(`Total Sales (Out) Amount: Rs.${totalOutAmt}`, 14, finalY + 8);
+                doc.text(`Net Balance Amount: Rs.${totalOutAmt - totalInAmt}`, 14, finalY + 16);
+
+                doc.save(`Ledger_Report_${selectedStore}.pdf`);
             } catch(e) {
                 showAlert("എറർ", "റിപ്പോർട്ട് എടുക്കുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message, false);
             }
