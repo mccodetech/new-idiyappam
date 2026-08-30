@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- jsPDF AutoTable plugin for Tables -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
         body { font-family: 'Noto Sans Malayalam', sans-serif; }
     </style>
@@ -16,7 +18,7 @@
 
     <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
         
-        <!-- കസ്റ്റം അലേർട്ട് മോഡൽ (Custom Alert Modal) -->
+        <!-- കസ്റ്റം അലേർട്ട് മോഡൽ -->
         <div id="custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
             <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-xs w-full text-center border border-slate-100 transform transition-all">
                 <div id="alert-icon" class="text-3xl mb-2">✅</div>
@@ -29,7 +31,7 @@
         <!-- ഹാംബർഗർ മെനു ബട്ടൺ -->
         <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-5 left-5 text-xl text-slate-700 bg-slate-100 px-2.5 py-1.5 rounded-xl shadow-sm transition hidden" title="മെനു">☰</button>
 
-        <!-- സൈഡ് ബാർ മെനു (Drawer) -->
+        <!-- സൈഡ് ബാർ മെനു -->
         <div id="sidebar" class="absolute top-0 left-0 w-64 h-full bg-white shadow-2xl z-40 p-5 transform -translate-x-full transition-transform duration-300 rounded-2xl border-r flex flex-col justify-between hidden">
             <div>
                 <div class="flex justify-between items-center mb-6">
@@ -140,21 +142,23 @@
                 <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-emerald-700 transition">കട സേവ് ചെയ്യുക</button>
             </div>
 
-            <!-- ടാബ് 4: റിപ്പോർട്ടുകൾ -->
+            <!-- ടാബ് 4: റിപ്പോർട്ടുകൾ (Specific Store Option Added) -->
             <div id="section-reports" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ടുകൾ</h4>
                     <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ പോവുക</button>
                 </div>
                 
-                <select id="report-type" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
-                    <option value="daily">ഡെയ്‌ലി റിപ്പോർട്ട് (Daily Report)</option>
-                    <option value="weekly">വീക്ക്‌ലി റിപ്പോർട്ട് (Weekly Report)</option>
-                    <option value="monthly">മന്ത്ലി റിപ്പോർട്ട് (Monthly Report)</option>
-                    <option value="all">ഇതുവരെയുള്ള മൊത്തം റിപ്പോർട്ട്</option>
+                <select id="report-type" class="w-full p-2.5 border rounded-xl text-sm bg-slate-550">
+                    <option value="all">എല്ലാ കടകളുടെയും മൊത്തം റിപ്പോർട്ട്</option>
                 </select>
 
-                <button onclick="generatePDFReport()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow">PDF റിപ്പോർട്ട് ഡൗൺലോഡ്</button>
+                <label class="block text-xs font-bold text-slate-600 mt-2">നിർദ്ദിഷ്ട കട തിരഞ്ഞെടുക്കുക (ഓപ്ഷണൽ):</label>
+                <select id="report-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
+                    <option value="">എല്ലാ കടകളും (All Stores)</option>
+                </select>
+
+                <button onclick="generatePDFReport()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow mt-3">PDF റിപ്പോർട്ട് ഡൗൺലോഡ്</button>
             </div>
 
         </div>
@@ -180,7 +184,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // കസ്റ്റം അലേർട്ട് ഫങ്ഷൻ
         window.showAlert = function(title, msg, isSuccess = true) {
             document.getElementById('alert-title').innerText = title;
             document.getElementById('alert-msg').innerText = msg;
@@ -233,6 +236,7 @@
                 loadStoresDropdown();
             } else {
                 mainTabs.classList.add('hidden');
+                if(tabName === 'reports') loadStoresDropdown();
             }
         }
 
@@ -240,14 +244,14 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             if(password.length < 6) return showAlert("ശ്രദ്ധിക്കുക", "പാസ്‌വേർഡ് കുറഞ്ഞത് 6 അക്കമെങ്കിലും ഉണ്ടായിരിക്കണം!", false);
-            signInWithEmailAndPassword(auth, email, password).catch(err => showAlert("ലോഗിൻ പരാജയം", err.message, false));
+            signInWithEmailAndPassword(auth, email, password).catch(err => alert(err.message));
         }
 
         window.registerUser = () => {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             if(password.length < 6) return showAlert("ശ്രദ്ധിക്കുക", "പാസ്‌വേർഡ് കുറഞ്ഞത് 6 അക്കമെങ്കിലും ഉണ്ടായിരിക്കണം!", false);
-            createUserWithEmailAndPassword(auth, email, password).then(() => showAlert("വിജയം", "അക്കൗണ്ട് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!")).catch(err => showAlert("പരാജയം", err.message, false));
+            createUserWithEmailAndPassword(auth, email, password).then(() => showAlert("വിജയം", "അക്കൗണ്ട് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!")).catch(err => alert(err.message));
         }
 
         window.confirmLogout = function() {
@@ -279,13 +283,10 @@
             try {
                 await addDoc(collection(db, "stores"), { name, owner, place, phone });
                 showAlert("വിജയം", "കട വിജയകരമായി സേവ് ചെയ്തു!");
-                
-                // ഫീൽഡുകൾ ഉടനടി ബ്ലാങ്ക് ആക്കുന്നു
                 document.getElementById('store-name').value = '';
                 document.getElementById('owner-name').value = '';
                 document.getElementById('store-place').value = '';
                 document.getElementById('store-phone').value = '';
-                
                 loadStoresDropdown();
             } catch(e) {
                 showAlert("എറർ", "സേവ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message, false);
@@ -295,8 +296,11 @@
         async function loadStoresDropdown() {
             const pSelect = document.getElementById('p-store');
             const sSelect = document.getElementById('s-store');
+            const rSelect = document.getElementById('report-store');
+            
             pSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
             sSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
+            rSelect.innerHTML = '<option value="">എല്ലാ കടകളും (All Stores)</option>';
             
             try {
                 const snap = await getDocs(collection(db, "stores"));
@@ -306,6 +310,7 @@
                     const opt = `<option value="${data.name}" data-owner="${data.owner || ''}" data-place="${data.place || ''}" data-phone="${data.phone}">${data.name}${placeStr} (${data.owner || 'ഓണർ'})</option>`;
                     pSelect.innerHTML += opt;
                     sSelect.innerHTML += opt;
+                    rSelect.innerHTML += `<option value="${data.name}">${data.name}${placeStr}</option>`;
                 });
             } catch(e) {
                 console.error("Error loading stores: ", e);
@@ -348,7 +353,6 @@
                 
                 showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
                 
-                // സേവ് ചെയ്ത ഉടൻ ഫീൽഡുകൾ ബ്ലാങ്ക് ആക്കുന്നു
                 dateInput.value = '';
                 storeSelect.value = '';
                 ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
@@ -394,22 +398,43 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const reportType = document.getElementById('report-type').value;
+            const selectedStore = document.getElementById('report-store').value;
 
             doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
-            doc.text(`Report Type: ${reportType.toUpperCase()}`, 14, 30);
+            doc.text(`Report Type: ${reportType.toUpperCase()}`, 14, 28);
+            if(selectedStore) {
+                doc.text(`Store: ${selectedStore}`, 14, 36);
+            }
 
-            let y = 40;
-            doc.text("Date / Store / Total Amount", 14, y);
-            y += 10;
-
+            let tableRows = [];
             try {
                 const snap = await getDocs(collection(db, "sales"));
                 snap.forEach(docSnap => {
                     const data = docSnap.data();
-                    doc.text(`${data.date} | ${data.store} | Rs.${data.totalAmount}`, 14, y);
-                    y += 8;
+                    
+                    // കട സെലക്ട് ചെയ്തിട്ടുണ്ടെങ്കിൽ ആ കടയുടെ ഡാറ്റ മാത്രം എടുക്കുക
+                    if(!selectedStore || data.store === selectedStore) {
+                        let items = data.items || {};
+                        tableRows.push([
+                            data.date || '',
+                            data.store || '',
+                            items.idiyappam || 0,
+                            items.vellappam || 0,
+                            items.pathiri || 0,
+                            items.porotta || 0,
+                            items.chapati || 0,
+                            `Rs.${data.totalAmount || 0}`
+                        ]);
+                    }
                 });
-                doc.save(`Idiyappam_${reportType}_Report.pdf`);
+
+                doc.autoTable({
+                    startY: selectedStore ? 42 : 38,
+                    head: [['Date', 'Store', 'Idiyappam', 'Vellappam', 'Pathiri', 'Porotta', 'Chapati', 'Total']],
+                    body: tableRows,
+                });
+
+                doc.save(`Idiyappam_${selectedStore ? selectedStore : 'All_Stores'}_Report.pdf`);
             } catch(e) {
                 showAlert("എറർ", "റിപ്പോർട്ട് എടുക്കുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message, false);
             }
