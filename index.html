@@ -16,11 +16,21 @@
 
     <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
         
-        <!-- ഹാംബർഗർ മെനു ബട്ടൺ (മുകളിൽ ഇടത് വശം) -->
+        <!-- കസ്റ്റം അലേർട്ട് മോഡൽ (Custom Alert Modal) -->
+        <div id="custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-xs w-full text-center border border-slate-100 transform transition-all">
+                <div id="alert-icon" class="text-3xl mb-2">✅</div>
+                <h4 id="alert-title" class="font-extrabold text-slate-800 text-sm mb-1">വിജയകരമാണ്</h4>
+                <p id="alert-msg" class="text-xs text-slate-600 mb-4">സന്ദേശം ഇവിടെ</p>
+                <button onclick="closeAlert()" class="w-full bg-emerald-600 text-white py-2 rounded-xl text-xs font-bold shadow hover:bg-emerald-700 transition">ശരി</button>
+            </div>
+        </div>
+
+        <!-- ഹാംബർഗർ മെനു ബട്ടൺ -->
         <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-5 left-5 text-xl text-slate-700 bg-slate-100 px-2.5 py-1.5 rounded-xl shadow-sm transition hidden" title="മെനു">☰</button>
 
         <!-- സൈഡ് ബാർ മെനു (Drawer) -->
-        <div id="sidebar" class="absolute top-0 left-0 w-64 h-full bg-white shadow-2xl z-50 p-5 transform -translate-x-full transition-transform duration-300 rounded-2xl border-r flex flex-col justify-between hidden">
+        <div id="sidebar" class="absolute top-0 left-0 w-64 h-full bg-white shadow-2xl z-40 p-5 transform -translate-x-full transition-transform duration-300 rounded-2xl border-r flex flex-col justify-between hidden">
             <div>
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-sm font-extrabold text-emerald-800">മെനു</h3>
@@ -60,7 +70,7 @@
         <!-- 2. ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
             
-            <!-- പ്രധാന 2 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ് മാത്രം) -->
+            <!-- പ്രധാന 2 ടാബുകൾ -->
             <div id="main-tabs" class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold">
                 <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
                 <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">സെയിൽസ്</button>
@@ -127,7 +137,6 @@
                     </div>
                 </div>
 
-                <!-- കട സേവ് ചെയ്യാനുള്ള ബട്ടൺ ഏറ്റവും താഴെ -->
                 <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-emerald-700 transition">കട സേവ് ചെയ്യുക</button>
             </div>
 
@@ -170,6 +179,18 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // കസ്റ്റം അലേർട്ട് ഫങ്ഷൻ
+        window.showAlert = function(title, msg, isSuccess = true) {
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-msg').innerText = msg;
+            document.getElementById('alert-icon').innerText = isSuccess ? '✅' : '⚠️';
+            document.getElementById('custom-alert').classList.remove('hidden');
+        }
+
+        window.closeAlert = function() {
+            document.getElementById('custom-alert').classList.add('hidden');
+        }
 
         window.togglePassword = function() {
             const pass = document.getElementById('password');
@@ -218,15 +239,15 @@
         window.loginUser = () => {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            if(password.length < 6) return alert("പാസ്‌വേർഡ് കുറഞ്ഞത് 6 അക്കമെങ്കിലും ഉണ്ടായിരിക്കണം!");
-            signInWithEmailAndPassword(auth, email, password).catch(err => alert("ലോഗിൻ പരാജയം: " + err.message));
+            if(password.length < 6) return showAlert("ശ്രദ്ധിക്കുക", "പാസ്‌വേർഡ് കുറഞ്ഞത് 6 അക്കമെങ്കിലും ഉണ്ടായിരിക്കണം!", false);
+            signInWithEmailAndPassword(auth, email, password).catch(err => showAlert("ലോഗിൻ പരാജയം", err.message, false));
         }
 
         window.registerUser = () => {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            if(password.length < 6) return alert("പാസ്‌വേർഡ് കുറഞ്ഞത് 6 അക്കമെങ്കിലും ഉണ്ടായിരിക്കണം!");
-            createUserWithEmailAndPassword(auth, email, password).then(() => alert("അക്കൗണ്ട് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!")).catch(err => alert(err.message));
+            if(password.length < 6) return showAlert("ശ്രദ്ധിക്കുക", "പാസ്‌വേർഡ് കുറഞ്ഞത് 6 അക്കമെങ്കിലും ഉണ്ടായിരിക്കണം!", false);
+            createUserWithEmailAndPassword(auth, email, password).then(() => showAlert("വിജയം", "അക്കൗണ്ട് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!")).catch(err => showAlert("പരാജയം", err.message, false));
         }
 
         window.confirmLogout = function() {
@@ -253,18 +274,21 @@
             const owner = document.getElementById('owner-name').value;
             const place = document.getElementById('store-place').value;
             const phone = document.getElementById('store-phone').value;
-            if(!name || !phone) return alert("കടയുടെ പേരും ഫോൺ നമ്പറും നൽകുക!");
+            if(!name || !phone) return showAlert("ശ്രദ്ധിക്കുക", "കടയുടെ പേരും ഫോൺ നമ്പറും നൽകുക!", false);
             
             try {
                 await addDoc(collection(db, "stores"), { name, owner, place, phone });
-                alert("കട വിജയകരമായി സേവ് ചെയ്തു!");
+                showAlert("വിജയം", "കട വിജയകരമായി സേവ് ചെയ്തു!");
+                
+                // ഫീൽഡുകൾ ഉടനടി ബ്ലാങ്ക് ആക്കുന്നു
                 document.getElementById('store-name').value = '';
                 document.getElementById('owner-name').value = '';
                 document.getElementById('store-place').value = '';
                 document.getElementById('store-phone').value = '';
+                
                 loadStoresDropdown();
             } catch(e) {
-                alert("സേവ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message);
+                showAlert("എറർ", "സേവ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message, false);
             }
         }
 
@@ -299,29 +323,40 @@
         }
 
         window.saveTransaction = async function(type) {
-            const date = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-date`).value;
-            const store = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-store`).value;
-            if(!date || !store) return alert("തീയതിയും കടയും തിരഞ്ഞെടുക്കുക!");
+            const dateInput = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-date`);
+            const storeSelect = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-store`);
+            
+            if(!dateInput.value || !storeSelect.value) return showAlert("ശ്രദ്ധിക്കുക", "തീയതിയും കടയും തിരഞ്ഞെടുക്കുക!", false);
 
             const rates = getRates();
             let itemsData = {};
             let totalAmount = 0;
 
             ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                let qty = Number(document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value) || 0;
+                let qtyField = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`);
+                let qty = Number(qtyField.value) || 0;
                 itemsData[item] = qty;
                 totalAmount += qty * rates[item];
             });
 
-            if(totalAmount === 0) return alert("കുറഞ്ഞത് ഒരു സാധനത്തിന്റെ എങ്കിലും എണ്ണം നൽകുക!");
+            if(totalAmount === 0) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനത്തിന്റെ എങ്കിലും എണ്ണം നൽകുക!", false);
 
             try {
                 await addDoc(collection(db, type === 'purchase' ? "purchases" : "sales"), {
-                    date, store, items: itemsData, totalAmount, timestamp: new Date()
+                    date: dateInput.value, store: storeSelect.value, items: itemsData, totalAmount, timestamp: new Date()
                 });
-                alert(`${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
+                
+                showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
+                
+                // സേവ് ചെയ്ത ഉടൻ ഫീൽഡുകൾ ബ്ലാങ്ക് ആക്കുന്നു
+                dateInput.value = '';
+                storeSelect.value = '';
+                ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                    document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value = '';
+                });
+
             } catch(e) {
-                alert("സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല: " + e.message);
+                showAlert("എറർ", "സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല: " + e.message, false);
             }
         }
 
@@ -332,7 +367,7 @@
             const place = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-place');
             const phone = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-phone');
 
-            if(!phone || !store) return alert("കടയും ഫോൺ നമ്പറും തിരഞ്ഞെടുക്കുക!");
+            if(!phone || !store) return showAlert("ശ്രദ്ധിക്കുക", "കടയും ഫോൺ നമ്പറും തിരഞ്ഞെടുക്കുക!", false);
 
             const rates = getRates();
             let total = 0;
@@ -349,7 +384,7 @@
                 }
             });
 
-            if(!hasItems) return alert("കുറഞ്ഞത് ഒരു സാധനമെങ്കിലും എണ്ണം നൽകുക!");
+            if(!hasItems) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനമെങ്കിലും എണ്ണം നൽകുക!", false);
 
             msg += `----------------------------------%0A*ആകെ തുക: ₹${total}*%0Aനന്ദി!`;
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
@@ -376,7 +411,7 @@
                 });
                 doc.save(`Idiyappam_${reportType}_Report.pdf`);
             } catch(e) {
-                alert("റിപ്പോർട്ട് എടുക്കുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message);
+                showAlert("എറർ", "റിപ്പോർട്ട് എടുക്കുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message, false);
             }
         }
     </script>
