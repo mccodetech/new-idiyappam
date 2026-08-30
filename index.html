@@ -16,10 +16,24 @@
 
     <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
         
-        <!-- മുകളിൽ വലതുഭാഗത്തുള്ള ഐക്കണുകളും ലോഗ് ഔട്ട് ബട്ടണും (ലോഗിൻ കഴിഞ്ഞാൽ മാത്രം കാണുന്നത്) -->
-        <div id="top-bar" class="absolute top-5 right-5 flex items-center gap-2 hidden">
-            <button onclick="switchTab('settings')" id="settings-icon" class="text-xl text-slate-600 hover:text-emerald-700 transition bg-slate-100 p-1.5 rounded-xl shadow-sm" title="സെറ്റിംഗ്സ്">⚙️</button>
-            <button onclick="confirmLogout()" class="bg-rose-500 text-white px-3 py-1.5 text-xs font-bold rounded-xl hover:bg-rose-600 shadow transition">ലോഗ് ഔട്ട്</button>
+        <!-- ഹാംബർഗർ മെനു ബട്ടൺ (മുകളിൽ ഇടത് വശം) -->
+        <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-5 left-5 text-xl text-slate-700 bg-slate-100 px-2.5 py-1.5 rounded-xl shadow-sm transition hidden" title="മെനു">☰</button>
+
+        <!-- സൈഡ് ബാർ മെനു (Drawer) -->
+        <div id="sidebar" class="absolute top-0 left-0 w-64 h-full bg-white shadow-2xl z-50 p-5 transform -translate-x-full transition-transform duration-300 rounded-2xl border-r flex flex-col justify-between hidden">
+            <div>
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-sm font-extrabold text-emerald-800">മെനു</h3>
+                    <button onclick="toggleSidebar()" class="text-sm font-bold text-slate-500 hover:text-rose-500">✕ അടയ്ക്കുക</button>
+                </div>
+                <div class="space-y-3 font-bold text-xs">
+                    <button onclick="switchTab('purchase'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📦 പർച്ചേസ്</button>
+                    <button onclick="switchTab('sales'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🛒 സെയിൽസ്</button>
+                    <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ</button>
+                    <button onclick="switchTab('settings'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">⚙️ സെറ്റിംഗ്സ് (കടകളും വിലയും)</button>
+                </div>
+            </div>
+            <button onclick="confirmLogout()" class="w-full bg-rose-500 text-white p-2.5 rounded-xl text-xs font-bold shadow hover:bg-rose-600 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
         </div>
 
         <!-- ഹെഡിങ് -->
@@ -48,7 +62,7 @@
         <!-- 2. ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
             
-            <!-- പ്രധാന 3 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ്, റിപ്പോർട്ടുകൾ) -->
+            <!-- പ്രധാന ടാബുകൾ (പർച്ചേസ്, സെയിൽസ്, റിപ്പോർട്ടുകൾ) -->
             <div class="grid grid-cols-3 gap-1.5 mb-4 text-xs font-bold">
                 <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
                 <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">സെയിൽസ്</button>
@@ -91,7 +105,7 @@
                 </div>
             </div>
 
-            <!-- ടാബ് 3: സെറ്റിംഗ്സ് -->
+            <!-- ടാബ് 3: സെറ്റിംഗ്സ് (മെനു വഴി വരുന്നത്) -->
             <div id="section-settings" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-extrabold text-slate-600 uppercase">സെറ്റിംഗ്സ് & മാനേജ്‌മെന്റ്</h4>
@@ -160,6 +174,17 @@
             pass.type = pass.type === 'password' ? 'text' : 'password';
         }
 
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            if(sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                setTimeout(() => sidebar.classList.remove('-translate-x-full'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                setTimeout(() => sidebar.classList.add('hidden'), 300);
+            }
+        }
+
         window.switchTab = function(tabName) {
             ['purchase', 'sales', 'settings', 'reports'].forEach(t => {
                 const el = document.getElementById(`section-${t}`);
@@ -206,12 +231,12 @@
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
-                document.getElementById('top-bar').classList.remove('hidden');
+                document.getElementById('menu-btn').classList.remove('hidden');
                 loadStoresDropdown();
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
-                document.getElementById('top-bar').classList.add('hidden');
+                document.getElementById('menu-btn').classList.add('hidden');
             }
         });
 
