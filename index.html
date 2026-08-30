@@ -15,7 +15,7 @@
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-3">
 
-    <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative mb-10">
+    <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
         
         <!-- കസ്റ്റം അലേർട്ട് മോഡൽ -->
         <div id="custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
@@ -404,7 +404,7 @@
                 loadStoresDropdown();
                 setDefaultDate();
             } else {
-                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
             }
@@ -548,6 +548,7 @@
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
 
+        // പ്രിവ്യൂവിൽ ലെഡ്ജർ ഫോർമാറ്റിൽ ബാലൻസ് കാണിക്കാൻ
         window.previewPDFReport = async () => {
             const duration = document.getElementById('report-duration').value;
             const store = document.getElementById('report-store').value;
@@ -557,13 +558,16 @@
             content.innerHTML = "ലോഡ് ചെയ്യുന്നു...";
 
             let rows = [];
+            let runningBalance = 0;
             const todayStr = new Date().toISOString().split('T')[0];
+
+            let allTransactions = [];
 
             const pSnap = await getDocs(collection(db, "purchases"));
             pSnap.forEach(doc => {
                 let d = doc.data();
                 if((!store || d.store === store) && (duration === 'all' || (duration === 'daily' && d.date === todayStr))) {
-                    rows.push(`<div>📅 ${d.date} | ${d.store} | Purchase | ₹${d.totalAmount}</div>`);
+                    allTransactions.push({ ...d, transType: 'Purchase', sortDate: d.timestamp?.seconds || 0 });
                 }
             });
 
@@ -571,13 +575,26 @@
             sSnap.forEach(doc => {
                 let d = doc.data();
                 if((!store || d.store === store) && (duration === 'all' || (duration === 'daily' && d.date === todayStr))) {
-                    rows.push(`<div>📅 ${d.date} | ${d.store} | Sales | ₹${d.totalAmount}</div>`);
+                    allTransactions.push({ ...d, transType: 'Sales', sortDate: d.timestamp?.seconds || 0 });
                 }
+            });
+
+            // തീയതി ക്രമത്തിൽ സോർട്ട് ചെയ്യുന്നു
+            allTransactions.sort((a, b) => a.sortDate - b.sortDate);
+
+            allTransactions.forEach(d => {
+                if(d.transType === 'Sales') {
+                    runningBalance += (d.totalAmount || 0);
+                } else {
+                    runningBalance -= (d.totalAmount || 0);
+                }
+                rows.push(`<div>📅 ${d.date} | ${d.store} | ${d.transType} | Amt: ₹${d.totalAmount} | <b>Balance: ₹${runningBalance}</b></div>`);
             });
 
             content.innerHTML = rows.length > 0 ? rows.join('') : "സൂചികയിൽ ഡാറ്റ ലഭ്യമല്ല";
         }
 
+        // PDF ലെഡ്ജർ റിപ്പോർട്ടിൽ അവസാന ബാലൻസ് കാണിക്കാൻ
         window.generatePDFReport = async () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -585,31 +602,61 @@
             const store = document.getElementById('report-store').value;
 
             doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
-            doc.text(`Report (${duration.toUpperCase()}): ${store ? store : 'All Stores'}`, 14, 28);
+            doc.text(`Store Ledger Report (${duration.toUpperCase()}): ${store ? store : 'All Stores'}`, 14, 28);
 
             let tableRows = [];
-            const todayStr = new Date().toISOString().split('T')[0];
+            let runningBalance = 0;
+            let allTransactions = [];
 
             const pSnap = await getDocs(collection(db, "purchases"));
             pSnap.forEach(docSnap => {
                 let data = docSnap.data();
-                if((!store || data.store === store) && (duration === 'all' || (duration === 'daily' && data.date === todayStr))) {
-                    let itm = data.items || {};
-                    tableRows.push([data.date, data.store, 'Purchase', itm.idiyappam||0, itm.vellappam||0, itm.pathiri||0, itm.porotta||0, itm.chapati||0, `Rs.${data.totalAmount}`]);
+                if((!store || data.store === store) && (duration === 'all' || (duration === 'daily' || data.date === new Date().toISOString().split('T')[0]))) {
+                    allTransactions.push({ ...data, transType: 'Purchase', sortDate: data.timestamp?.seconds || 0 });
                 }
             });
 
             const sSnap = await getDocs(collection(db, "sales"));
             sSnap.forEach(docSnap => {
                 let data = docSnap.data();
-                if((!store || data.store === store) && (duration === 'all' || (duration === 'daily' && data.date === todayStr))) {
-                    let itm = data.items || {};
-                    tableRows.push([data.date, data.store, 'Sales', itm.idiyappam||0, itm.vellappam||0, itm.pathiri||0, itm.porotta||0, itm.chapati||0, `Rs.${data.totalAmount}`]);
+                if((!store || data.store === store) && (duration === 'all' || (duration === 'daily' || data.date === new Date().toISOString().split('T')[0]))) {
+                    allTransactions.push({ ...data, transType: 'Sales', sortDate: data.timestamp?.seconds || 0 });
                 }
             });
 
-            doc.autoTable({ startY: 36, head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount']], body: tableRows });
-            doc.save(`Report_${duration}_${store ? store : 'All'}.pdf`);
+            allTransactions.sort((a, b) => a.sortDate - b.sortDate);
+
+            allTransactions.forEach(data => {
+                if(data.transType === 'Sales') {
+                    runningBalance += (data.totalAmount || 0);
+                } else {
+                    runningBalance -= (data.totalAmount || 0);
+                }
+
+                let itm = data.items || {};
+                tableRows.push([
+                    data.date, 
+                    data.store, 
+                    data.transType, 
+                    itm.idiyappam||0, 
+                    itm.vellappam||0, 
+                    itm.pathiri||0, 
+                    itm.porotta||0, 
+                    itm.chapati||0, 
+                    `Rs.${data.totalAmount}`, 
+                    `Rs.${runningBalance}`
+                ]);
+            });
+
+            doc.autoTable({ 
+                startY: 36, 
+                head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount', 'Balance']], 
+                body: tableRows 
+            });
+
+            let finalY = doc.lastAutoTable.finalY + 10;
+            doc.text(`Final Ledger Balance: Rs.${runningBalance}`, 14, finalY);
+            doc.save(`Ledger_Report_${duration}_${store ? store : 'All'}.pdf`);
         }
     </script>
 </body>
