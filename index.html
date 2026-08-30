@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store & Transfer Management</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">സ്റ്റോർ മാനേജ്മെന്റ് ആപ്പ്</h2>
+
+        <!-- 1. ലോഗിൻ സെക്ഷൻ -->
+        <div id="login-section">
+            <h3 class="text-lg font-semibold mb-4 text-gray-600">ലോഗിൻ ചെയ്യുക</h3>
+            <input type="email" id="email" placeholder="ഇമെയിൽ വിലാസം" class="w-full p-3 mb-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <input type="password" id="password" placeholder="പാസ്‌വേർഡ്" class="w-full p-3 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <button onclick="loginUser()" class="w-full bg-blue-600 text-white p-3 rounded font-semibold hover:bg-blue-700">ലോഗിൻ</button>
+        </div>
+
+        <!-- 2. ഡാഷ്‌ബോർഡ് / ട്രാൻസ്ഫർ സെക്ഷൻ (ലോഗിൻ കഴിഞ്ഞാൽ കാണുന്നത്) -->
+        <div id="dashboard-section" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <span id="user-email-display" class="text-sm text-gray-600 font-medium"></span>
+                <button onclick="logoutUser()" class="bg-red-500 text-white px-3 py-1 text-sm rounded hover:bg-red-600">ലോഗ് ഔട്ട്</button>
+            </div>
+            
+            <hr class="mb-4">
+
+            <h3 class="text-lg font-semibold mb-3 text-gray-700">കൈമാറ്റ കണക്കുകൾ ചേർക്കുക</h3>
+            
+            <!-- തീയതി -->
+            <label class="block text-sm text-gray-600 mb-1">തീയതി:</label>
+            <input type="date" id="trans-date" class="w-full p-2 mb-3 border rounded">
+
+            <!-- ഐറ്റം തിരഞ്ഞെടുക്കാൻ -->
+            <label class="block text-sm text-gray-600 mb-1">പലഹാരം:</label>
+            <select id="item-name" class="w-full p-2 mb-3 border rounded">
+                <option value="Idiyappam">ഇടിയപ്പം</option>
+                <option value="Vellappam">വെള്ളപ്പം</option>
+                <option value="Pathiri">പത്തിരി</option>
+                <option value="Porotta">പൊറോട്ട</option>
+                <option value="Chapati">ചപ്പാത്തി</option>
+            </select>
+
+            <!-- എണ്ണം -->
+            <label class="block text-sm text-gray-600 mb-1">എണ്ണം (Quantity):</label>
+            <input type="number" id="quantity" placeholder="ഉദാഹരണത്തിന്: 100" class="w-full p-2 mb-3 border rounded">
+
+            <!-- കടകൾ തമ്മിലുള്ള കൈമാറ്റം (From / To Store) -->
+            <label class="block text-sm text-gray-600 mb-1">വിവരങ്ങൾ (From / To):</label>
+            <input type="text" id="transfer-note" placeholder="ഉദാ: കട A യിൽ നിന്ന് കട B യിലേക്ക്" class="w-full p-2 mb-4 border rounded">
+
+            <button onclick="saveTransaction()" class="w-full bg-green-600 text-white p-3 rounded font-semibold hover:bg-green-700">കണക്ക് സേവ് ചെയ്യുക</button>
+        </div>
+    </div>
+
+    <!-- ഫയർബേസും ലോജിക് കോഡും (Firebase SDK v10 Modules) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+        // നിങ്ങൾ നൽകിയ ഒറിജിനൽ ഫയർബേസ് കോൺഫിഗറേഷൻ
+        const firebaseConfig = {
+            apiKey: "AIzaSyAM9SV2IvvcjBTCZRc1F6xawdMh2zFnczY",
+            authDomain: "new-idiyappam.firebaseapp.com",
+            projectId: "new-idiyappam",
+            storageBucket: "new-idiyappam.firebasestorage.app",
+            messagingSenderId: "457609504945",
+            appId: "1:457609504945:web:a7dc39a0abdd8e70255a90",
+            measurementId: "G-98MPHCF5MB"
+        };
+
+        // ഫയർബേസ് ഇനിഷ്യലൈസ് ചെയ്യുന്നു
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // ലോഗിൻ ഫങ്ഷൻ
+        window.loginUser = function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    alert("ലോഗിൻ വിജയകരമാണ്!");
+                })
+                .catch((error) => {
+                    alert("ലോഗിൻ പരാജയപ്പെട്ടു: " + error.message);
+                });
+        }
+
+        // ലോഗ് ഔട്ട് ഫങ്ഷൻ
+        window.logoutUser = function() {
+            signOut(auth).then(() => {
+                alert("ലോഗ് ഔട്ട് ചെയ്തു.");
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+
+        // യൂട്യൂബ്/ബ്രൗസർ ലോഗിൻ സ്റ്റാറ്റസ് മാറുന്നത് നിരീക്ഷിക്കാൻ
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('dashboard-section').classList.remove('hidden');
+                document.getElementById('user-email-display').innerText = `I D: ${user.email}`;
+            } else {
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('dashboard-section').classList.add('hidden');
+            }
+        });
+
+        // ഡാറ്റ ഫയർബേസ് ഡാറ്റാബേസിലേക്ക് സേവ് ചെയ്യാൻ (Firestore)
+        window.saveTransaction = async function() {
+            const date = document.getElementById('trans-date').value;
+            const item = document.getElementById('item-name').value;
+            const quantity = document.getElementById('quantity').value;
+            const note = document.getElementById('transfer-note').value;
+
+            if(!date || !quantity) {
+                alert("ദയവായി തീയതിയും എണ്ണവും നൽകുക!");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "transactions"), {
+                    date: date,
+                    item: item,
+                    quantity: Number(quantity),
+                    note: note,
+                    timestamp: new Date()
+                });
+                alert("കണക്ക് വിജയകരമായി സേവ് ചെയ്യപ്പെട്ടു!");
+                
+                // ഫോം ക്ലിയർ ചെയ്യുക
+                document.getElementById('quantity').value = '';
+                document.getElementById('transfer-note').value = '';
+            } catch (e) {
+                alert("ഡാറ്റ സേവ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message);
+            }
+        }
+    </script>
+</body>
+</html>
