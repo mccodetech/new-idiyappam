@@ -38,7 +38,7 @@
                     <button onclick="toggleSidebar()" class="text-sm font-bold text-slate-500 hover:text-rose-500">✕ അടയ്ക്കുക</button>
                 </div>
                 <div class="space-y-3 font-bold text-xs">
-                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🏪 കടകൾ മാനേജ് ചെയ്യുക (Add/Edit/Delete)</button>
+                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🏪 കടകൾ മാനേജ് ചെയ്യുക</button>
                     <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-blue-50 rounded-xl transition text-blue-700">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
                     <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition text-emerald-700">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
                     <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
@@ -135,23 +135,42 @@
                 </div>
             </div>
 
-            <!-- കടകൾ മാനേജ് ചെയ്യാനുള്ള പേജ് (ADD, EDIT, DELETE ഓപ്ഷനുകളോടെ) -->
+            <!-- കടകൾ മാനേജ് ചെയ്യാനുള്ള പേജ് (Add, Edit, Delete 3 ബട്ടണുകൾ) -->
             <div id="section-stores" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകൾ മാനേജ് ചെയ്യുക (Add / Edit / Delete)</h4>
+                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകൾ മാനേജ് ചെയ്യുക</h4>
                     <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
-                
-                <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
+
+                <!-- 3 സബ് ബട്ടണുകൾ -->
+                <div class="grid grid-cols-3 gap-1.5 text-xs font-bold">
+                    <button onclick="setStoreMode('add')" id="store-mode-add" class="py-2 bg-emerald-600 text-white rounded-xl shadow">ADD</button>
+                    <button onclick="setStoreMode('edit')" id="store-mode-edit" class="py-2 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">EDIT</button>
+                    <button onclick="setStoreMode('delete')" id="store-mode-delete" class="py-2 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">DELETE</button>
+                </div>
+
+                <!-- ADD / EDIT ഫോം കണ്ടെയ്നർ -->
+                <div id="store-form-container" class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                    <label id="store-form-label" class="block text-xs font-bold text-emerald-700">പുതിയ കട ചേർക്കുക (ADD)</label>
+                    <select id="existing-store-select" onchange="fillStoreDataForEdit()" class="w-full p-2 border rounded-xl text-sm bg-white hidden">
+                        <option value="">എഡിറ്റ് ചെയ്യാൻ കട തിരഞ്ഞെടുക്കുക</option>
+                    </select>
                     <input type="hidden" id="edit-store-id" value="">
-                    <input type="text" id="store-name" placeholder="കടയുടെ പേര് (ADD / EDIT)" class="w-full p-2 border rounded-xl text-sm bg-white">
+                    <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-xl text-sm bg-white">
-                    <button onclick="saveStore()" id="store-save-btn" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow">ADD (കട സേവ് ചെയ്യുക)</button>
+                    <button onclick="saveStoreAction()" id="store-action-btn" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow">കട സേവ് ചെയ്യുക</button>
                 </div>
 
-                <div id="stores-list-container" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                <!-- DELETE കണ്ടെയ്നർ -->
+                <div id="store-delete-container" class="bg-slate-50 p-3 rounded-xl border space-y-2 hidden">
+                    <label class="block text-xs font-bold text-rose-600">ഡിലീറ്റ് ചെയ്യേണ്ട കട തിരഞ്ഞെടുക്കുക:</label>
+                    <select id="delete-store-select" class="w-full p-2 border rounded-xl text-sm bg-white">
+                        <option value="">കട തിരഞ്ഞെടുക്കുക</option>
+                    </select>
+                    <button onclick="deleteStoreAction()" class="w-full bg-rose-600 text-white p-2.5 rounded-xl font-bold text-xs shadow hover:bg-rose-700">തിരഞ്ഞെടുത്ത കട ഡിലീറ്റ് ചെയ്യുക</button>
+                </div>
 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
                     <h5 class="text-xs font-bold text-slate-700">ഐറ്റം വിലകൾ (Rates)</h5>
@@ -203,7 +222,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAM9SV2IvvcjBTCZRc1F6xawdMh2zFnczY",
@@ -218,6 +237,8 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        let storesDataCache = {};
 
         function setDefaultDate() {
             const today = new Date().toISOString().split('T')[0];
@@ -259,10 +280,119 @@
                 setDefaultDate();
             } else {
                 mainTabs.classList.add('hidden');
-                if(tabName === 'stores') loadStoresManagementList();
+                if(tabName === 'stores') { setStoreMode('add'); loadStoresDropdown(); }
                 if(tabName === 'reports') loadStoresDropdown();
                 if(tabName === 'edit-sales') loadEditList('sales');
                 if(tabName === 'edit-purchase') loadEditList('purchases');
+            }
+        }
+
+        // കട മാനേജ്‌മെന്റ് മോഡ് (Add, Edit, Delete)
+        window.setStoreMode = async (mode) => {
+            ['add', 'edit', 'delete'].forEach(m => {
+                const btn = document.getElementById(`store-mode-${m}`);
+                btn.className = "py-2 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200";
+            });
+            document.getElementById(`store-mode-${mode}`).className = "py-2 bg-emerald-600 text-white rounded-xl shadow";
+
+            const formContainer = document.getElementById('store-form-container');
+            const deleteContainer = document.getElementById('store-delete-container');
+            const editSelect = document.getElementById('existing-store-select');
+            const formLabel = document.getElementById('store-form-label');
+            const actionBtn = document.getElementById('store-action-btn');
+
+            if(mode === 'add') {
+                formContainer.classList.remove('hidden');
+                deleteContainer.classList.add('hidden');
+                editSelect.classList.add('hidden');
+                formLabel.innerText = "പുതിയ കട ചേർക്കുക (ADD)";
+                actionBtn.innerText = "കട സേവ് ചെയ്യുക";
+                actionBtn.className = "w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow";
+                document.getElementById('edit-store-id').value = '';
+                document.getElementById('store-name').value = '';
+                document.getElementById('owner-name').value = '';
+                document.getElementById('store-place').value = '';
+                document.getElementById('store-phone').value = '';
+            } else if(mode === 'edit') {
+                formContainer.classList.remove('hidden');
+                deleteContainer.classList.add('hidden');
+                editSelect.classList.remove('hidden');
+                formLabel.innerText = "കട എഡിറ്റ് ചെയ്യുക (EDIT)";
+                actionBtn.innerText = "മാറ്റങ്ങൾ അപ്ഡേറ്റ് ചെയ്യുക";
+                actionBtn.className = "w-full bg-blue-600 text-white p-2.5 rounded-xl font-bold text-xs shadow";
+                await loadStoresForDropdown('existing-store-select');
+            } else if(mode === 'delete') {
+                formContainer.classList.add('hidden');
+                deleteContainer.classList.remove('hidden');
+                await loadStoresForDropdown('delete-store-select');
+            }
+        }
+
+        async function loadStoresForDropdown(elementId) {
+            const select = document.getElementById(elementId);
+            select.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
+            storesDataCache = {};
+            const snap = await getDocs(collection(db, "stores"));
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                storesDataCache[docSnap.id] = data;
+                select.innerHTML += `<option value="${docSnap.id}">${data.name} (${data.place || 'വിലാസമില്ല'})</option>`;
+            });
+        }
+
+        window.fillStoreDataForEdit = () => {
+            const id = document.getElementById('existing-store-select').value;
+            if(!id) return;
+            const data = storesDataCache[id];
+            document.getElementById('edit-store-id').value = id;
+            document.getElementById('store-name').value = data.name || '';
+            document.getElementById('owner-name').value = data.owner || '';
+            document.getElementById('store-place').value = data.place || '';
+            document.getElementById('store-phone').value = data.phone || '';
+        }
+
+        window.saveStoreAction = async () => {
+            const storeId = document.getElementById('edit-store-id').value;
+            const name = document.getElementById('store-name').value;
+            const owner = document.getElementById('owner-name').value;
+            const place = document.getElementById('store-place').value;
+            const phone = document.getElementById('store-phone').value;
+            if(!name || !phone) return showAlert("ശ്രദ്ധിക്കുക", "പേരും ഫോൺ നമ്പറും നൽകുക!", false);
+
+            if(storeId) {
+                await updateDoc(doc(db, "stores", storeId), { name, owner, place, phone });
+                showAlert("വിജയം", "കട വിജയകരമായി എഡിറ്റ് ചെയ്ത് അപ്ഡേറ്റ് ചെയ്തു!");
+            } else {
+                await addDoc(collection(db, "stores"), { name, owner, place, phone });
+                showAlert("വിജയം", "പുതിയ കട ADD ചെയ്തു!");
+            }
+            document.getElementById('store-name').value = '';
+            document.getElementById('owner-name').value = '';
+            document.getElementById('store-place').value = '';
+            document.getElementById('store-phone').value = '';
+            loadStoresDropdown();
+            if(storeId) setStoreMode('edit');
+        }
+
+        window.deleteStoreAction = async () => {
+            const storeId = document.getElementById('delete-store-select').value;
+            if(!storeId) return showAlert("ശ്രദ്ധിക്കുക", "ഡിലീറ്റ് ചെയ്യാൻ കട തിരഞ്ഞെടുക്കുക!", false);
+
+            const storeName = storesDataCache[storeId]?.name;
+
+            // ഡാറ്റ മിസ്സ് ആവാതിരിക്കാൻ പർച്ചേസ്/സെയിൽസ് പരിശോധിക്കുന്നു
+            const pCheck = await getDocs(query(collection(db, "purchases"), where("store", "==", storeName)));
+            const sCheck = await getDocs(query(collection(db, "sales"), where("store", "==", storeName)));
+
+            if(!pCheck.empty || !sCheck.empty) {
+                return showAlert("മുന്നറിയിപ്പ്", "ഈ കടയുമായി ബന്ധപ്പെട്ട പർച്ചേസ്/സെയിൽസ് ഡാറ്റ നിലവിലുള്ളതിനാൽ കട ഡിലീറ്റ് ചെയ്യാൻ കഴിയില്ല!", false);
+            }
+
+            if(confirm("ഈ കട പൂർണ്ണമായി DELETE ചെയ്യണമെന്ന് ഉറപ്പാണോ?")) {
+                await deleteDoc(doc(db, "stores", storeId));
+                showAlert("വിജയം", "കട ഡിലീറ്റ് ചെയ്തു!");
+                setStoreMode('delete');
+                loadStoresDropdown();
             }
         }
 
@@ -283,70 +413,6 @@
                 document.getElementById('menu-btn').classList.add('hidden');
             }
         });
-
-        window.saveStore = async () => {
-            const storeId = document.getElementById('edit-store-id').value;
-            const name = document.getElementById('store-name').value;
-            const owner = document.getElementById('owner-name').value;
-            const place = document.getElementById('store-place').value;
-            const phone = document.getElementById('store-phone').value;
-            if(!name || !phone) return showAlert("ശ്രദ്ധിക്കുക", "പേരും ഫോൺ നമ്പറും നൽകുക!", false);
-            
-            if(storeId) {
-                await updateDoc(doc(db, "stores", storeId), { name, owner, place, phone });
-                showAlert("വിജയം", "കടയുടെ വിവരങ്ങൾ EDIT ചെയ്ത് അപ്ഡേറ്റ് ചെയ്തു!");
-                document.getElementById('edit-store-id').value = '';
-                document.getElementById('store-save-btn').innerText = "ADD (കട സേവ് ചെയ്യുക)";
-                document.getElementById('store-save-btn').className = "w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow";
-            } else {
-                await addDoc(collection(db, "stores"), { name, owner, place, phone });
-                showAlert("വിജയം", "പുതിയ കട ADD ചെയ്തു!");
-            }
-
-            document.getElementById('store-name').value = '';
-            document.getElementById('owner-name').value = '';
-            document.getElementById('store-place').value = '';
-            document.getElementById('store-phone').value = '';
-            loadStoresDropdown();
-            loadStoresManagementList();
-        }
-
-        async function loadStoresManagementList() {
-            const container = document.getElementById('stores-list-container');
-            container.innerHTML = '';
-            const snap = await getDocs(collection(db, "stores"));
-            snap.forEach(docSnap => {
-                const data = docSnap.data();
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-2 border rounded-xl text-xs">
-                        <div><b>${data.name}</b> (${data.place || 'വിലാസമില്ല'})</div>
-                        <div class="flex gap-1">
-                            <button onclick="editStore('${docSnap.id}', '${data.name}', '${data.owner || ''}', '${data.place || ''}', '${data.phone}')" class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold">EDIT</button>
-                            <button onclick="deleteStore('${docSnap.id}')" class="bg-rose-100 text-rose-600 px-2 py-1 rounded font-bold">DELETE</button>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        window.editStore = (id, name, owner, place, phone) => {
-            document.getElementById('edit-store-id').value = id;
-            document.getElementById('store-name').value = name;
-            document.getElementById('owner-name').value = owner;
-            document.getElementById('store-place').value = place;
-            document.getElementById('store-phone').value = phone;
-            document.getElementById('store-save-btn').innerText = "EDIT ചെയ്ത് അപ്ഡേറ്റ് ചെയ്യുക";
-            document.getElementById('store-save-btn').className = "w-full bg-blue-600 text-white p-2.5 rounded-xl font-bold text-xs shadow";
-            showAlert("എഡിറ്റ് മോഡ്", "മുകളിൽ വിവരങ്ങൾ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി സേവ് ചെയ്യുക.");
-        }
-
-        window.deleteStore = async (id) => {
-            if(confirm("ഈ കട DELETE ചെയ്യണോ?")) {
-                await deleteDoc(doc(db, "stores", id));
-                showAlert("വിജയം", "കട DELETE ചെയ്തു!");
-                loadStoresManagementList();
-                loadStoresDropdown();
-            }
-        }
 
         async function loadStoresDropdown() {
             const pSelect = document.getElementById('p-store');
