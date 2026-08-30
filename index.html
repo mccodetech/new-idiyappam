@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</title>
-    <!-- Google Fonts for Malayalam -->
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -16,8 +16,8 @@
 
     <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
         
-        <!-- സെറ്റിംഗ്സ് ഐക്കൺ (മുകളിൽ വലതുഭാഗത്ത്) -->
-        <button onclick="switchTab('settings')" class="absolute top-5 right-5 text-xl text-slate-600 hover:text-emerald-700 transition" title="സെറ്റിംഗ്സ്">⚙️</button>
+        <!-- സെറ്റിംഗ്സ് ഐക്കൺ -->
+        <button onclick="switchTab('settings')" id="settings-icon" class="absolute top-5 right-5 text-xl text-slate-600 hover:text-emerald-700 transition hidden" title="സെറ്റിംഗ്സ്">⚙️</button>
 
         <!-- ഹെഡിങ് -->
         <div class="text-center mb-5">
@@ -27,38 +27,38 @@
 
         <!-- 1. ലോഗിൻ സെക്ഷൻ -->
         <div id="login-section">
-            <h3 class="text-xs font-bold mb-3 text-slate-600 uppercase tracking-wider">യൂസർ ലോഗിൻ / സൈൻ അപ്പ്</h3>
+            <h3 class="text-xs font-bold mb-3 text-slate-600 uppercase tracking-wider">ലോഗിൻ ചെയ്യുക</h3>
             
-            <label class="block text-xs text-slate-500 mb-1">യൂസർ നെയിം (ഇമെയിൽ):</label>
-            <input type="email" id="email" placeholder="name@gmail.com" class="w-full p-3 mb-3 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50">
+            <label class="block text-xs text-slate-500 mb-1">ഇമെയിൽ / യൂസർ നെയിം:</label>
+            <input type="email" id="email" placeholder="name@gmail.com" class="w-full p-3 mb-3 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
             
             <label class="block text-xs text-slate-500 mb-1">പാസ്‌വേർഡ് (കുറഞ്ഞത് 6 അക്കം):</label>
             <div class="relative mb-4">
-                <input type="password" id="password" placeholder="••••••" class="w-full p-3 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50">
+                <input type="password" id="password" placeholder="••••••" class="w-full p-3 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
                 <button type="button" onclick="togglePassword()" class="absolute right-3 top-3.5 text-xs text-slate-500 font-bold">കാണുക</button>
             </div>
             
-            <button onclick="loginUser()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-sm hover:bg-emerald-700 shadow-md transition mb-2">ലോഗിൻ ചെയ്യുക</button>
-            <button onclick="registerUser()" class="w-full bg-slate-800 text-white p-2.5 rounded-xl text-xs font-semibold hover:bg-slate-900 transition">പുതിയ അക്കൗണ്ട് ഉണ്ടാക്കുക</button>
+            <button onclick="loginUser()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-sm hover:bg-emerald-700 shadow-md mb-2">ലോഗിൻ</button>
+            <button onclick="registerUser()" class="w-full bg-slate-800 text-white p-2.5 rounded-xl text-xs font-semibold hover:bg-slate-900">അക്കൗണ്ട് ഉണ്ടാക്കുക</button>
         </div>
 
         <!-- 2. ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
             <div class="flex justify-between items-center mb-4 bg-emerald-50/80 p-3 rounded-xl border border-emerald-100 shadow-sm">
-                <span id="user-email-display" class="text-xs text-emerald-900 font-bold truncate max-w-[210px]"></span>
-                <button onclick="confirmLogout()" class="bg-rose-500 text-white px-3 py-1.5 text-xs font-bold rounded-lg hover:bg-rose-600 shadow transition">ലോഗ് ഔട്ട്</button>
+                <span id="user-name-display" class="text-xs text-emerald-900 font-bold truncate max-w-[210px]"></span>
+                <button onclick="confirmLogout()" class="bg-rose-500 text-white px-3 py-1.5 text-xs font-bold rounded-lg hover:bg-rose-600 shadow">ലോഗ് ഔട്ട്</button>
             </div>
 
             <!-- പ്രധാന 3 ടാബുകൾ (പർച്ചേസ്, സെയിൽസ്, റിപ്പോർട്ടുകൾ) -->
             <div class="grid grid-cols-3 gap-1.5 mb-4 text-xs font-bold">
-                <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow transition">പർച്ചേസ്</button>
-                <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition">സെയിൽസ്</button>
-                <button onclick="switchTab('reports')" id="tab-reports" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition">റിപ്പോർട്ടുകൾ</button>
+                <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
+                <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">സെയിൽസ്</button>
+                <button onclick="switchTab('reports')" id="tab-reports" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">റിപ്പോർട്ടുകൾ</button>
             </div>
 
             <!-- ടാബ് 1: പർച്ചേസ് -->
             <div id="section-purchase" class="space-y-3">
-                <h4 class="text-xs font-extrabold text-slate-600 uppercase">പർച്ചേസ് / പർച്ചേസ് ഓർഡർ</h4>
+                <h4 class="text-xs font-extrabold text-slate-600 uppercase">പർച്ചേസ് എൻട്രി</h4>
                 <input type="date" id="p-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
                 <select id="p-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
                 
@@ -74,7 +74,7 @@
 
             <!-- ടാബ് 2: സെയിൽസ് -->
             <div id="section-sales" class="space-y-3 hidden">
-                <h4 class="text-xs font-extrabold text-slate-600 uppercase">സെയിൽസ് / സെയിൽസ് ഓർഡർ</h4>
+                <h4 class="text-xs font-extrabold text-slate-600 uppercase">സെയിൽസ് / ഓർഡർ</h4>
                 <input type="date" id="s-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
                 <select id="s-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
                 
@@ -92,25 +92,34 @@
                 </div>
             </div>
 
-            <!-- ടാബ് 3: സെറ്റിംഗ്സ് പേജ് (Gear Icon വഴി തുറക്കുന്നത്) -->
+            <!-- ടാബ് 3: സെറ്റിംഗ്സ് (ഗിയർ ഐക്കൺ വഴി വരുന്നത്) -->
             <div id="section-settings" class="space-y-3 hidden">
-                <h4 class="text-xs font-extrabold text-slate-600 uppercase">പുതിയ കട ചേർക്കാൻ</h4>
-                <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
-                <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
-                <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ (9847XXXXXX)" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
-                <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">കട സേവ് ചെയ്യുക</button>
+                <div class="flex justify-between items-center">
+                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">സെറ്റിംഗ്സ് & മാനേജ്‌മെന്റ്</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ പോവുക</button>
+                </div>
+                
+                <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                    <h5 class="text-xs font-bold text-slate-700">പുതിയ കട ചേർക്കാൻ</h5>
+                    <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
+                    <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
+                    <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ (9847XXXXXX)" class="w-full p-2 border rounded-xl text-sm bg-white">
+                    <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-2 rounded-xl font-bold text-xs shadow">കട സേവ് ചെയ്യുക</button>
+                </div>
 
-                <h4 class="text-xs font-extrabold text-slate-600 uppercase mt-4">ഐറ്റം വിലകൾ (Rates)</h4>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div>ഇടിയപ്പം: <input type="number" id="rate-idiyappam" value="5" class="w-full p-1.5 border rounded-lg bg-slate-50"></div>
-                    <div>വെള്ളപ്പം: <input type="number" id="rate-vellappam" value="6" class="w-full p-1.5 border rounded-lg bg-slate-50"></div>
-                    <div>പത്തിരി: <input type="number" id="rate-pathiri" value="4" class="w-full p-1.5 border rounded-lg bg-slate-50"></div>
-                    <div>പൊറോട്ട: <input type="number" id="rate-porotta" value="10" class="w-full p-1.5 border rounded-lg bg-slate-50"></div>
-                    <div>ചപ്പാത്തി: <input type="number" id="rate-chapati" value="8" class="w-full p-1.5 border rounded-lg bg-slate-50"></div>
+                <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                    <h5 class="text-xs font-bold text-slate-700">ഐറ്റം വിലകൾ (Rates)</h5>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>ഇടിയപ്പം: <input type="number" id="rate-idiyappam" value="5" class="w-full p-1 border rounded bg-white"></div>
+                        <div>വെള്ളപ്പം: <input type="number" id="rate-vellappam" value="6" class="w-full p-1 border rounded bg-white"></div>
+                        <div>പത്തിരി: <input type="number" id="rate-pathiri" value="4" class="w-full p-1 border rounded bg-white"></div>
+                        <div>പൊറോട്ട: <input type="number" id="rate-porotta" value="10" class="w-full p-1 border rounded bg-white"></div>
+                        <div>ചപ്പാത്തി: <input type="number" id="rate-chapati" value="8" class="w-full p-1 border rounded bg-white"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- ടാബ് 4: റിപ്പോർട്ടുകൾ (PDF Download) -->
+            <!-- ടാബ് 4: റിപ്പോർട്ടുകൾ -->
             <div id="section-reports" class="space-y-3 hidden">
                 <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ടുകൾ ഡൗൺലോഡ് ചെയ്യുക</h4>
                 
@@ -121,7 +130,7 @@
                     <option value="all">ഇതുവരെയുള്ള മൊത്തം റിപ്പോർട്ട്</option>
                 </select>
 
-                <button onclick="generatePDFReport()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow transition">PDF റിപ്പോർട്ട് ഡൗൺലോഡ്</button>
+                <button onclick="generatePDFReport()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow">PDF റിപ്പോർട്ട് ഡൗൺലോഡ്</button>
             </div>
 
         </div>
@@ -198,11 +207,16 @@
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
-                document.getElementById('user-email-display').innerText = `യൂസർ: ${user.email}`;
+                document.getElementById('settings-icon').classList.remove('hidden');
+                
+                // ഇമെയിലിന് പകരം ലളിതമായ പേര് അല്ലെങ്കിൽ യൂസർ ഐഡി കാണിക്കാൻ
+                const userName = user.email.split('@')[0];
+                document.getElementById('user-name-display').innerText = `യൂസർ: ${userName}`;
                 loadStoresDropdown();
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
+                document.getElementById('settings-icon').classList.add('hidden');
             }
         });
 
@@ -211,12 +225,17 @@
             const owner = document.getElementById('owner-name').value;
             const phone = document.getElementById('store-phone').value;
             if(!name || !phone) return alert("കടയുടെ പേരും ഫോൺ നമ്പറും നൽകുക!");
-            await addDoc(collection(db, "stores"), { name, owner, phone });
-            alert("കട വിജയകരമായി സേവ് ചെയ്തു!");
-            document.getElementById('store-name').value = '';
-            document.getElementById('owner-name').value = '';
-            document.getElementById('store-phone').value = '';
-            loadStoresDropdown();
+            
+            try {
+                await addDoc(collection(db, "stores"), { name, owner, phone });
+                alert("കട വിജയകരമായി സേവ് ചെയ്തു!");
+                document.getElementById('store-name').value = '';
+                document.getElementById('owner-name').value = '';
+                document.getElementById('store-phone').value = '';
+                loadStoresDropdown();
+            } catch(e) {
+                alert("സേവ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message);
+            }
         }
 
         async function loadStoresDropdown() {
@@ -225,13 +244,17 @@
             pSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
             sSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
             
-            const snap = await getDocs(collection(db, "stores"));
-            snap.forEach(doc => {
-                const data = doc.data();
-                const opt = `<option value="${data.name}" data-owner="${data.owner || ''}" data-phone="${data.phone}">${data.name} (${data.owner || 'ഓണർ'})</option>`;
-                pSelect.innerHTML += opt;
-                sSelect.innerHTML += opt;
-            });
+            try {
+                const snap = await getDocs(collection(db, "stores"));
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const opt = `<option value="${data.name}" data-owner="${data.owner || ''}" data-phone="${data.phone}">${data.name} (${data.owner || 'ഓണർ'})</option>`;
+                    pSelect.innerHTML += opt;
+                    sSelect.innerHTML += opt;
+                });
+            } catch(e) {
+                console.error("Error loading stores: ", e);
+            }
         }
 
         function getRates() {
@@ -261,10 +284,14 @@
 
             if(totalAmount === 0) return alert("കുറഞ്ഞത് ഒരു സാധനത്തിന്റെ എങ്കിലും എണ്ണം നൽകുക!");
 
-            await addDoc(collection(db, type === 'purchase' ? "purchases" : "sales"), {
-                date, store, items: itemsData, totalAmount, timestamp: new Date()
-            });
-            alert(`${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
+            try {
+                await addDoc(collection(db, type === 'purchase' ? "purchases" : "sales"), {
+                    date, store, items: itemsData, totalAmount, timestamp: new Date()
+                });
+                alert(`${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
+            } catch(e) {
+                alert("സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല: " + e.message);
+            }
         }
 
         window.sendWhatsAppOrder = function() {
@@ -308,14 +335,17 @@
             doc.text("Date / Store / Total Amount", 14, y);
             y += 10;
 
-            const snap = await getDocs(collection(db, "sales"));
-            snap.forEach(docSnap => {
-                const data = docSnap.data();
-                doc.text(`${data.date} | ${data.store} | Rs.${data.totalAmount}`, 14, y);
-                y += 8;
-            });
-
-            doc.save(`Idiyappam_${reportType}_Report.pdf`);
+            try {
+                const snap = await getDocs(collection(db, "sales"));
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    doc.text(`${data.date} | ${data.store} | Rs.${data.totalAmount}`, 14, y);
+                    y += 8;
+                });
+                doc.save(`Idiyappam_${reportType}_Report.pdf`);
+            } catch(e) {
+                alert("റിപ്പോർട്ട് എടുക്കുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message);
+            }
         }
     </script>
 </body>
