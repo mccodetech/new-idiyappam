@@ -38,8 +38,8 @@
                     <button onclick="toggleSidebar()" class="text-sm font-bold text-slate-500 hover:text-rose-500">✕ അടയ്ക്കുക</button>
                 </div>
                 <div class="space-y-3 font-bold text-xs">
-                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🏪 കടകൾ ചേർക്കുക (Manage Stores)</button>
-                    <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ</button>
+                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🏪 കടകൾ മാനേജ് ചെയ്യുക</button>
+                    <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ & മാനേജ്‌മെന്റ്</button>
                 </div>
             </div>
             <button onclick="confirmLogout()" class="w-full bg-rose-500 text-white p-2.5 rounded-xl text-xs font-bold shadow hover:bg-rose-600 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
@@ -54,16 +54,13 @@
         <!-- 1. ലോഗിൻ സെക്ഷൻ -->
         <div id="login-section">
             <h3 class="text-xs font-bold mb-3 text-slate-600 uppercase tracking-wider">ലോഗിൻ ചെയ്യുക</h3>
-            
             <label class="block text-xs text-slate-500 mb-1">ഇമെയിൽ / യൂസർ നെയിം:</label>
             <input type="email" id="email" placeholder="name@gmail.com" class="w-full p-3 mb-3 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
-            
             <label class="block text-xs text-slate-500 mb-1">പാസ്‌വേർഡ് (കുറഞ്ഞത് 6 അക്കം):</label>
             <div class="relative mb-4">
                 <input type="password" id="password" placeholder="••••••" class="w-full p-3 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
                 <button type="button" onclick="togglePassword()" class="absolute right-3 top-3.5 text-xs text-slate-500 font-bold">കാണുക</button>
             </div>
-            
             <button onclick="loginUser()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-sm hover:bg-emerald-700 shadow-md mb-2">ലോഗിൻ</button>
             <button onclick="registerUser()" class="w-full bg-slate-800 text-white p-2.5 rounded-xl text-xs font-semibold hover:bg-slate-900">അക്കൗണ്ട് ഉണ്ടാക്കുക</button>
         </div>
@@ -71,13 +68,12 @@
         <!-- 2. ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
             
-            <!-- പ്രധാന 2 ടാബുകൾ -->
             <div id="main-tabs" class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold">
                 <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
                 <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">സെയിൽസ്</button>
             </div>
 
-            <!-- ടാബ് 1: പർച്ചേസ് -->
+            <!-- പർച്ചേസ് -->
             <div id="section-purchase" class="space-y-3">
                 <h4 class="text-xs font-extrabold text-slate-600 uppercase">പർച്ചേസ് എൻട്രി</h4>
                 <input type="date" id="p-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
@@ -93,7 +89,7 @@
                 <button onclick="saveTransaction('purchase')" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">പർച്ചേസ് സേവ് ചെയ്യുക</button>
             </div>
 
-            <!-- ടാബ് 2: സെയിൽസ് -->
+            <!-- സെയിൽസ് -->
             <div id="section-sales" class="space-y-3 hidden">
                 <h4 class="text-xs font-extrabold text-slate-600 uppercase">സെയിൽസ് / ഓർഡർ</h4>
                 <input type="date" id="s-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
@@ -113,18 +109,23 @@
                 </div>
             </div>
 
-            <!-- ടാബ് 3: കടകൾ ചേർക്കാനുള്ള സെറ്റിംഗ്സ് പേജ് -->
+            <!-- കടകൾ മാനേജ് ചെയ്യാനുള്ള പേജ് -->
             <div id="section-stores" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകൾ ചേർക്കുക</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ പോവുക</button>
+                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകൾ മാനേജ് ചെയ്യുക</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
                 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
                     <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-2 border rounded-xl text-sm bg-white">
-                    <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ (9847XXXXXX)" class="w-full p-2 border rounded-xl text-sm bg-white">
+                    <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-xl text-sm bg-white">
+                    <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow">കട സേവ് ചെയ്യുക</button>
+                </div>
+
+                <div id="stores-list-container" class="space-y-2 max-h-48 overflow-y-auto">
+                    <!-- നിലവിലുള്ള കടകളുടെ ലിസ്റ്റ് ഇവിടെ ഡാറ്റാബേസിൽ നിന്ന് വരുത്തും -->
                 </div>
 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
@@ -137,27 +138,26 @@
                         <div>ചപ്പാത്തി: <input type="number" id="rate-chapati" value="8" class="w-full p-1 border rounded bg-white"></div>
                     </div>
                 </div>
-
-                <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-emerald-700 transition">കട സേവ് ചെയ്യുക</button>
             </div>
 
-            <!-- ടാബ് 4: റിപ്പോർട്ടുകൾ -->
+            <!-- റിപ്പോർട്ടുകളും എൻട്രി മാനേജ്‌മെന്റും -->
             <div id="section-reports" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ടുകൾ</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ പോവുക</button>
+                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ട് & എൻട്രി മാനേജ്മെന്റ്</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
                 
-                <select id="report-type" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
-                    <option value="all">ഇതുവരെയുള്ള മൊത്തം റിപ്പോർട്ട്</option>
-                </select>
-
-                <label class="block text-xs font-bold text-slate-600 mt-2">കട തിരഞ്ഞെടുക്കുക (നിർബന്ധം):</label>
-                <select id="report-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
+                <label class="block text-xs font-bold text-slate-600">കട തിരഞ്ഞെടുക്കുക:</label>
+                <select id="report-store" onchange="loadStoreEntries()" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
                     <option value="">കട തിരഞ്ഞെടുക്കുക</option>
                 </select>
 
-                <button onclick="generatePDFReport()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow mt-3">PDF ലെഡ്ജർ റിപ്പോർട്ട് ഡൗൺലോഡ്</button>
+                <!-- ഡാറ്റാബേസ് എൻട്രികൾ എഡിറ്റ്/ഡിലീറ്റ് ചെയ്യാൻ കാണിക്കുന്ന ലിസ്റ്റ് -->
+                <div id="entries-management-list" class="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-xl bg-slate-50 text-xs">
+                    <p class="text-gray-400 text-center">കട തിരഞ്ഞെടുക്കുക...</p>
+                </div>
+
+                <button onclick="generatePDFReport()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow mt-2">PDF ലെഡ്ജർ റിപ്പോർട്ട് ഡൗൺലോഡ്</button>
             </div>
 
         </div>
@@ -167,7 +167,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAM9SV2IvvcjBTCZRc1F6xawdMh2zFnczY",
@@ -183,51 +183,30 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        window.showAlert = function(title, msg, isSuccess = true) {
+        window.showAlert = (title, msg, isSuccess = true) => {
             document.getElementById('alert-title').innerText = title;
             document.getElementById('alert-msg').innerText = msg;
             document.getElementById('alert-icon').innerText = isSuccess ? '✅' : '⚠️';
             document.getElementById('custom-alert').classList.remove('hidden');
         }
-
-        window.closeAlert = function() {
-            document.getElementById('custom-alert').classList.add('hidden');
+        window.closeAlert = () => document.getElementById('custom-alert').classList.add('hidden');
+        window.togglePassword = () => { const p = document.getElementById('password'); p.type = p.type === 'password' ? 'text' : 'password'; }
+        window.toggleSidebar = () => {
+            const sb = document.getElementById('sidebar');
+            sb.classList.toggle('hidden');
+            setTimeout(() => sb.classList.toggle('-translate-x-full'), 10);
         }
 
-        window.togglePassword = function() {
-            const pass = document.getElementById('password');
-            pass.type = pass.type === 'password' ? 'text' : 'password';
-        }
-
-        window.toggleSidebar = function() {
-            const sidebar = document.getElementById('sidebar');
-            if(sidebar.classList.contains('hidden')) {
-                sidebar.classList.remove('hidden');
-                setTimeout(() => sidebar.classList.remove('-translate-x-full'), 10);
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                setTimeout(() => sidebar.classList.add('hidden'), 300);
-            }
-        }
-
-        window.switchTab = function(tabName) {
+        window.switchTab = (tabName) => {
             ['purchase', 'sales', 'stores', 'reports'].forEach(t => {
                 const el = document.getElementById(`section-${t}`);
                 if(el) el.classList.add('hidden');
-                
                 const tabEl = document.getElementById(`tab-${t}`);
-                if(tabEl) {
-                    tabEl.className = "py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition text-xs font-bold";
-                }
+                if(tabEl) tabEl.className = "py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition text-xs font-bold";
             });
-
-            const targetSection = document.getElementById(`section-${tabName}`);
-            if(targetSection) targetSection.classList.remove('hidden');
-
+            document.getElementById(`section-${tabName}`).classList.remove('hidden');
             const targetTab = document.getElementById(`tab-${tabName}`);
-            if(targetTab) {
-                targetTab.className = "py-2.5 bg-emerald-600 text-white rounded-xl shadow transition text-xs font-bold";
-            }
+            if(targetTab) targetTab.className = "py-2.5 bg-emerald-600 text-white rounded-xl shadow transition text-xs font-bold";
 
             const mainTabs = document.getElementById('main-tabs');
             if(tabName === 'purchase' || tabName === 'sales') {
@@ -235,29 +214,14 @@
                 loadStoresDropdown();
             } else {
                 mainTabs.classList.add('hidden');
+                if(tabName === 'stores') loadStoresManagementList();
                 if(tabName === 'reports') loadStoresDropdown();
             }
         }
 
-        window.loginUser = () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            if(password.length < 6) return showAlert("ശ്രദ്ധിക്കുക", "പാസ്‌വേർഡ് കുറഞ്ഞത് 6 അക്കമെങ്കിലും ഉണ്ടായിരിക്കണം!", false);
-            signInWithEmailAndPassword(auth, email, password).catch(err => alert(err.message));
-        }
-
-        window.registerUser = () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            if(password.length < 6) return showAlert("ശ്രദ്ധിക്കുക", "പാസ്‌വേർഡ് കുറഞ്ഞത് 6 അക്കമെങ്കിലും ഉണ്ടായിരിക്കണം!", false);
-            createUserWithEmailAndPassword(auth, email, password).then(() => showAlert("വിജയം", "അക്കൗണ്ട് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!")).catch(err => alert(err.message));
-        }
-
-        window.confirmLogout = function() {
-            if(confirm("തീർച്ചയായും ലോഗ് ഔട്ട് ചെയ്യണമെന്നുണ്ടോ?")) {
-                signOut(auth);
-            }
-        }
+        window.loginUser = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).catch(err => showAlert("പരാജയം", err.message, false));
+        window.registerUser = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).then(() => showAlert("വിജയം", "അക്കൗണ്ട് ക്രിയേറ്റ് ചെയ്തു!")).catch(err => showAlert("പരാജയം", err.message, false));
+        window.confirmLogout = () => { if(confirm("ലോഗ് ഔട്ട് ചെയ്യണോ?")) signOut(auth); }
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -266,29 +230,49 @@
                 document.getElementById('menu-btn').classList.remove('hidden');
                 loadStoresDropdown();
             } else {
-                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
             }
         });
 
-        window.saveStore = async function() {
+        window.saveStore = async () => {
             const name = document.getElementById('store-name').value;
             const owner = document.getElementById('owner-name').value;
             const place = document.getElementById('store-place').value;
             const phone = document.getElementById('store-phone').value;
-            if(!name || !phone) return showAlert("ശ്രദ്ധിക്കുക", "കടയുടെ പേരും ഫോൺ നമ്പറും നൽകുക!", false);
+            if(!name || !phone) return showAlert("ശ്രദ്ധിക്കുക", "പേരും ഫോൺ നമ്പറും നൽകുക!", false);
             
-            try {
-                await addDoc(collection(db, "stores"), { name, owner, place, phone });
-                showAlert("വിജയം", "കട വിജയകരമായി സേവ് ചെയ്തു!");
-                document.getElementById('store-name').value = '';
-                document.getElementById('owner-name').value = '';
-                document.getElementById('store-place').value = '';
-                document.getElementById('store-phone').value = '';
+            await addDoc(collection(db, "stores"), { name, owner, place, phone });
+            showAlert("വിജയം", "കട സേവ് ചെയ്തു!");
+            document.getElementById('store-name').value = '';
+            document.getElementById('owner-name').value = '';
+            document.getElementById('store-place').value = '';
+            document.getElementById('store-phone').value = '';
+            loadStoresDropdown();
+            loadStoresManagementList();
+        }
+
+        async function loadStoresManagementList() {
+            const container = document.getElementById('stores-list-container');
+            container.innerHTML = '';
+            const snap = await getDocs(collection(db, "stores"));
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                container.innerHTML += `
+                    <div class="flex justify-between items-center bg-white p-2 border rounded-xl text-xs">
+                        <div><b>${data.name}</b> (${data.place || 'വിലാസമില്ല'})</div>
+                        <button onclick="deleteStore('${docSnap.id}')" class="bg-rose-100 text-rose-600 px-2 py-1 rounded font-bold">ഡിലീറ്റ്</button>
+                    </div>`;
+            });
+        }
+
+        window.deleteStore = async (id) => {
+            if(confirm("ഈ കട ഡിലീറ്റ് ചെയ്യണോ?")) {
+                await deleteDoc(doc(db, "stores", id));
+                showAlert("വിജയം", "കട ഡിലീറ്റ് ചെയ്തു!");
+                loadStoresManagementList();
                 loadStoresDropdown();
-            } catch(e) {
-                showAlert("എറർ", "സേവ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message, false);
             }
         }
 
@@ -296,23 +280,44 @@
             const pSelect = document.getElementById('p-store');
             const sSelect = document.getElementById('s-store');
             const rSelect = document.getElementById('report-store');
+            pSelect.innerHTML = sSelect.innerHTML = rSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
             
-            pSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
-            sSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
-            rSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
-            
-            try {
-                const snap = await getDocs(collection(db, "stores"));
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    const placeStr = data.place ? `, ${data.place}` : '';
-                    const opt = `<option value="${data.name}" data-owner="${data.owner || ''}" data-place="${data.place || ''}" data-phone="${data.phone}">${data.name}${placeStr} (${data.owner || 'ഓണർ'})</option>`;
-                    pSelect.innerHTML += opt;
-                    sSelect.innerHTML += opt;
-                    rSelect.innerHTML += `<option value="${data.name}">${data.name}${placeStr}</option>`;
+            const snap = await getDocs(collection(db, "stores"));
+            snap.forEach(doc => {
+                const data = doc.data();
+                const opt = `<option value="${data.name}" data-owner="${data.owner || ''}" data-place="${data.place || ''}" data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
+                pSelect.innerHTML += opt;
+                sSelect.innerHTML += opt;
+                rSelect.innerHTML += opt;
+            });
+        }
+
+        window.loadStoreEntries = async () => {
+            const storeName = document.getElementById('report-store').value;
+            const container = document.getElementById('entries-management-list');
+            container.innerHTML = '';
+            if(!storeName) return container.innerHTML = '<p class="text-gray-400 text-center">കട തിരഞ്ഞെടുക്കുക...</p>';
+
+            ['purchases', 'sales'].forEach(async (colName) => {
+                const snap = await getDocs(collection(db, colName));
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if(data.store === storeName) {
+                        container.innerHTML += `
+                            <div class="flex justify-between items-center bg-white p-2 border rounded-lg mb-1">
+                                <div><b>${data.date}</b> (${colName === 'purchases' ? 'Purchase' : 'Sales'} - ₹${data.totalAmount})</div>
+                                <button onclick="deleteEntry('${colName}', '${docSnap.id}')" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">ഡിലീറ്റ്</button>
+                            </div>`;
+                    }
                 });
-            } catch(e) {
-                console.error("Error loading stores: ", e);
+            });
+        }
+
+        window.deleteEntry = async (colName, id) => {
+            if(confirm("ഈ എൻട്രി ഡിലീറ്റ് ചെയ്യണോ?")) {
+                await deleteDoc(doc(db, colName, id));
+                showAlert("വിജയം", "എൻട്രി ഡിലീറ്റ് ചെയ്തു!");
+                loadStoreEntries();
             }
         }
 
@@ -326,157 +331,88 @@
             };
         }
 
-        window.saveTransaction = async function(type) {
+        window.saveTransaction = async (type) => {
             const dateInput = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-date`);
             const storeSelect = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-store`);
-            
             if(!dateInput.value || !storeSelect.value) return showAlert("ശ്രദ്ധിക്കുക", "തീയതിയും കടയും തിരഞ്ഞെടുക്കുക!", false);
 
             const rates = getRates();
-            let itemsData = {};
-            let totalAmount = 0;
-
+            let itemsData = {}, totalAmount = 0;
             ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                let qtyField = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`);
-                let qty = Number(qtyField.value) || 0;
+                let qty = Number(document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value) || 0;
                 itemsData[item] = qty;
                 totalAmount += qty * rates[item];
             });
 
             if(totalAmount === 0) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനത്തിന്റെ എങ്കിലും എണ്ണം നൽകുക!", false);
 
-            try {
-                await addDoc(collection(db, type === 'purchase' ? "purchases" : "sales"), {
-                    date: dateInput.value, store: storeSelect.value, items: itemsData, totalAmount, timestamp: new Date()
-                });
-                
-                showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
-                
-                dateInput.value = '';
-                storeSelect.value = '';
-                ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                    document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value = '';
-                });
-
-            } catch(e) {
-                showAlert("എറർ", "സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല: " + e.message, false);
-            }
+            await addDoc(collection(db, type === 'purchase' ? "purchases" : "sales"), {
+                date: dateInput.value, store: storeSelect.value, items: itemsData, totalAmount, timestamp: new Date()
+            });
+            
+            showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} സേവ് ചെയ്തു!`);
+            dateInput.value = storeSelect.value = '';
+            ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value = '';
+            });
         }
 
-        window.sendWhatsAppOrder = function() {
+        window.sendWhatsAppOrder = () => {
             const storeSelect = document.getElementById('s-store');
             const store = storeSelect.value;
-            const owner = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-owner');
-            const place = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-place');
             const phone = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-phone');
-
             if(!phone || !store) return showAlert("ശ്രദ്ധിക്കുക", "കടയും ഫോൺ നമ്പറും തിരഞ്ഞെടുക്കുക!", false);
 
             const rates = getRates();
-            let total = 0;
-            let msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്*%0Aകട: ${store} ${place ? '(' + place + ')' : ''} ${owner ? '- ' + owner : ''}%0A----------------------------------%0A`;
-            
-            let hasItems = false;
+            let total = 0, msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി*%0Aകട: ${store}%0A------------------%0A`;
             ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                 let qty = Number(document.getElementById(`s-qty-${item}`).value) || 0;
                 if(qty > 0) {
-                    hasItems = true;
                     let amt = qty * rates[item];
                     total += amt;
                     msg += `${item}: ${qty} (₹${amt})%0A`;
                 }
             });
-
-            if(!hasItems) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനമെങ്കിലും എണ്ണം നൽകുക!");
-
-            msg += `----------------------------------%0A*ആകെ തുക: ₹${total}*%0Aനന്ദി!`;
+            msg += `------------------%0A*ആകെ തുക: ₹${total}*%0Aനന്ദി!`;
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
 
-        window.generatePDFReport = async function() {
+        window.generatePDFReport = async () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const selectedStore = document.getElementById('report-store').value;
-
-            if(!selectedStore) return showAlert("ശ്രദ്ധിക്കുക", "ദയവായി ഒരു കട തിരഞ്ഞെടുക്കുക!", false);
+            if(!selectedStore) return showAlert("ശ്രദ്ധിക്കുക", "കട തിരഞ്ഞെടുക്കുക!", false);
 
             doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
             doc.text(`Store Ledger Report: ${selectedStore}`, 14, 28);
 
-            let tableRows = [];
-            let totalInQty = { idiyappam: 0, vellappam: 0, pathiri: 0, porotta: 0, chapati: 0 };
-            let totalOutQty = { idiyappam: 0, vellappam: 0, pathiri: 0, porotta: 0, chapati: 0 };
-            let totalInAmt = 0;
-            let totalOutAmt = 0;
+            let tableRows = [], totalInAmt = 0, totalOutAmt = 0;
+            const pSnap = await getDocs(collection(db, "purchases"));
+            pSnap.forEach(docSnap => {
+                const data = docSnap.doc.data ? docSnap.doc.data() : docSnap.data();
+                if(data.store === selectedStore) {
+                    let itm = data.items || {};
+                    totalInAmt += data.totalAmount || 0;
+                    tableRows.push([data.date, 'Purchase (In)', itm.idiyappam||0, itm.vellappam||0, itm.pathiri||0, itm.porotta||0, itm.chapati||0, `Rs.${data.totalAmount}`]);
+                }
+            });
 
-            try {
-                // പർച്ചേസ് ഡാറ്റ (In / Purchase)
-                const pSnap = await getDocs(collection(db, "purchases"));
-                pSnap.forEach(docSnap => {
-                    const data = docSnap.data();
-                    if(data.store === selectedStore) {
-                        let itm = data.items || {};
-                        totalInQty.idiyappam += itm.idiyappam || 0;
-                        totalInQty.vellappam += itm.vellappam || 0;
-                        totalInQty.pathiri += itm.pathiri || 0;
-                        totalInQty.porotta += itm.porotta || 0;
-                        totalInQty.chapati += itm.chapati || 0;
-                        totalInAmt += data.totalAmount || 0;
+            const sSnap = await getDocs(collection(db, "sales"));
+            sSnap.forEach(docSnap => {
+                const data = docSnap.data();
+                if(data.store === selectedStore) {
+                    let itm = data.items || {};
+                    totalOutAmt += data.totalAmount || 0;
+                    tableRows.push([data.date, 'Sales (Out)', itm.idiyappam||0, itm.vellappam||0, itm.pathiri||0, itm.porotta||0, itm.chapati||0, `Rs.${data.totalAmount}`]);
+                }
+            });
 
-                        tableRows.push([
-                            data.date || '',
-                            'Purchase (In)',
-                            itm.idiyappam || 0,
-                            itm.vellappam || 0,
-                            itm.pathiri || 0,
-                            itm.porotta || 0,
-                            itm.chapati || 0,
-                            `Rs.${data.totalAmount || 0}`
-                        ]);
-                    }
-                });
-
-                // സെയിൽസ് ഡാറ്റ (Out / Sales)
-                const sSnap = await getDocs(collection(db, "sales"));
-                sSnap.forEach(docSnap => {
-                    const data = docSnap.data();
-                    if(data.store === selectedStore) {
-                        let itm = data.items || {};
-                        totalOutQty.idiyappam += itm.idiyappam || 0;
-                        totalOutQty.vellappam += itm.vellappam || 0;
-                        totalOutQty.pathiri += itm.pathiri || 0;
-                        totalOutQty.porotta += itm.porotta || 0;
-                        totalOutQty.chapati += itm.chapati || 0;
-                        totalOutAmt += data.totalAmount || 0;
-
-                        tableRows.push([
-                            data.date || '',
-                            'Sales (Out)',
-                            itm.idiyappam || 0,
-                            itm.vellappam || 0,
-                            itm.pathiri || 0,
-                            itm.porotta || 0,
-                            itm.chapati || 0,
-                            `Rs.${data.totalAmount || 0}`
-                        ]);
-                    }
-                });
-
-                doc.autoTable({
-                    startY: 36,
-                    head: [['Date', 'Type', 'Idiyappam', 'Vellappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount']],
-                    body: tableRows,
-                });
-
-                let finalY = doc.lastAutoTable.finalY + 10;
-                doc.text(`Total Purchase (In) Amount: Rs.${totalInAmt}`, 14, finalY);
-                doc.text(`Total Sales (Out) Amount: Rs.${totalOutAmt}`, 14, finalY + 8);
-                doc.text(`Net Balance Amount: Rs.${totalOutAmt - totalInAmt}`, 14, finalY + 16);
-
-                doc.save(`Ledger_Report_${selectedStore}.pdf`);
-            } catch(e) {
-                showAlert("എറർ", "റിപ്പോർട്ട് എടുക്കുന്നതിൽ തടസ്സം നേരിട്ടു: " + e.message, false);
-            }
+            doc.autoTable({ startY: 36, head: [['Date', 'Type', 'Idiyappam', 'Vellappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount']], body: tableRows });
+            let finalY = doc.lastAutoTable.finalY + 10;
+            doc.text(`Total Purchase (In) Amount: Rs.${totalInAmt}`, 14, finalY);
+            doc.text(`Total Sales (Out) Amount: Rs.${totalOutAmt}`, 14, finalY + 8);
+            doc.text(`Net Balance Amount: Rs.${totalOutAmt - totalInAmt}`, 14, finalY + 16);
+            doc.save(`Ledger_Report_${selectedStore}.pdf`);
         }
     </script>
 </body>
