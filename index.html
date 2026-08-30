@@ -89,7 +89,8 @@
                     <div class="flex justify-between items-center"><span>പൊറോട്ട:</span> <input type="number" id="p-qty-porotta" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>ചപ്പാത്തി:</span> <input type="number" id="p-qty-chapati" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                 </div>
-                <button onclick="saveTransaction('purchase')" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">പർച്ചേസ് സേവ് ചെയ്യുക</button>
+                <!-- സേവ് ബട്ടൺ ഏറ്റവും താഴേക്ക് മാറ്റിയിരിക്കുന്നു -->
+                <button onclick="saveTransaction('purchase')" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow mt-3">പർച്ചേസ് സേവ് ചെയ്യുക</button>
             </div>
 
             <!-- സെയിൽസ് -->
@@ -107,9 +108,9 @@
                     <div class="flex justify-between items-center"><span>ചപ്പാത്തി:</span> <input type="number" id="s-qty-chapati" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                 </div>
                 
-                <div class="flex gap-2">
-                    <button onclick="saveTransaction('sales')" class="flex-1 bg-blue-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-blue-700 shadow">സെയിൽസ് സേവ്</button>
-                    <button onclick="sendWhatsAppOrder()" class="flex-1 bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">വാട്സാപ്പ് അയക്കൂ</button>
+                <div class="flex gap-2 mt-3">
+                    <button onclick="saveTransaction('sales')" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold text-xs hover:bg-blue-700 shadow">സെയിൽസ് സേവ് ചെയ്യുക</button>
+                    <button onclick="sendWhatsAppOrder()" class="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">വാട്സാപ്പ് അയക്കൂ</button>
                 </div>
             </div>
 
@@ -135,14 +136,13 @@
                 </div>
             </div>
 
-            <!-- കടകൾ മാനേജ് ചെയ്യാനുള്ള പേജ് (Add, Edit, Delete 3 ബട്ടണുകൾ) -->
+            <!-- കടകൾ മാനേജ് ചെയ്യാനുള്ള പേജ് -->
             <div id="section-stores" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകൾ മാനേജ് ചെയ്യുക</h4>
                     <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
 
-                <!-- 3 സബ് ബട്ടണുകൾ -->
                 <div class="grid grid-cols-3 gap-1.5 text-xs font-bold">
                     <button onclick="setStoreMode('add')" id="store-mode-add" class="py-2 bg-emerald-600 text-white rounded-xl shadow">ADD</button>
                     <button onclick="setStoreMode('edit')" id="store-mode-edit" class="py-2 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">EDIT</button>
@@ -160,7 +160,6 @@
                     <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-xl text-sm bg-white">
-                    <button onclick="saveStoreAction()" id="store-action-btn" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow">കട സേവ് ചെയ്യുക</button>
                 </div>
 
                 <!-- DELETE കണ്ടെയ്നർ -->
@@ -169,7 +168,7 @@
                     <select id="delete-store-select" class="w-full p-2 border rounded-xl text-sm bg-white">
                         <option value="">കട തിരഞ്ഞെടുക്കുക</option>
                     </select>
-                    <button onclick="deleteStoreAction()" class="w-full bg-rose-600 text-white p-2.5 rounded-xl font-bold text-xs shadow hover:bg-rose-700">തിരഞ്ഞെടുത്ത കട ഡിലീറ്റ് ചെയ്യുക</button>
+                    <button onclick="deleteStoreAction()" class="w-full bg-rose-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-rose-700 mt-2">തിരഞ്ഞെടുത്ത കട ഡിലീറ്റ് ചെയ്യുക</button>
                 </div>
 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
@@ -182,6 +181,9 @@
                         <div>ചപ്പാത്തി: <input type="number" id="rate-chapati" value="8" class="w-full p-1 border rounded bg-white"></div>
                     </div>
                 </div>
+
+                <!-- കട സേവ് / എഡിറ്റ് ബട്ടൺ ഏറ്റവും താഴേക്ക് മാറ്റിയിരിക്കുന്നു -->
+                <button onclick="saveStoreAction()" id="store-action-btn" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow mt-2">കട സേവ് ചെയ്യുക</button>
             </div>
 
             <!-- റിപ്പോർട്ടുകൾ -->
@@ -204,9 +206,9 @@
                     <option value="">എല്ലാ കടകളും (All Stores)</option>
                 </select>
 
-                <div class="flex gap-2 mt-2">
-                    <button onclick="previewPDFReport()" class="flex-1 bg-slate-700 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-slate-800 shadow">പ്രിവ്യൂ കാണുക</button>
-                    <button onclick="generatePDFReport()" class="flex-1 bg-slate-900 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-black shadow">PDF ഡൗൺലോഡ്</button>
+                <div class="flex gap-2 mt-3">
+                    <button onclick="previewPDFReport()" class="flex-1 bg-slate-700 text-white p-3 rounded-xl font-bold text-xs hover:bg-slate-800 shadow">പ്രിവ്യൂ കാണുക</button>
+                    <button onclick="generatePDFReport()" class="flex-1 bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow">PDF ഡൗൺലോഡ്</button>
                 </div>
 
                 <div id="report-preview-box" class="bg-slate-50 p-3 rounded-xl border text-[11px] max-h-48 overflow-y-auto hidden space-y-1">
@@ -287,7 +289,6 @@
             }
         }
 
-        // കട മാനേജ്‌മെന്റ് മോഡ് (Add, Edit, Delete)
         window.setStoreMode = async (mode) => {
             ['add', 'edit', 'delete'].forEach(m => {
                 const btn = document.getElementById(`store-mode-${m}`);
@@ -307,7 +308,7 @@
                 editSelect.classList.add('hidden');
                 formLabel.innerText = "പുതിയ കട ചേർക്കുക (ADD)";
                 actionBtn.innerText = "കട സേവ് ചെയ്യുക";
-                actionBtn.className = "w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow";
+                actionBtn.className = "w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow mt-2";
                 document.getElementById('edit-store-id').value = '';
                 document.getElementById('store-name').value = '';
                 document.getElementById('owner-name').value = '';
@@ -319,7 +320,7 @@
                 editSelect.classList.remove('hidden');
                 formLabel.innerText = "കട എഡിറ്റ് ചെയ്യുക (EDIT)";
                 actionBtn.innerText = "മാറ്റങ്ങൾ അപ്ഡേറ്റ് ചെയ്യുക";
-                actionBtn.className = "w-full bg-blue-600 text-white p-2.5 rounded-xl font-bold text-xs shadow";
+                actionBtn.className = "w-full bg-blue-600 text-white p-3 rounded-xl font-bold text-xs shadow mt-2";
                 await loadStoresForDropdown('existing-store-select');
             } else if(mode === 'delete') {
                 formContainer.classList.add('hidden');
@@ -380,7 +381,6 @@
 
             const storeName = storesDataCache[storeId]?.name;
 
-            // ഡാറ്റ മിസ്സ് ആവാതിരിക്കാൻ പർച്ചേസ്/സെയിൽസ് പരിശോധിക്കുന്നു
             const pCheck = await getDocs(query(collection(db, "purchases"), where("store", "==", storeName)));
             const sCheck = await getDocs(query(collection(db, "sales"), where("store", "==", storeName)));
 
