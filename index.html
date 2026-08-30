@@ -38,7 +38,7 @@
                     <button onclick="toggleSidebar()" class="text-sm font-bold text-slate-500 hover:text-rose-500">✕ അടയ്ക്കുക</button>
                 </div>
                 <div class="space-y-3 font-bold text-xs">
-                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🏪 കടകൾ മാനേജ് ചെയ്യുക</button>
+                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🏪 കടകൾ മാനേജ് ചെയ്യുക (Add/Edit/Delete)</button>
                     <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-blue-50 rounded-xl transition text-blue-700">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
                     <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition text-emerald-700">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
                     <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
@@ -135,20 +135,20 @@
                 </div>
             </div>
 
-            <!-- കടകൾ മാനേജ് ചെയ്യാനുള്ള പേജ് (Add, Edit, Delete ഒന്നിച്ച്) -->
+            <!-- കടകൾ മാനേജ് ചെയ്യാനുള്ള പേജ് (ADD, EDIT, DELETE ഓപ്ഷനുകളോടെ) -->
             <div id="section-stores" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകൾ മാനേജ് ചെയ്യുക</h4>
+                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകൾ മാനേജ് ചെയ്യുക (Add / Edit / Delete)</h4>
                     <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
                 
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2">
                     <input type="hidden" id="edit-store-id" value="">
-                    <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
+                    <input type="text" id="store-name" placeholder="കടയുടെ പേര് (ADD / EDIT)" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-2 border rounded-xl text-sm bg-white">
                     <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-xl text-sm bg-white">
-                    <button onclick="saveStore()" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow">കട സേവ് ചെയ്യുക</button>
+                    <button onclick="saveStore()" id="store-save-btn" class="w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow">ADD (കട സേവ് ചെയ്യുക)</button>
                 </div>
 
                 <div id="stores-list-container" class="space-y-2 max-h-40 overflow-y-auto"></div>
@@ -165,7 +165,7 @@
                 </div>
             </div>
 
-            <!-- റിപ്പോർട്ടുകളും പ്രിവ്യൂവും -->
+            <!-- റിപ്പോർട്ടുകൾ -->
             <div id="section-reports" class="space-y-3 hidden">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ട് & പ്രിവ്യൂ</h4>
@@ -190,7 +190,6 @@
                     <button onclick="generatePDFReport()" class="flex-1 bg-slate-900 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-black shadow">PDF ഡൗൺലോഡ്</button>
                 </div>
 
-                <!-- പ്രിവ്യൂ ബോക്സ് -->
                 <div id="report-preview-box" class="bg-slate-50 p-3 rounded-xl border text-[11px] max-h-48 overflow-y-auto hidden space-y-1">
                     <h5 class="font-bold text-slate-700 border-b pb-1">പ്രിവ്യൂ ഫലങ്ങൾ:</h5>
                     <div id="preview-content"></div>
@@ -295,11 +294,13 @@
             
             if(storeId) {
                 await updateDoc(doc(db, "stores", storeId), { name, owner, place, phone });
-                showAlert("വിജയം", "കടയുടെ വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു!");
+                showAlert("വിജയം", "കടയുടെ വിവരങ്ങൾ EDIT ചെയ്ത് അപ്ഡേറ്റ് ചെയ്തു!");
                 document.getElementById('edit-store-id').value = '';
+                document.getElementById('store-save-btn').innerText = "ADD (കട സേവ് ചെയ്യുക)";
+                document.getElementById('store-save-btn').className = "w-full bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs shadow";
             } else {
                 await addDoc(collection(db, "stores"), { name, owner, place, phone });
-                showAlert("വിജയം", "കട സേവ് ചെയ്തു!");
+                showAlert("വിജയം", "പുതിയ കട ADD ചെയ്തു!");
             }
 
             document.getElementById('store-name').value = '';
@@ -320,8 +321,8 @@
                     <div class="flex justify-between items-center bg-white p-2 border rounded-xl text-xs">
                         <div><b>${data.name}</b> (${data.place || 'വിലാസമില്ല'})</div>
                         <div class="flex gap-1">
-                            <button onclick="editStore('${docSnap.id}', '${data.name}', '${data.owner || ''}', '${data.place || ''}', '${data.phone}')" class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold">എഡിറ്റ്</button>
-                            <button onclick="deleteStore('${docSnap.id}')" class="bg-rose-100 text-rose-600 px-2 py-1 rounded font-bold">ഡിലീറ്റ്</button>
+                            <button onclick="editStore('${docSnap.id}', '${data.name}', '${data.owner || ''}', '${data.place || ''}', '${data.phone}')" class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold">EDIT</button>
+                            <button onclick="deleteStore('${docSnap.id}')" class="bg-rose-100 text-rose-600 px-2 py-1 rounded font-bold">DELETE</button>
                         </div>
                     </div>`;
             });
@@ -333,12 +334,15 @@
             document.getElementById('owner-name').value = owner;
             document.getElementById('store-place').value = place;
             document.getElementById('store-phone').value = phone;
+            document.getElementById('store-save-btn').innerText = "EDIT ചെയ്ത് അപ്ഡേറ്റ് ചെയ്യുക";
+            document.getElementById('store-save-btn').className = "w-full bg-blue-600 text-white p-2.5 rounded-xl font-bold text-xs shadow";
+            showAlert("എഡിറ്റ് മോഡ്", "മുകളിൽ വിവരങ്ങൾ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി സേവ് ചെയ്യുക.");
         }
 
         window.deleteStore = async (id) => {
-            if(confirm("ഈ കട ഡിലീറ്റ് ചെയ്യണോ?")) {
+            if(confirm("ഈ കട DELETE ചെയ്യണോ?")) {
                 await deleteDoc(doc(db, "stores", id));
-                showAlert("വിജയം", "കട ഡിലീറ്റ് ചെയ്തു!");
+                showAlert("വിജയം", "കട DELETE ചെയ്തു!");
                 loadStoresManagementList();
                 loadStoresDropdown();
             }
@@ -374,17 +378,17 @@
                     <div class="flex justify-between items-center bg-white p-2 border rounded-lg mb-1">
                         <div><b>${data.date}</b> | ${data.store} (₹${data.totalAmount})</div>
                         <div class="flex gap-1">
-                            <button onclick="editEntry('${colName}', '${docSnap.id}', '${data.date}', '${data.store}', ${JSON.stringify(data.items).replace(/"/g, '&quot;')})" class="bg-blue-500 text-white px-2 py-0.5 rounded text-[10px]">എഡിറ്റ്</button>
-                            <button onclick="deleteEntry('${colName}', '${docSnap.id}')" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">ഡിലീറ്റ്</button>
+                            <button onclick="editEntry('${colName}', '${docSnap.id}', '${data.date}', '${data.store}', ${JSON.stringify(data.items).replace(/"/g, '&quot;')})" class="bg-blue-500 text-white px-2 py-0.5 rounded text-[10px]">EDIT</button>
+                            <button onclick="deleteEntry('${colName}', '${docSnap.id}')" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">DELETE</button>
                         </div>
                     </div>`;
             });
         }
 
         window.deleteEntry = async (colName, id) => {
-            if(confirm("ഈ എൻട്രി ഡിലീറ്റ് ചെയ്യണോ?")) {
+            if(confirm("ഈ എൻട്രി DELETE ചെയ്യണോ?")) {
                 await deleteDoc(doc(db, colName, id));
-                showAlert("വിജയം", "എൻട്രി ഡിലീറ്റ് ചെയ്തു!");
+                showAlert("വിജയം", "എൻട്രി DELETE ചെയ്തു!");
                 loadEditList(colName);
             }
         }
@@ -398,7 +402,7 @@
                 ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                     document.getElementById(`s-qty-${item}`).value = items[item] || '';
                 });
-                document.getElementById('s-form-title').innerText = "സെയിൽസ് എഡിറ്റ് മോഡ്";
+                document.getElementById('s-form-title').innerText = "സെയിൽസ് EDIT മോഡ്";
             } else {
                 document.getElementById('edit-purchase-id').value = id;
                 document.getElementById('p-date').value = date;
@@ -406,9 +410,9 @@
                 ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                     document.getElementById(`p-qty-${item}`).value = items[item] || '';
                 });
-                document.getElementById('p-form-title').innerText = "പർച്ചേസ് എഡിറ്റ് മോഡ്";
+                document.getElementById('p-form-title').innerText = "പർച്ചേസ് EDIT മോഡ്";
             }
-            showAlert("ശ്രദ്ധിക്കുക", "ഫീൽഡിൽ ഡാറ്റ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി വീണ്ടും സേവ് ചെയ്യുക.");
+            showAlert("ശ്രദ്ധിക്കുക", "ഫീൽഡിൽ ഡാറ്റ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി സേവ് ചെയ്യുക.");
         }
 
         function getRates() {
@@ -482,7 +486,6 @@
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
 
-        // പ്രിവ്യൂ കാണിക്കാനുള്ള ഫങ്ഷൻ
         window.previewPDFReport = async () => {
             const duration = document.getElementById('report-duration').value;
             const store = document.getElementById('report-store').value;
