@@ -85,6 +85,7 @@
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2 text-xs">
                     <div class="flex justify-between items-center"><span>ഇടിയപ്പം:</span> <input type="number" id="p-qty-idiyappam" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>വെള്ളപ്പം:</span> <input type="number" id="p-qty-vellappam" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
+                    <div class="flex justify-between items-center"><span>പാലപ്പം:</span> <input type="number" id="p-qty-palappam" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>പത്തിരി:</span> <input type="number" id="p-qty-pathiri" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>പൊറോട്ട:</span> <input type="number" id="p-qty-porotta" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>ചപ്പാത്തി:</span> <input type="number" id="p-qty-chapati" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
@@ -102,6 +103,7 @@
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2 text-xs">
                     <div class="flex justify-between items-center"><span>ഇടിയപ്പം:</span> <input type="number" id="s-qty-idiyappam" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>വെള്ളപ്പം:</span> <input type="number" id="s-qty-vellappam" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
+                    <div class="flex justify-between items-center"><span>പാലപ്പം:</span> <input type="number" id="s-qty-palappam" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>പത്തിരി:</span> <input type="number" id="s-qty-pathiri" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>പൊറോട്ട:</span> <input type="number" id="s-qty-porotta" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
                     <div class="flex justify-between items-center"><span>ചപ്പാത്തി:</span> <input type="number" id="s-qty-chapati" placeholder="0" class="w-20 p-1 border rounded text-center bg-white"></div>
@@ -173,6 +175,7 @@
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>ഇടിയപ്പം: <input type="number" id="rate-idiyappam" value="5" class="w-full p-1 border rounded bg-white"></div>
                         <div>വെള്ളപ്പം: <input type="number" id="rate-vellappam" value="6" class="w-full p-1 border rounded bg-white"></div>
+                        <div>പാലപ്പം: <input type="number" id="rate-palappam" value="6" class="w-full p-1 border rounded bg-white"></div>
                         <div>പത്തിരി: <input type="number" id="rate-pathiri" value="4" class="w-full p-1 border rounded bg-white"></div>
                         <div>പൊറോട്ട: <input type="number" id="rate-porotta" value="10" class="w-full p-1 border rounded bg-white"></div>
                         <div>ചപ്പാത്തി: <input type="number" id="rate-chapati" value="8" class="w-full p-1 border rounded bg-white"></div>
@@ -404,7 +407,6 @@
                 loadStoresDropdown();
                 setDefaultDate();
             } else {
-                // ലോഗിൻ ചെയ്യാത്തപ്പോൾ ലോഗിൻ സെക്ഷൻ കൃത്യമായി കാണിക്കാൻ
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
@@ -462,7 +464,7 @@
                 document.getElementById('edit-sales-id').value = id;
                 document.getElementById('s-date').value = date;
                 document.getElementById('s-store').value = store;
-                ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                     document.getElementById(`s-qty-${item}`).value = items[item] || '';
                 });
                 document.getElementById('s-form-title').innerText = "സെയിൽസ് EDIT മോഡ്";
@@ -470,7 +472,7 @@
                 document.getElementById('edit-purchase-id').value = id;
                 document.getElementById('p-date').value = date;
                 document.getElementById('p-store').value = store;
-                ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                     document.getElementById(`p-qty-${item}`).value = items[item] || '';
                 });
                 document.getElementById('p-form-title').innerText = "പർച്ചേസ് EDIT മോഡ്";
@@ -482,6 +484,7 @@
             return {
                 idiyappam: Number(document.getElementById('rate-idiyappam').value) || 0,
                 vellappam: Number(document.getElementById('rate-vellappam').value) || 0,
+                palappam: Number(document.getElementById('rate-palappam').value) || 0,
                 pathiri: Number(document.getElementById('rate-pathiri').value) || 0,
                 porotta: Number(document.getElementById('rate-porotta').value) || 0,
                 chapati: Number(document.getElementById('rate-chapati').value) || 0
@@ -496,7 +499,7 @@
 
             const rates = getRates();
             let itemsData = {}, totalAmount = 0;
-            ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                 let qty = Number(document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value) || 0;
                 itemsData[item] = qty;
                 totalAmount += qty * rates[item];
@@ -524,7 +527,7 @@
                 document.getElementById('s-form-title').innerText = "സെയിൽസ് / ഓർഡർ";
             }
 
-            ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                 document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value = '';
             });
         }
@@ -537,7 +540,7 @@
 
             const rates = getRates();
             let total = 0, msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി*%0Aകട: ${store}%0A------------------%0A`;
-            ['idiyappam', 'vellappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
                 let qty = Number(document.getElementById(`s-qty-${item}`).value) || 0;
                 if(qty > 0) {
                     let amt = qty * rates[item];
@@ -595,7 +598,7 @@
         window.generatePDFReport = async () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            const duration = document.getElementById('report-duration.value');
+            const duration = document.getElementById('report-duration').value;
             const store = document.getElementById('report-store').value;
 
             doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
@@ -637,6 +640,7 @@
                     data.transType, 
                     itm.idiyappam||0, 
                     itm.vellappam||0, 
+                    itm.palappam||0, 
                     itm.pathiri||0, 
                     itm.porotta||0, 
                     itm.chapati||0, 
@@ -647,7 +651,7 @@
 
             doc.autoTable({ 
                 startY: 36, 
-                head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount', 'Balance']], 
+                head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Palappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount', 'Balance']], 
                 body: tableRows 
             });
 
