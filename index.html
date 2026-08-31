@@ -13,7 +13,7 @@
         body { font-family: 'Noto Sans Malayalam', sans-serif; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-3">
+<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-3 pb-20">
 
     <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
         
@@ -404,7 +404,8 @@
                 loadStoresDropdown();
                 setDefaultDate();
             } else {
-                document.getElementById('login-section').classList.add('hidden');
+                // ലോഗിൻ ചെയ്യാത്തപ്പോൾ ലോഗിൻ സെക്ഷൻ കൃത്യമായി കാണിക്കാൻ
+                document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
             }
@@ -548,7 +549,6 @@
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
 
-        // പ്രിവ്യൂവിൽ ലെഡ്ജർ ഫോർമാറ്റിൽ ബാലൻസ് കാണിക്കാൻ
         window.previewPDFReport = async () => {
             const duration = document.getElementById('report-duration').value;
             const store = document.getElementById('report-store').value;
@@ -560,7 +560,6 @@
             let rows = [];
             let runningBalance = 0;
             const todayStr = new Date().toISOString().split('T')[0];
-
             let allTransactions = [];
 
             const pSnap = await getDocs(collection(db, "purchases"));
@@ -579,7 +578,6 @@
                 }
             });
 
-            // തീയതി ക്രമത്തിൽ സോർട്ട് ചെയ്യുന്നു
             allTransactions.sort((a, b) => a.sortDate - b.sortDate);
 
             allTransactions.forEach(d => {
@@ -594,15 +592,14 @@
             content.innerHTML = rows.length > 0 ? rows.join('') : "സൂചികയിൽ ഡാറ്റ ലഭ്യമല്ല";
         }
 
-        // PDF ലെഡ്ജർ റിപ്പോർട്ടിൽ അവസാന ബാലൻസ് കാണിക്കാൻ
         window.generatePDFReport = async () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            const duration = document.getElementById('report-duration').value;
+            const duration = document.getElementById('report-duration.value');
             const store = document.getElementById('report-store').value;
 
             doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
-            doc.text(`Store Ledger Report (${duration.toUpperCase()}): ${store ? store : 'All Stores'}`, 14, 28);
+            doc.text(`Store Ledger Report (${duration ? duration.toUpperCase() : 'ALL'}): ${store ? store : 'All Stores'}`, 14, 28);
 
             let tableRows = [];
             let runningBalance = 0;
@@ -656,7 +653,7 @@
 
             let finalY = doc.lastAutoTable.finalY + 10;
             doc.text(`Final Ledger Balance: Rs.${runningBalance}`, 14, finalY);
-            doc.save(`Ledger_Report_${duration}_${store ? store : 'All'}.pdf`);
+            doc.save(`Ledger_Report.pdf`);
         }
     </script>
 </body>
