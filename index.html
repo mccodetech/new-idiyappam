@@ -13,12 +13,13 @@
         body { font-family: 'Noto Sans Malayalam', sans-serif; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-3 pb-20">
+<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-3 pb-20 flex items-center justify-center">
 
-    <div class="max-w-md mx-auto bg-white p-5 rounded-2xl shadow-xl border border-slate-100 relative">
+    <!-- റെസ്പോൺസീവ് കണ്ടെയ്നർ (മൊബൈലിലും കമ്പ്യൂട്ടറിലും ഒരുപോലെ ഭംഗിയായി കാണാൻ) -->
+    <div class="w-full max-w-lg mx-auto bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-100 relative">
         
         <!-- കസ്റ്റം അലേർട്ട് മോഡൽ -->
-        <div id="custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div id="custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
             <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-xs w-full text-center border border-slate-100 transform transition-all">
                 <div id="alert-icon" class="text-3xl mb-2">✅</div>
                 <h4 id="alert-title" class="font-extrabold text-slate-800 text-sm mb-1">വിജയകരമാണ്</h4>
@@ -28,34 +29,34 @@
         </div>
 
         <!-- ഹാംബർഗർ മെനു ബട്ടൺ -->
-        <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-5 left-5 text-xl text-slate-700 bg-slate-100 px-2.5 py-1.5 rounded-xl shadow-sm transition hidden" title="മെനു">☰</button>
+        <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-5 left-5 text-xl text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl shadow-sm transition hidden z-30" title="മെനു">☰</button>
 
-        <!-- സൈഡ് ബാർ മെനു -->
-        <div id="sidebar" class="absolute top-0 left-0 w-64 h-full bg-white shadow-2xl z-40 p-5 transform -translate-x-full transition-transform duration-300 rounded-2xl border-r flex flex-col justify-between hidden">
+        <!-- സൈഡ് ബാർ മെനു (റെസ്പോൺസീവ് & പ്രൊഫഷണൽ ലുക്ക്) -->
+        <div id="sidebar" class="absolute inset-y-0 left-0 w-72 bg-white shadow-2xl z-50 p-5 transform -translate-x-full transition-transform duration-300 rounded-r-2xl border-r flex flex-col justify-between hidden">
             <div>
-                <div class="flex justify-between items-center mb-6">
+                <div class="flex justify-between items-center mb-6 border-b pb-3">
                     <h3 class="text-sm font-extrabold text-emerald-800">മെനു</h3>
-                    <button onclick="toggleSidebar()" class="text-sm font-bold text-slate-500 hover:text-rose-500">✕ അടയ്ക്കുക</button>
+                    <button onclick="toggleSidebar()" class="text-xs font-bold text-slate-500 hover:text-rose-500 bg-slate-100 px-2 py-1 rounded-lg">✕ അടയ്ക്കുക</button>
                 </div>
-                <div class="space-y-3 font-bold text-xs">
-                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">🏪 കടകൾ മാനേജ് ചെയ്യുക & വിലകൾ</button>
-                    <button onclick="switchTab('accounts'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition text-emerald-700">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
-                    <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-blue-50 rounded-xl transition text-blue-700">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
-                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition text-emerald-700">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
-                    <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-2.5 bg-slate-100 hover:bg-emerald-50 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
+                <div class="space-y-2.5 font-bold text-xs">
+                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition flex items-center gap-2">🏪 കടകളും വിലകളും മാനേജ് ചെയ്യുക</button>
+                    <button onclick="switchTab('accounts'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition text-emerald-700 flex items-center gap-2">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
+                    <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-blue-50 rounded-xl transition text-blue-700 flex items-center gap-2">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
+                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition text-emerald-700 flex items-center gap-2">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
+                    <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition flex items-center gap-2">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
                 </div>
             </div>
-            <button onclick="confirmLogout()" class="w-full bg-rose-500 text-white p-2.5 rounded-xl text-xs font-bold shadow hover:bg-rose-600 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
+            <button onclick="confirmLogout()" class="w-full bg-rose-500 text-white p-3 rounded-xl text-xs font-bold shadow hover:bg-rose-600 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
         </div>
 
         <!-- ഹെഡിങ് -->
         <div class="text-center mb-5 mt-2">
-            <h1 class="text-xl font-extrabold text-emerald-800">ന്യൂ ഇടിയപ്പം കമ്പനി</h1>
-            <p class="text-xs text-slate-500 font-semibold tracking-wide">ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</p>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-emerald-800">ന്യൂ ഇടിയപ്പം കമ്പനി</h1>
+            <p class="text-xs sm:text-sm text-slate-500 font-semibold tracking-wide">ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</p>
         </div>
 
         <!-- 1. ലോഗിൻ സെക്ഷൻ -->
-        <div id="login-section">
+        <div id="login-section" class="max-w-sm mx-auto">
             <h3 class="text-xs font-bold mb-3 text-slate-600 uppercase tracking-wider">ലോഗിൻ ചെയ്യുക</h3>
             <label class="block text-xs text-slate-500 mb-1">ഇമെയിൽ / യൂസർ നെയിം:</label>
             <input type="email" id="email" placeholder="name@gmail.com" class="w-full p-3 mb-3 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
@@ -259,7 +260,7 @@
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>ഇടിയപ്പം: <input type="number" id="store-rate-idiyappam" value="5" class="w-full p-1 border rounded bg-white"></div>
                         <div>വെള്ളപ്പം: <input type="number" id="store-rate-vellappam" value="6" class="w-full p-1 border rounded bg-white"></div>
-                        <div>പലപ്പം: <input type="number" id="store-rate-palappam" value="6" class="w-full p-1 border rounded bg-white"></div>
+                        <div>പാലപ്പം: <input type="number" id="store-rate-palappam" value="6" class="w-full p-1 border rounded bg-white"></div>
                         <div>പത്തിരി: <input type="number" id="store-rate-pathiri" value="4" class="w-full p-1 border rounded bg-white"></div>
                         <div>പൊറോട്ട: <input type="number" id="store-rate-porotta" value="10" class="w-full p-1 border rounded bg-white"></div>
                         <div>ചപ്പാത്തി: <input type="number" id="store-rate-chapati" value="8" class="w-full p-1 border rounded bg-white"></div>
@@ -430,7 +431,6 @@
             const select = document.getElementById(elementId);
             select.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
             storesDataCache = {};
-            // ഓരോ യൂസർക്കും സ്വന്തം കടകൾ മാത്രം ലഭിക്കാൻ query ചെയ്യുക
             const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
             const snap = await getDocs(q);
             snap.forEach(docSnap => {
@@ -675,7 +675,7 @@
                 });
                 document.getElementById('p-form-title').innerText = "പർച്ചേസ് EDIT മോഡ്";
             }
-            showAlert("ശ്രദ്ധിക്കുക", "ഫീൽഡിൽ ഡാറ്റ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി സേവ് ചെയ്യുക.");
+            showAlert("ശ്രദ്ധിക്കുക", "ഫീൽഡിൽ ഡാറ്റ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി വീണ്ടും സേവ് ചെയ്യുക.");
         }
 
         window.saveTransaction = async (type) => {
