@@ -259,7 +259,7 @@
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>ഇടിയപ്പം: <input type="number" id="store-rate-idiyappam" value="5" class="w-full p-1 border rounded bg-white"></div>
                         <div>വെള്ളപ്പം: <input type="number" id="store-rate-vellappam" value="6" class="w-full p-1 border rounded bg-white"></div>
-                        <div>പാലപ്പം: <input type="number" id="store-rate-palappam" value="6" class="w-full p-1 border rounded bg-white"></div>
+                        <div>പലപ്പം: <input type="number" id="store-rate-palappam" value="6" class="w-full p-1 border rounded bg-white"></div>
                         <div>പത്തിരി: <input type="number" id="store-rate-pathiri" value="4" class="w-full p-1 border rounded bg-white"></div>
                         <div>പൊറോട്ട: <input type="number" id="store-rate-porotta" value="10" class="w-full p-1 border rounded bg-white"></div>
                         <div>ചപ്പാത്തി: <input type="number" id="store-rate-chapati" value="8" class="w-full p-1 border rounded bg-white"></div>
@@ -332,6 +332,7 @@
         const db = getFirestore(app);
 
         let storesDataCache = {};
+        let currentUserId = null;
         const defaultRates = { idiyappam: 5, vellappam: 6, palappam: 6, pathiri: 4, porotta: 10, chapati: 8 };
 
         function setDefaultDate() {
@@ -429,7 +430,9 @@
             const select = document.getElementById(elementId);
             select.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
             storesDataCache = {};
-            const snap = await getDocs(collection(db, "stores"));
+            // ഓരോ യൂസർക്കും സ്വന്തം കടകൾ മാത്രം ലഭിക്കാൻ query ചെയ്യുക
+            const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
+            const snap = await getDocs(q);
             snap.forEach(docSnap => {
                 const data = docSnap.data();
                 storesDataCache[docSnap.id] = data;
@@ -466,10 +469,10 @@
             });
 
             if(storeId) {
-                await updateDoc(doc(db, "stores", storeId), { name, owner, place, phone, rates });
+                await updateDoc(doc(db, "stores", storeId), { name, owner, place, phone, rates, userId: currentUserId });
                 showAlert("വിജയം", "കട വിജയകരമായി എഡിറ്റ് ചെയ്ത് അപ്ഡേറ്റ് ചെയ്തു!");
             } else {
-                await addDoc(collection(db, "stores"), { name, owner, place, phone, rates });
+                await addDoc(collection(db, "stores"), { name, owner, place, phone, rates, userId: currentUserId });
                 showAlert("വിജയം", "പുതിയ കട ADD ചെയ്തു!");
             }
             document.getElementById('store-name').value = '';
@@ -485,8 +488,8 @@
             if(!storeId) return showAlert("ശ്രദ്ധിക്കുക", "ഡിലീറ്റ് ചെയ്യാൻ കട തിരഞ്ഞെടുക്കുക!", false);
 
             const storeName = storesDataCache[storeId]?.name;
-            const pCheck = await getDocs(query(collection(db, "purchases"), where("store", "==", storeName)));
-            const sCheck = await getDocs(query(collection(db, "sales"), where("store", "==", storeName)));
+            const pCheck = await getDocs(query(collection(db, "purchases"), where("userId", "==", currentUserId), where("store", "==", storeName)));
+            const sCheck = await getDocs(query(collection(db, "sales"), where("userId", "==", currentUserId), where("store", "==", storeName)));
 
             if(!pCheck.empty || !sCheck.empty) {
                 return showAlert("മുന്നറിയിപ്പ്", "ഈ കടയുമായി ബന്ധപ്പെട്ട പർച്ചേസ്/സെയിൽസ് ഡാറ്റ നിലവിലുള്ളതിനാൽ കട ഡിലീറ്റ് ചെയ്യാൻ കഴിയില്ല!", false);
@@ -506,12 +509,14 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                currentUserId = user.uid;
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
                 document.getElementById('menu-btn').classList.remove('hidden');
                 loadStoresDropdown();
                 setDefaultDate();
             } else {
+                currentUserId = null;
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
@@ -526,7 +531,8 @@
             if(sSelect) sSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
             if(rSelect) rSelect.innerHTML = '<option value="">എല്ലാ കടകളും (All Stores)</option>';
             
-            const snap = await getDocs(collection(db, "stores"));
+            const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
+            const snap = await getDocs(q);
             snap.forEach(doc => {
                 const data = doc.data();
                 const opt = `<option value="${data.name}" data-rates='${JSON.stringify(data.rates || defaultRates)}' data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
@@ -579,13 +585,15 @@
             container.innerHTML = "ലോഡ് ചെയ്യുന്നു...";
             let storeAccounts = {};
 
-            const snapStores = await getDocs(collection(db, "stores"));
+            const qStores = query(collection(db, "stores"), where("userId", "==", currentUserId));
+            const snapStores = await getDocs(qStores);
             snapStores.forEach(doc => {
                 let name = doc.data().name;
                 storeAccounts[name] = { totalSales: 0, totalPaid: 0, balance: 0 };
             });
 
-            const snapSales = await getDocs(collection(db, "sales"));
+            const qSales = query(collection(db, "sales"), where("userId", "==", currentUserId));
+            const snapSales = await getDocs(qSales);
             snapSales.forEach(doc => {
                 let d = doc.data();
                 if(storeAccounts[d.store]) {
@@ -617,7 +625,8 @@
         window.loadEditList = async (colName) => {
             const container = document.getElementById(colName === 'sales' ? 'edit-sales-list' : 'edit-purchase-list');
             container.innerHTML = '';
-            const snap = await getDocs(collection(db, colName));
+            const q = query(collection(db, colName), where("userId", "==", currentUserId));
+            const snap = await getDocs(q);
             if(snap.empty) return container.innerHTML = '<p class="text-gray-400 text-center">ഡാറ്റ ലഭ്യമല്ല</p>';
 
             snap.forEach(docSnap => {
@@ -666,7 +675,7 @@
                 });
                 document.getElementById('p-form-title').innerText = "പർച്ചേസ് EDIT മോഡ്";
             }
-            showAlert("ശ്രദ്ധിക്കുക", "ഫീൽഡിൽ ഡാറ്റ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി വീണ്ടും സേവ് ചെയ്യുക.");
+            showAlert("ശ്രദ്ധിക്കുക", "ഫീൽഡിൽ ഡാറ്റ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി സേവ് ചെയ്യുക.");
         }
 
         window.saveTransaction = async (type) => {
@@ -694,7 +703,7 @@
             }
 
             await addDoc(collection(db, colName), {
-                date: dateInput.value, store: storeSelect.value, items: itemsData, totalAmount, paidAmount, balanceAmount, timestamp: new Date()
+                date: dateInput.value, store: storeSelect.value, items: itemsData, totalAmount, paidAmount, balanceAmount, userId: currentUserId, timestamp: new Date()
             });
             
             showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
@@ -760,7 +769,8 @@
             const todayStr = new Date().toISOString().split('T')[0];
             let allTransactions = [];
 
-            const pSnap = await getDocs(collection(db, "purchases"));
+            const qP = query(collection(db, "purchases"), where("userId", "==", currentUserId));
+            const pSnap = await getDocs(qP);
             pSnap.forEach(doc => {
                 let d = doc.data();
                 if((!store || d.store === store) && (duration === 'all' || (duration === 'daily' && d.date === todayStr))) {
@@ -768,7 +778,8 @@
                 }
             });
 
-            const sSnap = await getDocs(collection(db, "sales"));
+            const qS = query(collection(db, "sales"), where("userId", "==", currentUserId));
+            const sSnap = await getDocs(qS);
             sSnap.forEach(doc => {
                 let d = doc.data();
                 if((!store || d.store === store) && (duration === 'all' || (duration === 'daily' && d.date === todayStr))) {
@@ -803,7 +814,8 @@
             let runningBalance = 0;
             let allTransactions = [];
 
-            const pSnap = await getDocs(collection(db, "purchases"));
+            const qP = query(collection(db, "purchases"), where("userId", "==", currentUserId));
+            const pSnap = await getDocs(qP);
             pSnap.forEach(docSnap => {
                 let data = docSnap.data();
                 if((!store || data.store === store) && (duration === 'all' || (duration === 'daily' || data.date === new Date().toISOString().split('T')[0]))) {
@@ -811,7 +823,8 @@
                 }
             });
 
-            const sSnap = await getDocs(collection(db, "sales"));
+            const qS = query(collection(db, "sales"), where("userId", "==", currentUserId));
+            const sSnap = await getDocs(qS);
             sSnap.forEach(docSnap => {
                 let data = docSnap.data();
                 if((!store || data.store === store) && (duration === 'all' || (duration === 'daily' || data.date === new Date().toISOString().split('T')[0]))) {
