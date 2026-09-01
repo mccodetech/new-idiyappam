@@ -135,7 +135,10 @@
                     </div>
                 </div>
 
-                <button onclick="saveTransaction('purchase')" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow mt-2">പർച്ചേസ് സേവ് ചെയ്യുക</button>
+                <div class="flex gap-2 mt-2">
+                    <button onclick="saveTransaction('purchase')" class="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">പർച്ചേസ് സേവ്</button>
+                    <button onclick="clearForm('purchase')" class="w-28 bg-rose-100 text-rose-600 p-3 rounded-xl font-bold text-xs hover:bg-rose-200 transition">റദ്ദാക്കുക (Cancel)</button>
+                </div>
             </div>
 
             <!-- സെയിൽസ് -->
@@ -202,9 +205,10 @@
                 </div>
                 
                 <div class="flex gap-2 mt-2">
-                    <button onclick="saveTransaction('sales')" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold text-xs hover:bg-blue-700 shadow">സെയിൽസ് സേവ്</button>
-                    <button onclick="sendWhatsAppOrder()" class="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">വാട്സാപ്പ് ബിൽ</button>
+                    <button onclick="saveTransaction('sales')" class="flex-1 bg-blue-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-blue-700 shadow">സെയിൽസ് സേവ്</button>
+                    <button onclick="sendWhatsAppOrder()" class="flex-1 bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">വാട്സാപ്പ് ബിൽ</button>
                 </div>
+                <button onclick="clearForm('sales')" class="w-full bg-rose-100 text-rose-600 p-2.5 rounded-xl font-bold text-xs hover:bg-rose-200 transition">റദ്ദാക്കുക (Cancel)</button>
             </div>
 
             <!-- പണം ഇടപാടുകൾ (Payment Entry Page) -->
@@ -227,7 +231,10 @@
                     <input type="number" id="pay-amount" placeholder="0" class="w-full p-2 border rounded-xl text-sm bg-white font-bold">
                 </div>
 
-                <button onclick="savePaymentEntry()" class="w-full bg-blue-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-blue-700 transition">ഇടപാട് സേവ് ചെയ്യുക</button>
+                <div class="flex gap-2">
+                    <button onclick="savePaymentEntry()" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-blue-700 transition">ഇടപാട് സേവ്</button>
+                    <button onclick="clearForm('payments')" class="w-28 bg-rose-100 text-rose-600 p-3 rounded-xl font-bold text-xs hover:bg-rose-200 transition">റദ്ദാക്കുക</button>
+                </div>
             </div>
 
             <!-- അക്കൗണ്ട്സ് & ബാലൻസ് പേജ് -->
@@ -306,7 +313,10 @@
                     <button onclick="deleteStoreAction()" class="w-full bg-rose-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-rose-700 mt-2">തിരഞ്ഞെടുത്ത കട ഡിലീറ്റ് ചെയ്യുക</button>
                 </div>
 
-                <button onclick="saveStoreAction()" id="store-action-btn" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow mt-2">കട സേവ് ചെയ്യുക</button>
+                <div class="flex gap-2 mt-2">
+                    <button onclick="saveStoreAction()" id="store-action-btn" class="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow">കട സേവ് ചെയ്യുക</button>
+                    <button onclick="clearForm('stores')" class="w-28 bg-rose-100 text-rose-600 p-3 rounded-xl font-bold text-xs hover:bg-rose-200 transition">റദ്ദാക്കുക</button>
+                </div>
             </div>
 
             <!-- റിപ്പോർട്ടുകൾ -->
@@ -416,6 +426,43 @@
             }
         }
 
+        // ഫോം ക്ലിയർ ചെയ്യാനുള്ള ഫങ്ഷൻ (Cancel Button)
+        window.clearForm = (type) => {
+            if(type === 'purchase') {
+                document.getElementById('edit-purchase-id').value = '';
+                document.getElementById('p-store').value = '';
+                document.getElementById('p-paid-amt').value = '';
+                document.getElementById('p-form-title').innerText = "പർച്ചേസ് എൻട്രി";
+                ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                    document.getElementById(`p-qty-${item}`).value = '';
+                    document.getElementById(`p-amt-${item}`).innerText = '₹0';
+                });
+                document.getElementById('p-grand-total').innerText = '₹0';
+            } else if(type === 'sales') {
+                document.getElementById('edit-sales-id').value = '';
+                document.getElementById('s-store').value = '';
+                document.getElementById('s-paid-amt').value = '';
+                document.getElementById('s-balance-amt').innerText = '₹0';
+                document.getElementById('s-form-title').innerText = "സെയിൽസ് / ഓർഡർ";
+                ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
+                    document.getElementById(`s-qty-${item}`).value = '';
+                    document.getElementById(`s-amt-${item}`).innerText = '₹0';
+                });
+                document.getElementById('s-grand-total').innerText = '₹0';
+            } else if(type === 'payments') {
+                document.getElementById('pay-store').value = '';
+                document.getElementById('pay-amount').value = '';
+            } else if(type === 'stores') {
+                document.getElementById('edit-store-id').value = '';
+                document.getElementById('store-name').value = '';
+                document.getElementById('owner-name').value = '';
+                document.getElementById('store-place').value = '';
+                document.getElementById('store-phone').value = '';
+            }
+            setDefaultDate();
+            showAlert("റദ്ദാക്കി", "ഫീൽഡുകൾ ക്ലിയർ ചെയ്തിരിക്കുന്നു.", true);
+        }
+
         window.setStoreMode = async (mode) => {
             ['add', 'edit', 'delete'].forEach(m => {
                 const btn = document.getElementById(`store-mode-${m}`);
@@ -435,7 +482,7 @@
                 editSelect.classList.add('hidden');
                 formLabel.innerText = "പുതിയ കട ചേർക്കുക (ADD)";
                 actionBtn.innerText = "കട സേവ് ചെയ്യുക";
-                actionBtn.className = "w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow mt-2";
+                actionBtn.className = "flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow";
                 document.getElementById('edit-store-id').value = '';
                 document.getElementById('store-name').value = '';
                 document.getElementById('owner-name').value = '';
@@ -450,7 +497,7 @@
                 editSelect.classList.remove('hidden');
                 formLabel.innerText = "കട എഡിറ്റ് ചെയ്യുക (EDIT)";
                 actionBtn.innerText = "മാറ്റങ്ങൾ അപ്ഡേറ്റ് ചെയ്യുക";
-                actionBtn.className = "w-full bg-blue-600 text-white p-3 rounded-xl font-bold text-xs shadow mt-2";
+                actionBtn.className = "flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold text-xs shadow";
                 await loadStoresForDropdown('existing-store-select');
             } else if(mode === 'delete') {
                 formContainer.classList.add('hidden');
@@ -507,10 +554,7 @@
                 await addDoc(collection(db, "stores"), { name, owner, place, phone, rates, userId: currentUserId });
                 showAlert("വിജയം", "പുതിയ കട ADD ചെയ്തു!");
             }
-            document.getElementById('store-name').value = '';
-            document.getElementById('owner-name').value = '';
-            document.getElementById('store-place').value = '';
-            document.getElementById('store-phone').value = '';
+            clearForm('stores');
             loadStoresDropdown();
             if(storeId) setStoreMode('edit');
         }
@@ -615,7 +659,6 @@
             document.getElementById('s-balance-amt').innerText = `₹${balance}`;
         }
 
-        // പണം ഇടപാട് സേവ് ചെയ്യാൻ (Payment Received / Given)
         window.savePaymentEntry = async () => {
             const date = document.getElementById('pay-date').value;
             const store = document.getElementById('pay-store').value;
@@ -629,9 +672,7 @@
             });
 
             showAlert("വിജയം", "പണമിടപാട് വിജയകരമായി സേവ് ചെയ്തു!");
-            document.getElementById('pay-amount').value = '';
-            document.getElementById('pay-store').value = '';
-            setDefaultDate();
+            clearForm('payments');
         }
 
         async function loadAccountsSummary() {
@@ -656,7 +697,6 @@
                 }
             });
 
-            // പണം ഇടപാടുകൾ (Payments) കൂടി കണക്കിൽ കൂട്ടുന്നു
             const qPayments = query(collection(db, "payments"), where("userId", "==", currentUserId));
             const snapPayments = await getDocs(qPayments);
             snapPayments.forEach(doc => {
@@ -665,7 +705,7 @@
                     if(d.type === 'received') {
                         storeAccounts[d.store].totalPaid += (d.amount || 0);
                     } else if(d.type === 'given') {
-                        storeAccounts[d.store].totalSales += (d.amount || 0); // പണം നൽകിയാൽ ബാക്കി തുക കൂടും
+                        storeAccounts[d.store].totalSales += (d.amount || 0);
                     }
                 }
             });
@@ -762,12 +802,7 @@
 
             if(totalAmount === 0) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനത്തിന്റെ എങ്കിലും എണ്ണം നൽകുക!", false);
 
-            let paidAmount = 0;
-            if(type === 'sales') {
-                paidAmount = Number(document.getElementById('s-paid-amt').value) || 0;
-            } else {
-                paidAmount = Number(document.getElementById('p-paid-amt').value) || 0;
-            }
+            let paidAmount = type === 'sales' ? (Number(document.getElementById('s-paid-amt').value) || 0) : (Number(document.getElementById('p-paid-amt').value) || 0);
             let balanceAmount = totalAmount - paidAmount;
 
             const colName = type === 'purchase' ? 'purchases' : 'sales';
@@ -780,26 +815,7 @@
             });
             
             showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
-            
-            // ഡാറ്റ സേവ് ചെയ്ത ഉടൻ ഫീൽഡുകൾ പൂർണ്ണമായി ബ്ലാങ്ക് (Blank) ആക്കുന്നു
-            setDefaultDate();
-            storeSelect.value = '';
-            if(type === 'purchase') {
-                document.getElementById('edit-purchase-id').value = '';
-                document.getElementById('p-form-title').innerText = "പർച്ചേസ് എൻട്രി";
-                document.getElementById('p-paid-amt').value = '';
-            } else {
-                document.getElementById('edit-sales-id').value = '';
-                document.getElementById('s-form-title').innerText = "സെയിൽസ് / ഓർഡർ";
-                document.getElementById('s-paid-amt').value = '';
-                document.getElementById('s-balance-amt').innerText = '₹0';
-            }
-
-            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value = '';
-                document.getElementById(`${type === 'purchase' ? 'p' : 's'}-amt-${item}`).innerText = '₹0';
-            });
-            document.getElementById(`${type}-grand-total`).innerText = '₹0';
+            clearForm(type);
         }
 
         window.sendWhatsAppOrder = () => {
