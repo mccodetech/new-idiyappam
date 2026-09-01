@@ -192,10 +192,10 @@
 
                 <div class="text-right font-extrabold text-sm text-blue-700 pr-2">ആകെ തുക: <span id="s-grand-total">₹0</span></div>
 
-                <!-- കൊടുത്ത പണവും ബാലൻസും -->
+                <!-- ലഭിച്ച പണവും ബാലൻസും -->
                 <div class="bg-slate-50 p-2 rounded-xl border text-xs space-y-2">
                     <div class="flex justify-between items-center">
-                        <span>നൽകിയ തുക (Paid):</span>
+                        <span>ലഭിച്ച തുക (Received):</span>
                         <input type="number" id="s-paid-amt" placeholder="0" oninput="calculateBalance()" class="w-24 p-1 border rounded text-center bg-white font-bold">
                     </div>
                     <div class="flex justify-between items-center font-bold text-rose-600">
@@ -223,8 +223,8 @@
                 <div class="bg-slate-50 p-3 rounded-xl border space-y-2 text-xs">
                     <label class="block font-bold text-slate-700">ഇടപാടിന്റെ തരം:</label>
                     <select id="pay-type" class="w-full p-2 border rounded-xl text-sm bg-white font-bold">
-                        <option value="received">പണം ലഭിച്ചത് (Payment Received from Store)</option>
-                        <option value="given">പണം നൽകിയത് (Payment Given to Store)</option>
+                        <option value="received">പണം ലഭിച്ചത് (Payment Received)</option>
+                        <option value="given">പണം നൽകിയത് (Payment Given)</option>
                     </select>
 
                     <label class="block font-bold text-slate-700 mt-2">തുക (Amount):</label>
@@ -426,7 +426,6 @@
             }
         }
 
-        // ഫോം ക്ലിയർ ചെയ്യാനുള്ള ഫങ്ഷൻ (Cancel Button)
         window.clearForm = (type) => {
             if(type === 'purchase') {
                 document.getElementById('edit-purchase-id').value = '';
@@ -719,7 +718,7 @@
                         <div class="font-bold text-emerald-800 text-sm">${store}</div>
                         <div class="flex justify-between text-slate-600 mt-1">
                             <span>ആകെ സെയിൽസ്: ₹${acc.totalSales}</span>
-                            <span>നൽകിയത്: ₹${acc.totalPaid}</span>
+                            <span>ലഭിച്ചത്: ₹${acc.totalPaid}</span>
                         </div>
                         <div class="flex justify-between font-bold text-rose-600 mt-1 border-t pt-1">
                             <span>ബാക്കി ബാലൻസ്:</span>
@@ -842,7 +841,7 @@
             let balance = total - paid;
 
             msg += `------------------%0A*ആകെ തുക: ₹${total}*`;
-            if(paid > 0) msg += `%0Aനൽകിയത്: ₹${paid}%0A*ബാക്കി ബാലൻസ്: ₹${balance}*`;
+            if(paid > 0) msg += `%0Aലഭിച്ചത്: ₹${paid}%0A*ബാക്കി ബാലൻസ്: ₹${balance}*`;
             msg += `%0Aനന്ദി!`;
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
