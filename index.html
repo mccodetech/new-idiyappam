@@ -13,17 +13,18 @@
         body { font-family: 'Noto Sans Malayalam', sans-serif; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-3 pb-20 flex items-center justify-center">
+<body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-2 sm:p-6 pb-20 flex items-center justify-center">
 
-    <div class="w-full max-w-lg mx-auto bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-100 relative">
+    <!-- കമ്പ്യൂട്ടറിൽ വലുതായും മൊബൈലിൽ ഒതുക്കത്തിലും കാണുന്ന റെസ്പോൺസീവ് മെയിൻ ബോക്സ് -->
+    <div class="w-full max-w-2xl mx-auto bg-white p-5 sm:p-8 rounded-2xl shadow-xl border border-slate-100 relative">
         
         <!-- കസ്റ്റം അലേർട്ട് മോഡൽ -->
         <div id="custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-            <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-xs w-full text-center border border-slate-100 transform transition-all">
+            <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center border border-slate-100 transform transition-all">
                 <div id="alert-icon" class="text-3xl mb-2">✅</div>
-                <h4 id="alert-title" class="font-extrabold text-slate-800 text-sm mb-1">വിജയകരമാണ്</h4>
-                <p id="alert-msg" class="text-xs text-slate-600 mb-4">സന്ദേശം ഇവിടെ</p>
-                <button onclick="closeAlert()" class="w-full bg-emerald-600 text-white py-2 rounded-xl text-xs font-bold shadow hover:bg-emerald-700 transition">ശരി</button>
+                <h4 id="alert-title" class="font-extrabold text-slate-800 text-sm sm:text-base mb-1">വിജയകരമാണ്</h4>
+                <p id="alert-msg" class="text-xs sm:text-sm text-slate-600 mb-4">സന്ദേശം ഇവിടെ</p>
+                <button onclick="closeAlert()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow hover:bg-emerald-700 transition">ശരി</button>
             </div>
         </div>
 
@@ -31,13 +32,13 @@
         <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-5 left-5 text-xl text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl shadow-sm transition hidden z-30" title="മെനു">☰</button>
 
         <!-- സൈഡ് ബാർ മെനു -->
-        <div id="sidebar" class="absolute inset-y-0 left-0 w-72 bg-white shadow-2xl z-50 p-5 transform -translate-x-full transition-transform duration-300 rounded-r-2xl border-r flex flex-col justify-between hidden">
+        <div id="sidebar" class="absolute inset-y-0 left-0 w-72 sm:w-80 bg-white shadow-2xl z-50 p-6 transform -translate-x-full transition-transform duration-300 rounded-r-2xl border-r flex flex-col justify-between hidden">
             <div>
                 <div class="flex justify-between items-center mb-6 border-b pb-3">
-                    <h3 class="text-sm font-extrabold text-emerald-800">മെനു</h3>
-                    <button onclick="toggleSidebar()" class="text-xs font-bold text-slate-500 hover:text-rose-500 bg-slate-100 px-2 py-1 rounded-lg">✕ അടയ്ക്കുക</button>
+                    <h3 class="text-sm sm:text-base font-extrabold text-emerald-800">മെനു</h3>
+                    <button onclick="toggleSidebar()" class="text-xs sm:text-sm font-bold text-slate-500 hover:text-rose-500 bg-slate-100 px-2.5 py-1 rounded-lg">✕ അടയ്ക്കുക</button>
                 </div>
-                <div class="space-y-2.5 font-bold text-xs">
+                <div class="space-y-3 font-bold text-xs sm:text-sm">
                     <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition flex items-center gap-2">🏪 കടകളും വിലകളും മാനേജ് ചെയ്യുക</button>
                     <button onclick="switchTab('payments'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition text-blue-700 flex items-center gap-2">💵 പണം ഇടപാടുകൾ (Payment Entry)</button>
                     <button onclick="switchTab('accounts'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition text-emerald-700 flex items-center gap-2">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
@@ -46,306 +47,306 @@
                     <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition flex items-center gap-2">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
                 </div>
             </div>
-            <button onclick="confirmLogout()" class="w-full bg-rose-500 text-white p-3 rounded-xl text-xs font-bold shadow hover:bg-rose-600 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
+            <button onclick="confirmLogout()" class="w-full bg-rose-500 text-white p-3 rounded-xl text-xs sm:text-sm font-bold shadow hover:bg-rose-600 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
         </div>
 
         <!-- ഹെഡിങ് -->
-        <div class="text-center mb-5 mt-2">
-            <h1 class="text-xl sm:text-2xl font-extrabold text-emerald-800">ന്യൂ ഇടിയപ്പം കമ്പനി</h1>
+        <div class="text-center mb-6 mt-2">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-emerald-800">ന്യൂ ഇടിയപ്പം കമ്പനി</h1>
             <p class="text-xs sm:text-sm text-slate-500 font-semibold tracking-wide">ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</p>
         </div>
 
         <!-- 1. ലോഗിൻ സെക്ഷൻ -->
-        <div id="login-section" class="max-w-sm mx-auto">
-            <h3 class="text-xs font-bold mb-3 text-slate-600 uppercase tracking-wider">ലോഗിൻ ചെയ്യുക</h3>
-            <label class="block text-xs text-slate-500 mb-1">ഇമെയിൽ / യൂസർ നെയിം:</label>
-            <input type="email" id="email" placeholder="name@gmail.com" class="w-full p-3 mb-3 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
-            <label class="block text-xs text-slate-500 mb-1">പാസ്‌വേർഡ് (കുറഞ്ഞത് 6 അക്കം):</label>
+        <div id="login-section" class="max-w-md mx-auto">
+            <h3 class="text-xs sm:text-sm font-bold mb-3 text-slate-600 uppercase tracking-wider">ലോഗിൻ ചെയ്യുക</h3>
+            <label class="block text-xs sm:text-sm text-slate-500 mb-1">ഇമെയിൽ / യൂസർ നെയിം:</label>
+            <input type="email" id="email" placeholder="name@gmail.com" class="w-full p-3.5 mb-3 border rounded-xl text-sm sm:text-base focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+            <label class="block text-xs sm:text-sm text-slate-500 mb-1">പാസ്‌വേർഡ് (കുറഞ്ഞത് 6 അക്കം):</label>
             <div class="relative mb-4">
-                <input type="password" id="password" placeholder="••••••" class="w-full p-3 border rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-50">
-                <button type="button" onclick="togglePassword()" class="absolute right-3 top-3.5 text-xs text-slate-500 font-bold">കാണുക</button>
+                <input type="password" id="password" placeholder="••••••" class="w-full p-3.5 border rounded-xl text-sm sm:text-base focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+                <button type="button" onclick="togglePassword()" class="absolute right-3 top-4 text-xs sm:text-sm text-slate-500 font-bold">കാണുക</button>
             </div>
-            <button onclick="loginUser()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-sm hover:bg-emerald-700 shadow-md mb-2">ലോഗിൻ</button>
-            <button onclick="registerUser()" class="w-full bg-slate-800 text-white p-2.5 rounded-xl text-xs font-semibold hover:bg-slate-900">അക്കൗണ്ട് ഉണ്ടാക്കുക</button>
+            <button onclick="loginUser()" class="w-full bg-emerald-600 text-white p-3.5 rounded-xl font-bold text-sm sm:text-base hover:bg-emerald-700 shadow-md mb-2">ലോഗിൻ</button>
+            <button onclick="registerUser()" class="w-full bg-slate-800 text-white p-3 rounded-xl text-xs sm:text-sm font-semibold hover:bg-slate-900">അക്കൗണ്ട് ഉണ്ടാക്കുക</button>
         </div>
 
         <!-- 2. ഡാഷ്‌ബോർഡ് -->
         <div id="dashboard-section" class="hidden">
             
-            <div id="main-tabs" class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold">
-                <button onclick="switchTab('purchase')" id="tab-purchase" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
-                <button onclick="switchTab('sales')" id="tab-sales" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">സെയിൽസ്</button>
+            <div id="main-tabs" class="grid grid-cols-2 gap-3 mb-5 text-xs sm:text-sm font-bold">
+                <button onclick="switchTab('purchase')" id="tab-purchase" class="py-3 bg-emerald-600 text-white rounded-xl shadow">പർച്ചേസ്</button>
+                <button onclick="switchTab('sales')" id="tab-sales" class="py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">സെയിൽസ്</button>
             </div>
 
             <!-- പർച്ചേസ് -->
-            <div id="section-purchase" class="space-y-3">
-                <h4 class="text-xs font-extrabold text-slate-600 uppercase" id="p-form-title">പർച്ചേസ് എൻട്രി</h4>
+            <div id="section-purchase" class="space-y-4">
+                <h4 class="text-xs sm:text-sm font-extrabold text-slate-600 uppercase" id="p-form-title">പർച്ചേസ് എൻട്രി</h4>
                 <input type="hidden" id="edit-purchase-id" value="">
-                <input type="date" id="p-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
-                <select id="p-store" onchange="updateRatesView('p')" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
+                <input type="date" id="p-date" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
+                <select id="p-store" onchange="updateRatesView('p')" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
                 
-                <div class="bg-slate-50 p-3 rounded-xl border space-y-2 text-xs">
-                    <div class="grid grid-cols-4 gap-1 font-bold text-slate-500 pb-1 border-b">
-                        <span>ഐറ്റം</span><span>വില</span><span>എണ്ണം</span><span>തുക</span>
+                <div class="bg-slate-50 p-4 rounded-xl border space-y-3 text-xs sm:text-sm">
+                    <div class="grid grid-cols-4 gap-2 font-bold text-slate-500 pb-2 border-b">
+                        <span>ഐറ്റം</span><span>വില</span><span>എണ്ണം</span><span class="text-right">തുക</span>
                     </div>
                     <!-- ഇടിയപ്പം -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>ഇടിയപ്പം</span><span id="p-rate-idiyappam" class="text-slate-600">5</span>
-                        <input type="number" id="p-qty-idiyappam" placeholder="0" oninput="calculateRowTotal('p', 'idiyappam')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">ഇടിയപ്പം</span><span id="p-rate-idiyappam" class="text-slate-600">5</span>
+                        <input type="number" id="p-qty-idiyappam" placeholder="0" oninput="calculateRowTotal('p', 'idiyappam')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="p-amt-idiyappam" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- വെള്ളപ്പം -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>വെള്ളപ്പം</span><span id="p-rate-vellappam" class="text-slate-600">6</span>
-                        <input type="number" id="p-qty-vellappam" placeholder="0" oninput="calculateRowTotal('p', 'vellappam')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">വെള്ളപ്പം</span><span id="p-rate-vellappam" class="text-slate-600">6</span>
+                        <input type="number" id="p-qty-vellappam" placeholder="0" oninput="calculateRowTotal('p', 'vellappam')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="p-amt-vellappam" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- പാലപ്പം -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>പാലപ്പം</span><span id="p-rate-palappam" class="text-slate-600">6</span>
-                        <input type="number" id="p-qty-palappam" placeholder="0" oninput="calculateRowTotal('p', 'palappam')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">പാലപ്പം</span><span id="p-rate-palappam" class="text-slate-600">6</span>
+                        <input type="number" id="p-qty-palappam" placeholder="0" oninput="calculateRowTotal('p', 'palappam')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="p-amt-palappam" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- പത്തിരി -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>പത്തിരി</span><span id="p-rate-pathiri" class="text-slate-600">4</span>
-                        <input type="number" id="p-qty-pathiri" placeholder="0" oninput="calculateRowTotal('p', 'pathiri')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">പത്തിരി</span><span id="p-rate-pathiri" class="text-slate-600">4</span>
+                        <input type="number" id="p-qty-pathiri" placeholder="0" oninput="calculateRowTotal('p', 'pathiri')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="p-amt-pathiri" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- പൊറോട്ട -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>പൊറോട്ട</span><span id="p-rate-porotta" class="text-slate-600">10</span>
-                        <input type="number" id="p-qty-porotta" placeholder="0" oninput="calculateRowTotal('p', 'porotta')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">പൊറോട്ട</span><span id="p-rate-porotta" class="text-slate-600">10</span>
+                        <input type="number" id="p-qty-porotta" placeholder="0" oninput="calculateRowTotal('p', 'porotta')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="p-amt-porotta" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- ചപ്പാത്തി -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>ചപ്പാത്തി</span><span id="p-rate-chapati" class="text-slate-600">8</span>
-                        <input type="number" id="p-qty-chapati" placeholder="0" oninput="calculateRowTotal('p', 'chapati')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">ചപ്പാത്തി</span><span id="p-rate-chapati" class="text-slate-600">8</span>
+                        <input type="number" id="p-qty-chapati" placeholder="0" oninput="calculateRowTotal('p', 'chapati')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="p-amt-chapati" class="font-bold text-right">₹0</span>
                     </div>
                 </div>
 
-                <div class="text-right font-extrabold text-sm text-emerald-700 pr-2">ആകെ തുക: <span id="p-grand-total">₹0</span></div>
+                <div class="text-right font-extrabold text-sm sm:text-base text-emerald-700 pr-2">ആകെ തുക: <span id="p-grand-total">₹0</span></div>
                 
-                <div class="bg-slate-50 p-2 rounded-xl border text-xs space-y-2">
-                    <div class="flex justify-between items-center">
+                <div class="bg-slate-50 p-3 rounded-xl border text-xs sm:text-sm space-y-2">
+                    <div class="flex justify-between items-center font-semibold">
                         <span>നൽകിയ പണം (Paid):</span>
-                        <input type="number" id="p-paid-amt" placeholder="0" class="w-24 p-1 border rounded text-center bg-white font-bold">
+                        <input type="number" id="p-paid-amt" placeholder="0" class="w-32 p-2 border rounded-lg text-center bg-white font-bold text-sm sm:text-base">
                     </div>
                 </div>
 
-                <div class="flex gap-2 mt-2">
-                    <button onclick="saveTransaction('purchase')" class="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">പർച്ചേസ് സേവ്</button>
-                    <button onclick="clearForm('purchase')" class="w-28 bg-rose-100 text-rose-600 p-3 rounded-xl font-bold text-xs hover:bg-rose-200 transition">റദ്ദാക്കുക (Cancel)</button>
+                <div class="flex gap-3 mt-3">
+                    <button onclick="saveTransaction('purchase')" class="flex-1 bg-emerald-600 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-emerald-700 shadow">പർച്ചേസ് സേവ്</button>
+                    <button onclick="clearForm('purchase')" class="w-32 bg-rose-100 text-rose-600 p-3.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-rose-200 transition">റദ്ദാക്കുക (Cancel)</button>
                 </div>
             </div>
 
             <!-- സെയിൽസ് -->
-            <div id="section-sales" class="space-y-3 hidden">
-                <h4 class="text-xs font-extrabold text-slate-600 uppercase" id="s-form-title">സെയിൽസ് / ഓർഡർ</h4>
+            <div id="section-sales" class="space-y-4 hidden">
+                <h4 class="text-xs sm:text-sm font-extrabold text-slate-600 uppercase" id="s-form-title">സെയിൽസ് / ഓർഡർ</h4>
                 <input type="hidden" id="edit-sales-id" value="">
-                <input type="date" id="s-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
-                <select id="s-store" onchange="updateRatesView('s')" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
+                <input type="date" id="s-date" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
+                <select id="s-store" onchange="updateRatesView('s')" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
                 
-                <div class="bg-slate-50 p-3 rounded-xl border space-y-2 text-xs">
-                    <div class="grid grid-cols-4 gap-1 font-bold text-slate-500 pb-1 border-b">
-                        <span>ഐറ്റം</span><span>വില</span><span>എണ്ണം</span><span>തുക</span>
+                <div class="bg-slate-50 p-4 rounded-xl border space-y-3 text-xs sm:text-sm">
+                    <div class="grid grid-cols-4 gap-2 font-bold text-slate-500 pb-2 border-b">
+                        <span>ഐറ്റം</span><span>വില</span><span>എണ്ണം</span><span class="text-right">തുക</span>
                     </div>
                     <!-- ഇടിയപ്പം -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>ഇടിയപ്പം</span><span id="s-rate-idiyappam" class="text-slate-600">5</span>
-                        <input type="number" id="s-qty-idiyappam" placeholder="0" oninput="calculateRowTotal('s', 'idiyappam')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">ഇടിയപ്പം</span><span id="s-rate-idiyappam" class="text-slate-600">5</span>
+                        <input type="number" id="s-qty-idiyappam" placeholder="0" oninput="calculateRowTotal('s', 'idiyappam')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="s-amt-idiyappam" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- വെള്ളപ്പം -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>വെള്ളപ്പം</span><span id="s-rate-vellappam" class="text-slate-600">6</span>
-                        <input type="number" id="s-qty-vellappam" placeholder="0" oninput="calculateRowTotal('s', 'vellappam')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">വെള്ളപ്പം</span><span id="s-rate-vellappam" class="text-slate-600">6</span>
+                        <input type="number" id="s-qty-vellappam" placeholder="0" oninput="calculateRowTotal('s', 'vellappam')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="s-amt-vellappam" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- പാലപ്പം -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>പാലപ്പം</span><span id="s-rate-palappam" class="text-slate-600">6</span>
-                        <input type="number" id="s-qty-palappam" placeholder="0" oninput="calculateRowTotal('s', 'palappam')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">പാലപ്പം</span><span id="s-rate-palappam" class="text-slate-600">6</span>
+                        <input type="number" id="s-qty-palappam" placeholder="0" oninput="calculateRowTotal('s', 'palappam')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="s-amt-palappam" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- പത്തിരി -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>പത്തിരി</span><span id="s-rate-pathiri" class="text-slate-600">4</span>
-                        <input type="number" id="s-qty-pathiri" placeholder="0" oninput="calculateRowTotal('s', 'pathiri')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">പത്തിരി</span><span id="s-rate-pathiri" class="text-slate-600">4</span>
+                        <input type="number" id="s-qty-pathiri" placeholder="0" oninput="calculateRowTotal('s', 'pathiri')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="s-amt-pathiri" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- പൊറോട്ട -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>പൊറോട്ട</span><span id="s-rate-porotta" class="text-slate-600">10</span>
-                        <input type="number" id="s-qty-porotta" placeholder="0" oninput="calculateRowTotal('s', 'porotta')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">പൊറോട്ട</span><span id="s-rate-porotta" class="text-slate-600">10</span>
+                        <input type="number" id="s-qty-porotta" placeholder="0" oninput="calculateRowTotal('s', 'porotta')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="s-amt-porotta" class="font-bold text-right">₹0</span>
                     </div>
                     <!-- ചപ്പാത്തി -->
-                    <div class="grid grid-cols-4 gap-1 items-center">
-                        <span>ചപ്പാത്തി</span><span id="s-rate-chapati" class="text-slate-600">8</span>
-                        <input type="number" id="s-qty-chapati" placeholder="0" oninput="calculateRowTotal('s', 'chapati')" class="p-1 border rounded text-center bg-white">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span class="font-semibold">ചപ്പാത്തി</span><span id="s-rate-chapati" class="text-slate-600">8</span>
+                        <input type="number" id="s-qty-chapati" placeholder="0" oninput="calculateRowTotal('s', 'chapati')" class="p-2 border rounded-lg text-center bg-white text-sm sm:text-base">
                         <span id="s-amt-chapati" class="font-bold text-right">₹0</span>
                     </div>
                 </div>
 
-                <div class="text-right font-extrabold text-sm text-blue-700 pr-2">ആകെ തുക: <span id="s-grand-total">₹0</span></div>
+                <div class="text-right font-extrabold text-sm sm:text-base text-blue-700 pr-2">ആകെ തുക: <span id="s-grand-total">₹0</span></div>
 
                 <!-- ലഭിച്ച പണവും ബാലൻസും -->
-                <div class="bg-slate-50 p-2 rounded-xl border text-xs space-y-2">
-                    <div class="flex justify-between items-center">
+                <div class="bg-slate-50 p-3 rounded-xl border text-xs sm:text-sm space-y-2">
+                    <div class="flex justify-between items-center font-semibold">
                         <span>ലഭിച്ച തുക (Received):</span>
-                        <input type="number" id="s-paid-amt" placeholder="0" oninput="calculateBalance()" class="w-24 p-1 border rounded text-center bg-white font-bold">
+                        <input type="number" id="s-paid-amt" placeholder="0" oninput="calculateBalance()" class="w-32 p-2 border rounded-lg text-center bg-white font-bold text-sm sm:text-base">
                     </div>
-                    <div class="flex justify-between items-center font-bold text-rose-600">
+                    <div class="flex justify-between items-center font-bold text-rose-600 pt-1 border-t">
                         <span>ബാക്കി ബാലൻസ് (Balance):</span>
                         <span id="s-balance-amt">₹0</span>
                     </div>
                 </div>
                 
-                <div class="flex gap-2 mt-2">
-                    <button onclick="saveTransaction('sales')" class="flex-1 bg-blue-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-blue-700 shadow">സെയിൽസ് സേവ്</button>
-                    <button onclick="sendWhatsAppOrder()" class="flex-1 bg-emerald-600 text-white p-2.5 rounded-xl font-bold text-xs hover:bg-emerald-700 shadow">വാട്സാപ്പ് ബിൽ</button>
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                    <button onclick="saveTransaction('sales')" class="bg-blue-600 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-blue-700 shadow">സെയിൽസ് സേവ്</button>
+                    <button onclick="sendWhatsAppOrder()" class="bg-emerald-600 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-emerald-700 shadow">വാട്സാപ്പ് ബിൽ</button>
                 </div>
-                <button onclick="clearForm('sales')" class="w-full bg-rose-100 text-rose-600 p-2.5 rounded-xl font-bold text-xs hover:bg-rose-200 transition">റദ്ദാക്കുക (Cancel)</button>
+                <button onclick="clearForm('sales')" class="w-full bg-rose-100 text-rose-600 p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-rose-200 transition">റദ്ദാക്കുക (Cancel)</button>
             </div>
 
             <!-- പണം ഇടപാടുകൾ (Payment Entry Page) -->
-            <div id="section-payments" class="space-y-3 hidden">
+            <div id="section-payments" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-blue-700 uppercase">പണം ഇടപാട് രേഖപ്പെടുത്തുക</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
+                    <h4 class="text-xs sm:text-sm font-extrabold text-blue-700 uppercase">പണം ഇടപാട് രേഖപ്പെടുത്തുക</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
-                <input type="date" id="pay-date" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
-                <select id="pay-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
+                <input type="date" id="pay-date" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
+                <select id="pay-store" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
                 
-                <div class="bg-slate-50 p-3 rounded-xl border space-y-2 text-xs">
+                <div class="bg-slate-50 p-4 rounded-xl border space-y-3 text-xs sm:text-sm">
                     <label class="block font-bold text-slate-700">ഇടപാടിന്റെ തരം:</label>
-                    <select id="pay-type" class="w-full p-2 border rounded-xl text-sm bg-white font-bold">
+                    <select id="pay-type" class="w-full p-2.5 border rounded-xl text-sm sm:text-base bg-white font-bold">
                         <option value="received">പണം ലഭിച്ചത് (Payment Received)</option>
                         <option value="given">പണം നൽകിയത് (Payment Given)</option>
                     </select>
 
                     <label class="block font-bold text-slate-700 mt-2">തുക (Amount):</label>
-                    <input type="number" id="pay-amount" placeholder="0" class="w-full p-2 border rounded-xl text-sm bg-white font-bold">
+                    <input type="number" id="pay-amount" placeholder="0" class="w-full p-2.5 border rounded-xl text-sm sm:text-base bg-white font-bold">
                 </div>
 
-                <div class="flex gap-2">
-                    <button onclick="savePaymentEntry()" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-blue-700 transition">ഇടപാട് സേവ്</button>
-                    <button onclick="clearForm('payments')" class="w-28 bg-rose-100 text-rose-600 p-3 rounded-xl font-bold text-xs hover:bg-rose-200 transition">റദ്ദാക്കുക</button>
+                <div class="flex gap-3">
+                    <button onclick="savePaymentEntry()" class="flex-1 bg-blue-600 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm shadow hover:bg-blue-700 transition">ഇടപാട് സേവ്</button>
+                    <button onclick="clearForm('payments')" class="w-32 bg-rose-100 text-rose-600 p-3.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-rose-200 transition">റദ്ദാക്കുക</button>
                 </div>
             </div>
 
             <!-- അക്കൗണ്ട്സ് & ബാലൻസ് പേജ് -->
-            <div id="section-accounts" class="space-y-3 hidden">
+            <div id="section-accounts" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-emerald-700 uppercase">കടകളുടെ അക്കൗണ്ട്സ് & ബാലൻസ്</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
+                    <h4 class="text-xs sm:text-sm font-extrabold text-emerald-700 uppercase">കടകളുടെ അക്കൗണ്ട്സ് & ബാലൻസ്</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
-                <div id="accounts-list-container" class="space-y-2 max-h-72 overflow-y-auto border p-2 rounded-xl bg-slate-50 text-xs">
+                <div id="accounts-list-container" class="space-y-3 max-h-80 overflow-y-auto border p-3 rounded-xl bg-slate-50 text-xs sm:text-sm">
                     <p class="text-gray-400 text-center">ലോഡ് ചെയ്യുന്നു...</p>
                 </div>
             </div>
 
             <!-- സെയിൽസ് എഡിറ്റ് ലിസ്റ്റ് പേജ് -->
-            <div id="section-edit-sales" class="space-y-3 hidden">
+            <div id="section-edit-sales" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-blue-700 uppercase">സെയിൽസ് എഡിറ്റ് ചെയ്യുക</h4>
-                    <button onclick="switchTab('sales')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
+                    <h4 class="text-xs sm:text-sm font-extrabold text-blue-700 uppercase">സെയിൽസ് എഡിറ്റ് ചെയ്യുക</h4>
+                    <button onclick="switchTab('sales')" class="text-xs sm:text-sm text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
-                <div id="edit-sales-list" class="space-y-2 max-h-64 overflow-y-auto border p-2 rounded-xl bg-slate-50 text-xs">
+                <div id="edit-sales-list" class="space-y-2.5 max-h-80 overflow-y-auto border p-3 rounded-xl bg-slate-50 text-xs sm:text-sm">
                     <p class="text-gray-400 text-center">ലോഡ് ചെയ്യുന്നു...</p>
                 </div>
             </div>
 
             <!-- പർച്ചേസ് എഡിറ്റ് ലിസ്റ്റ് പേജ് -->
-            <div id="section-edit-purchase" class="space-y-3 hidden">
+            <div id="section-edit-purchase" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-emerald-700 uppercase">പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
+                    <h4 class="text-xs sm:text-sm font-extrabold text-emerald-700 uppercase">പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
-                <div id="edit-purchase-list" class="space-y-2 max-h-64 overflow-y-auto border p-2 rounded-xl bg-slate-50 text-xs">
+                <div id="edit-purchase-list" class="space-y-2.5 max-h-80 overflow-y-auto border p-3 rounded-xl bg-slate-50 text-xs sm:text-sm">
                     <p class="text-gray-400 text-center">ലോഡ് ചെയ്യുന്നു...</p>
                 </div>
             </div>
 
             <!-- കടകൾ മാനേജ് ചെയ്യാനുള്ള പേജ് -->
-            <div id="section-stores" class="space-y-3 hidden">
+            <div id="section-stores" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">കടകളും വിലകളും മാനേജ് ചെയ്യുക</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
+                    <h4 class="text-xs sm:text-sm font-extrabold text-slate-600 uppercase">കടകളും വിലകളും മാനേജ് ചെയ്യുക</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
 
-                <div class="grid grid-cols-3 gap-1.5 text-xs font-bold">
-                    <button onclick="setStoreMode('add')" id="store-mode-add" class="py-2 bg-emerald-600 text-white rounded-xl shadow">ADD</button>
-                    <button onclick="setStoreMode('edit')" id="store-mode-edit" class="py-2 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">EDIT</button>
-                    <button onclick="setStoreMode('delete')" id="store-mode-delete" class="py-2 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">DELETE</button>
+                <div class="grid grid-cols-3 gap-2 text-xs sm:text-sm font-bold">
+                    <button onclick="setStoreMode('add')" id="store-mode-add" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow">ADD</button>
+                    <button onclick="setStoreMode('edit')" id="store-mode-edit" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">EDIT</button>
+                    <button onclick="setStoreMode('delete')" id="store-mode-delete" class="py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200">DELETE</button>
                 </div>
 
-                <div id="store-form-container" class="bg-slate-50 p-3 rounded-xl border space-y-2">
-                    <label id="store-form-label" class="block text-xs font-bold text-emerald-700">പുതിയ കട ചേർക്കുക (ADD)</label>
-                    <select id="existing-store-select" onchange="fillStoreDataForEdit()" class="w-full p-2 border rounded-xl text-sm bg-white hidden">
+                <div id="store-form-container" class="bg-slate-50 p-4 rounded-xl border space-y-3">
+                    <label id="store-form-label" class="block text-xs sm:text-sm font-bold text-emerald-700">പുതിയ കട ചേർക്കുക (ADD)</label>
+                    <select id="existing-store-select" onchange="fillStoreDataForEdit()" class="w-full p-2.5 border rounded-xl text-sm sm:text-base bg-white hidden">
                         <option value="">എഡിറ്റ് ചെയ്യാൻ കട തിരഞ്ഞെടുക്കുക</option>
                     </select>
                     <input type="hidden" id="edit-store-id" value="">
-                    <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
-                    <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2 border rounded-xl text-sm bg-white">
-                    <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-2 border rounded-xl text-sm bg-white">
-                    <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2 border rounded-xl text-sm bg-white">
+                    <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-white">
+                    <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-white">
+                    <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-white">
+                    <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-white">
                     
-                    <h5 class="text-xs font-bold text-slate-700 pt-2 border-t">ഈ കടയ്ക്കുള്ള പ്രത്യേക വിലകൾ (Rates):</h5>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>ഇടിയപ്പം: <input type="number" id="store-rate-idiyappam" value="5" class="w-full p-1 border rounded bg-white"></div>
-                        <div>വെള്ളപ്പം: <input type="number" id="store-rate-vellappam" value="6" class="w-full p-1 border rounded bg-white"></div>
-                        <div>പാലപ്പം: <input type="number" id="store-rate-palappam" value="6" class="w-full p-1 border rounded bg-white"></div>
-                        <div>പത്തിരി: <input type="number" id="store-rate-pathiri" value="4" class="w-full p-1 border rounded bg-white"></div>
-                        <div>പൊറോട്ട: <input type="number" id="store-rate-porotta" value="10" class="w-full p-1 border rounded bg-white"></div>
-                        <div>ചപ്പാത്തി: <input type="number" id="store-rate-chapati" value="8" class="w-full p-1 border rounded bg-white"></div>
+                    <h5 class="text-xs sm:text-sm font-bold text-slate-700 pt-2 border-t">ഈ കടയ്ക്കുള്ള പ്രത്യേക വിലകൾ (Rates):</h5>
+                    <div class="grid grid-cols-2 gap-3 text-xs sm:text-sm">
+                        <div>ഇടിയപ്പം: <input type="number" id="store-rate-idiyappam" value="5" class="w-full p-2 border rounded-lg bg-white text-sm sm:text-base"></div>
+                        <div>വെള്ളപ്പം: <input type="number" id="store-rate-vellappam" value="6" class="w-full p-2 border rounded-lg bg-white text-sm sm:text-base"></div>
+                        <div>പാലപ്പം: <input type="number" id="store-rate-palappam" value="6" class="w-full p-2 border rounded-lg bg-white text-sm sm:text-base"></div>
+                        <div>പത്തിരി: <input type="number" id="store-rate-pathiri" value="4" class="w-full p-2 border rounded-lg bg-white text-sm sm:text-base"></div>
+                        <div>പൊറോട്ട: <input type="number" id="store-rate-porotta" value="10" class="w-full p-2 border rounded-lg bg-white text-sm sm:text-base"></div>
+                        <div>ചപ്പാത്തി: <input type="number" id="store-rate-chapati" value="8" class="w-full p-2 border rounded-lg bg-white text-sm sm:text-base"></div>
                     </div>
                 </div>
 
-                <div id="store-delete-container" class="bg-slate-50 p-3 rounded-xl border space-y-2 hidden">
-                    <label class="block text-xs font-bold text-rose-600">ഡിലീറ്റ് ചെയ്യേണ്ട കട തിരഞ്ഞെടുക്കുക:</label>
-                    <select id="delete-store-select" class="w-full p-2 border rounded-xl text-sm bg-white">
+                <div id="store-delete-container" class="bg-slate-50 p-4 rounded-xl border space-y-3 hidden">
+                    <label class="block text-xs sm:text-sm font-bold text-rose-600">ഡിലീറ്റ് ചെയ്യേണ്ട കട തിരഞ്ഞെടുക്കുക:</label>
+                    <select id="delete-store-select" class="w-full p-2.5 border rounded-xl text-sm sm:text-base bg-white">
                         <option value="">കട തിരഞ്ഞെടുക്കുക</option>
                     </select>
-                    <button onclick="deleteStoreAction()" class="w-full bg-rose-600 text-white p-3 rounded-xl font-bold text-xs shadow hover:bg-rose-700 mt-2">തിരഞ്ഞെടുത്ത കട ഡിലീറ്റ് ചെയ്യുക</button>
+                    <button onclick="deleteStoreAction()" class="w-full bg-rose-600 text-white p-3 rounded-xl font-bold text-xs sm:text-sm shadow hover:bg-rose-700 mt-2">തിരഞ്ഞെടുത്ത കട ഡിലീറ്റ് ചെയ്യുക</button>
                 </div>
 
-                <div class="flex gap-2 mt-2">
-                    <button onclick="saveStoreAction()" id="store-action-btn" class="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow">കട സേവ് ചെയ്യുക</button>
-                    <button onclick="clearForm('stores')" class="w-28 bg-rose-100 text-rose-600 p-3 rounded-xl font-bold text-xs hover:bg-rose-200 transition">റദ്ദാക്കുക</button>
+                <div class="flex gap-3 mt-3">
+                    <button onclick="saveStoreAction()" id="store-action-btn" class="flex-1 bg-emerald-600 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm shadow">കട സേവ് ചെയ്യുക</button>
+                    <button onclick="clearForm('stores')" class="w-32 bg-rose-100 text-rose-600 p-3.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-rose-200 transition">റദ്ദാക്കുക</button>
                 </div>
             </div>
 
             <!-- റിപ്പോർട്ടുകൾ -->
-            <div id="section-reports" class="space-y-3 hidden">
+            <div id="section-reports" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-slate-600 uppercase">റിപ്പോർട്ട് & പ്രിവ്യൂ</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs text-blue-600 font-bold underline">തിരികെ</button>
+                    <h4 class="text-xs sm:text-sm font-extrabold text-slate-600 uppercase">റിപ്പോർട്ട് & പ്രിവ്യൂ</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-blue-600 font-bold underline">തിരികെ</button>
                 </div>
                 
-                <label class="block text-xs font-bold text-slate-600">റിപ്പോർട്ട് തരം:</label>
-                <select id="report-duration" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
+                <label class="block text-xs sm:text-sm font-bold text-slate-600">റിപ്പോർട്ട് തരം:</label>
+                <select id="report-duration" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
                     <option value="all">ഇതുവരെയുള്ള മൊത്തം റിപ്പോർട്ട്</option>
                     <option value="daily">ഡെയ്‌ലി റിപ്പോർട്ട് (ഇന്നത്തെ)</option>
                     <option value="weekly">വീക്ക്‌ലി റിപ്പോർട്ട് (ഈ ആഴ്ച)</option>
                     <option value="monthly">മന്ത്ലി റിപ്പോർട്ട് (ഈ മാസം)</option>
                 </select>
 
-                <label class="block text-xs font-bold text-slate-600">കട തിരഞ്ഞെടുക്കുക (ഓപ്ഷണൽ):</label>
-                <select id="report-store" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50">
+                <label class="block text-xs sm:text-sm font-bold text-slate-600">കട തിരഞ്ഞെടുക്കുക (ഓപ്ഷണൽ):</label>
+                <select id="report-store" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
                     <option value="">എല്ലാ കടകളും (All Stores)</option>
                 </select>
 
-                <div class="flex gap-2 mt-3">
-                    <button onclick="previewPDFReport()" class="flex-1 bg-slate-700 text-white p-3 rounded-xl font-bold text-xs hover:bg-slate-800 shadow">പ്രിവ്യൂ കാണുക</button>
-                    <button onclick="generatePDFReport()" class="flex-1 bg-slate-900 text-white p-3 rounded-xl font-bold text-xs hover:bg-black shadow">PDF ഡൗൺലോഡ്</button>
+                <div class="flex gap-3 mt-4">
+                    <button onclick="previewPDFReport()" class="flex-1 bg-slate-700 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-slate-800 shadow">പ്രിവ്യൂ കാണുക</button>
+                    <button onclick="generatePDFReport()" class="flex-1 bg-slate-900 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-black shadow">PDF ഡൗൺലോഡ്</button>
                 </div>
 
-                <div id="report-preview-box" class="bg-slate-50 p-3 rounded-xl border text-[11px] max-h-48 overflow-y-auto hidden space-y-1">
-                    <h5 class="font-bold text-slate-700 border-b pb-1">പ്രിവ്യൂ ഫലങ്ങൾ:</h5>
+                <div id="report-preview-box" class="bg-slate-50 p-4 rounded-xl border text-xs sm:text-sm max-h-60 overflow-y-auto hidden space-y-1.5">
+                    <h5 class="font-bold text-slate-700 border-b pb-1.5">പ്രിവ്യൂ ഫലങ്ങൾ:</h5>
                     <div id="preview-content"></div>
                 </div>
             </div>
@@ -404,11 +405,11 @@
                 const el = document.getElementById(`section-${t}`);
                 if(el) el.classList.add('hidden');
                 const tabEl = document.getElementById(`tab-${t}`);
-                if(tabEl) tabEl.className = "py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition text-xs font-bold";
+                if(tabEl) tabEl.className = "py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition text-xs sm:text-sm font-bold";
             });
             document.getElementById(`section-${tabName}`).classList.remove('hidden');
             const targetTab = document.getElementById(`tab-${tabName}`);
-            if(targetTab) targetTab.className = "py-2.5 bg-emerald-600 text-white rounded-xl shadow transition text-xs font-bold";
+            if(targetTab) targetTab.className = "py-3 bg-emerald-600 text-white rounded-xl shadow transition text-xs sm:text-sm font-bold";
 
             const mainTabs = document.getElementById('main-tabs');
             if(tabName === 'purchase' || tabName === 'sales') {
@@ -465,9 +466,9 @@
         window.setStoreMode = async (mode) => {
             ['add', 'edit', 'delete'].forEach(m => {
                 const btn = document.getElementById(`store-mode-${m}`);
-                btn.className = "py-2 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200";
+                btn.className = "py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200";
             });
-            document.getElementById(`store-mode-${mode}`).className = "py-2 bg-emerald-600 text-white rounded-xl shadow";
+            document.getElementById(`store-mode-${mode}`).className = "py-2.5 bg-emerald-600 text-white rounded-xl shadow";
 
             const formContainer = document.getElementById('store-form-container');
             const deleteContainer = document.getElementById('store-delete-container');
@@ -481,7 +482,7 @@
                 editSelect.classList.add('hidden');
                 formLabel.innerText = "പുതിയ കട ചേർക്കുക (ADD)";
                 actionBtn.innerText = "കട സേവ് ചെയ്യുക";
-                actionBtn.className = "flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs shadow";
+                actionBtn.className = "flex-1 bg-emerald-600 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm shadow";
                 document.getElementById('edit-store-id').value = '';
                 document.getElementById('store-name').value = '';
                 document.getElementById('owner-name').value = '';
@@ -496,7 +497,7 @@
                 editSelect.classList.remove('hidden');
                 formLabel.innerText = "കട എഡിറ്റ് ചെയ്യുക (EDIT)";
                 actionBtn.innerText = "മാറ്റങ്ങൾ അപ്ഡേറ്റ് ചെയ്യുക";
-                actionBtn.className = "flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold text-xs shadow";
+                actionBtn.className = "flex-1 bg-blue-600 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm shadow";
                 await loadStoresForDropdown('existing-store-select');
             } else if(mode === 'delete') {
                 formContainer.classList.add('hidden');
@@ -683,7 +684,7 @@
             const snapStores = await getDocs(qStores);
             snapStores.forEach(doc => {
                 let name = doc.data().name;
-                storeAccounts[name] = { totalSales: 0, totalPaid: 0, balance: 0 };
+                storeAccounts[name] = { totalSales: 0, totalPaid: 0, balance: 0, hasSales: false, hasPurchase: false };
             });
 
             const qSales = query(collection(db, "sales"), where("userId", "==", currentUserId));
@@ -693,6 +694,16 @@
                 if(storeAccounts[d.store]) {
                     storeAccounts[d.store].totalSales += (d.totalAmount || 0);
                     storeAccounts[d.store].totalPaid += (d.paidAmount || 0);
+                    storeAccounts[d.store].hasSales = true;
+                }
+            });
+
+            const qPurchases = query(collection(db, "purchases"), where("userId", "==", currentUserId));
+            const snapPurchases = await getDocs(qPurchases);
+            snapPurchases.forEach(doc => {
+                let d = doc.data();
+                if(storeAccounts[d.store]) {
+                    storeAccounts[d.store].hasPurchase = true;
                 }
             });
 
@@ -713,14 +724,20 @@
             for(let store in storeAccounts) {
                 let acc = storeAccounts[store];
                 acc.balance = acc.totalSales - acc.totalPaid;
+                
+                let secondLabel = "ലഭിച്ചത്";
+                if(acc.hasPurchase && !acc.hasSales) {
+                    secondLabel = "നൽകിയത്";
+                }
+
                 html += `
-                    <div class="bg-white p-2.5 border rounded-xl mb-2 shadow-sm">
-                        <div class="font-bold text-emerald-800 text-sm">${store}</div>
-                        <div class="flex justify-between text-slate-600 mt-1">
-                            <span>ആകെ സെയിൽസ്: ₹${acc.totalSales}</span>
-                            <span>ലഭിച്ചത്: ₹${acc.totalPaid}</span>
+                    <div class="bg-white p-3.5 border rounded-xl mb-3 shadow-sm">
+                        <div class="font-extrabold text-emerald-800 text-sm sm:text-base">${store}</div>
+                        <div class="flex justify-between text-slate-600 mt-1.5 text-xs sm:text-sm">
+                            <span>ആകെ തുക: ₹${acc.totalSales}</span>
+                            <span>${secondLabel}: ₹${acc.totalPaid}</span>
                         </div>
-                        <div class="flex justify-between font-bold text-rose-600 mt-1 border-t pt-1">
+                        <div class="flex justify-between font-bold text-rose-600 mt-2 border-t pt-2 text-xs sm:text-sm">
                             <span>ബാക്കി ബാലൻസ്:</span>
                             <span>₹${acc.balance}</span>
                         </div>
@@ -739,11 +756,11 @@
             snap.forEach(docSnap => {
                 const data = docSnap.data();
                 container.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-2 border rounded-lg mb-1">
+                    <div class="flex justify-between items-center bg-white p-2.5 border rounded-xl mb-2">
                         <div><b>${data.date}</b> | ${data.store} (₹${data.totalAmount})</div>
-                        <div class="flex gap-1">
-                            <button onclick="editEntry('${colName}', '${docSnap.id}', '${data.date}', '${data.store}', ${JSON.stringify(data.items).replace(/"/g, '&quot;')}, ${data.paidAmount||0})" class="bg-blue-500 text-white px-2 py-0.5 rounded text-[10px]">EDIT</button>
-                            <button onclick="deleteEntry('${colName}', '${docSnap.id}')" class="bg-rose-500 text-white px-2 py-0.5 rounded text-[10px]">DELETE</button>
+                        <div class="flex gap-1.5">
+                            <button onclick="editEntry('${colName}', '${docSnap.id}', '${data.date}', '${data.store}', ${JSON.stringify(data.items).replace(/"/g, '&quot;')}, ${data.paidAmount||0})" class="bg-blue-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold">EDIT</button>
+                            <button onclick="deleteEntry('${colName}', '${docSnap.id}')" class="bg-rose-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold">DELETE</button>
                         </div>
                     </div>`;
             });
