@@ -27,10 +27,10 @@
             </div>
         </div>
 
-        <!-- ഹാംബർഗർ മെനു ബട്ടൺ (മൊബൈലിൽ മാത്രം കാണാൻ sm:hidden) -->
+        <!-- ഹാംബർഗർ മെനു ബട്ടൺ (മൊബൈലിൽ മാത്രം കാണാൻ) -->
         <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-5 left-5 text-xl text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl shadow-sm transition hidden sm:hidden z-30" title="മെനു">☰</button>
 
-        <!-- കമ്പ്യൂട്ടറിനുള്ള ടോപ്പ് നാവിഗേഷൻ ബാർ (കമ്പ്യൂട്ടറിൽ മാത്രം കാണാൻ hidden sm:flex) -->
+        <!-- കമ്പ്യൂട്ടറിനുള്ള ടോപ്പ് നാവിഗേഷൻ ബാർ -->
         <div id="desktop-nav" class="hidden sm:flex flex-wrap gap-2 mb-6 pb-4 border-b text-xs font-bold justify-center">
             <button onclick="switchTab('purchase')" class="px-3 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl transition">പർച്ചേസ് / സെയിൽസ്</button>
             <button onclick="switchTab('stores')" class="px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl transition">🏪 കടകളും വിലകളും</button>
@@ -601,7 +601,7 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
                 
-                // കമ്പ്യൂട്ടറാണോ മൊബൈലാണോ എന്ന് നോക്കി മെനു ബട്ടൺ കാണിക്കാൻ
+                // മൊബൈലിൽ മാത്രം മെനു ബട്ടൺ കാണിക്കുക
                 if (window.innerWidth <= 640) {
                     document.getElementById('menu-btn').classList.remove('hidden');
                 } else {
@@ -883,6 +883,7 @@
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
 
+        // ഡെയ്‌ലി, വീക്ക്‌ലി, മന്ത്ലി ഫിൽട്ടറിംഗ് ശരിയാക്കിയ പ്രിവ്യൂ ഫങ്ഷൻ
         window.previewPDFReport = async () => {
             const duration = document.getElementById('report-duration').value;
             const store = document.getElementById('report-store').value;
@@ -893,15 +894,21 @@
 
             let rows = [];
             let runningBalance = 0;
-            const todayStr = new Date().toISOString().split('T')[0];
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            const currentMonth = today.toISOString().slice(0, 7); // YYYY-MM
             let allTransactions = [];
 
             const qP = query(collection(db, "purchases"), where("userId", "==", currentUserId));
             const pSnap = await getDocs(qP);
             pSnap.forEach(doc => {
                 let d = doc.data();
-                if((!store || d.store === store) && (duration === 'all' || (duration === 'daily' && d.date === todayStr))) {
-                    allTransactions.push({ ...d, transType: 'Purchase', sortDate: d.timestamp?.seconds || 0 });
+                if(!store || d.store === store) {
+                    if(duration === 'all' || 
+                       (duration === 'daily' && d.date === todayStr) || 
+                       (duration === 'monthly' && d.date.startsWith(currentMonth))) {
+                        allTransactions.push({ ...d, transType: 'Purchase', sortDate: d.timestamp?.seconds || 0 });
+                    }
                 }
             });
 
@@ -909,8 +916,12 @@
             const sSnap = await getDocs(qS);
             sSnap.forEach(doc => {
                 let d = doc.data();
-                if((!store || d.store === store) && (duration === 'all' || (duration === 'daily' && d.date === todayStr))) {
-                    allTransactions.push({ ...d, transType: 'Sales', sortDate: d.timestamp?.seconds || 0 });
+                if(!store || d.store === store) {
+                    if(duration === 'all' || 
+                       (duration === 'daily' && d.date === todayStr) || 
+                       (duration === 'monthly' && d.date.startsWith(currentMonth))) {
+                        allTransactions.push({ ...d, transType: 'Sales', sortDate: d.timestamp?.seconds || 0 });
+                    }
                 }
             });
 
@@ -918,8 +929,12 @@
             const paySnap = await getDocs(qPay);
             paySnap.forEach(doc => {
                 let d = doc.data();
-                if((!store || d.store === store) && (duration === 'all' || (duration === 'daily' && d.date === todayStr))) {
-                    allTransactions.push({ ...d, transType: d.type === 'received' ? 'Payment Received' : 'Payment Given', totalAmount: d.amount, sortDate: d.timestamp?.seconds || 0 });
+                if(!store || d.store === store) {
+                    if(duration === 'all' || 
+                       (duration === 'daily' && d.date === todayStr) || 
+                       (duration === 'monthly' && d.date.startsWith(currentMonth))) {
+                        allTransactions.push({ ...d, transType: d.type === 'received' ? 'Payment Received' : 'Payment Given', totalAmount: d.amount, sortDate: d.timestamp?.seconds || 0 });
+                    }
                 }
             });
 
@@ -941,6 +956,7 @@
             content.innerHTML = rows.length > 0 ? rows.join('') : "സൂചികയിൽ ഡാറ്റ ലഭ്യമല്ല";
         }
 
+        // ടോട്ടൽ ക്വാണ്ടിറ്റി റോ (Total Row) കൂടി ഉൾപ്പെടുത്തിയ PDF ജനറേറ്റർ
         window.generatePDFReport = async () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -953,13 +969,21 @@
             let tableRows = [];
             let runningBalance = 0;
             let allTransactions = [];
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            const currentMonth = today.toISOString().slice(0, 7);
+
+            // ടോട്ടൽ കൂട്ടാൻ വേരിയബിളുകൾ
+            let totalQty = { idiyappam: 0, vellappam: 0, palappam: 0, pathiri: 0, porotta: 0, chapati: 0, amount: 0 };
 
             const qP = query(collection(db, "purchases"), where("userId", "==", currentUserId));
             const pSnap = await getDocs(qP);
             pSnap.forEach(docSnap => {
                 let data = docSnap.data();
-                if((!store || data.store === store) && (duration === 'all' || (duration === 'daily' || data.date === new Date().toISOString().split('T')[0]))) {
-                    allTransactions.push({ ...data, transType: 'Purchase', sortDate: data.timestamp?.seconds || 0 });
+                if(!store || data.store === store) {
+                    if(duration === 'all' || (duration === 'daily' && data.date === todayStr) || (duration === 'monthly' && data.date.startsWith(currentMonth))) {
+                        allTransactions.push({ ...data, transType: 'Purchase', sortDate: data.timestamp?.seconds || 0 });
+                    }
                 }
             });
 
@@ -967,8 +991,10 @@
             const sSnap = await getDocs(qS);
             sSnap.forEach(docSnap => {
                 let data = docSnap.data();
-                if((!store || data.store === store) && (duration === 'all' || (duration === 'daily' || data.date === new Date().toISOString().split('T')[0]))) {
-                    allTransactions.push({ ...data, transType: 'Sales', sortDate: data.timestamp?.seconds || 0 });
+                if(!store || data.store === store) {
+                    if(duration === 'all' || (duration === 'daily' && data.date === todayStr) || (duration === 'monthly' && data.date.startsWith(currentMonth))) {
+                        allTransactions.push({ ...data, transType: 'Sales', sortDate: data.timestamp?.seconds || 0 });
+                    }
                 }
             });
 
@@ -976,8 +1002,10 @@
             const paySnap = await getDocs(qPay);
             paySnap.forEach(docSnap => {
                 let data = docSnap.data();
-                if((!store || data.store === store) && (duration === 'all' || (duration === 'daily' || data.date === new Date().toISOString().split('T')[0]))) {
-                    allTransactions.push({ ...data, transType: data.type === 'received' ? 'Payment Received' : 'Payment Given', totalAmount: data.amount, sortDate: data.timestamp?.seconds || 0 });
+                if(!store || data.store === store) {
+                    if(duration === 'all' || (duration === 'daily' && data.date === todayStr) || (duration === 'monthly' && data.date.startsWith(currentMonth))) {
+                        allTransactions.push({ ...data, transType: data.type === 'received' ? 'Payment Received' : 'Payment Given', totalAmount: data.amount, sortDate: data.timestamp?.seconds || 0 });
+                    }
                 }
             });
 
@@ -995,6 +1023,14 @@
                 }
 
                 let itm = data.items || {};
+                totalQty.idiyappam += Number(itm.idiyappam || 0);
+                totalQty.vellappam += Number(itm.vellappam || 0);
+                totalQty.palappam += Number(itm.palappam || 0);
+                totalQty.pathiri += Number(itm.pathiri || 0);
+                totalQty.porotta += Number(itm.porotta || 0);
+                totalQty.chapati += Number(itm.chapati || 0);
+                totalQty.amount += Number(data.totalAmount || 0);
+
                 tableRows.push([
                     data.date, 
                     data.store, 
@@ -1010,10 +1046,25 @@
                 ]);
             });
 
+            // ആകെ തുക കാണിക്കുന്ന ടോട്ടൽ റോ (Total Row) ചേർക്കുന്നു
+            tableRows.push([
+                'TOTAL', '-', '-', 
+                totalQty.idiyappam, 
+                totalQty.vellappam, 
+                totalQty.palappam, 
+                totalQty.pathiri, 
+                totalQty.porotta, 
+                totalQty.chapati, 
+                `Rs.${totalQty.amount}`, 
+                `Rs.${runningBalance}`
+            ]);
+
             doc.autoTable({ 
                 startY: 36, 
                 head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Palappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount', 'Balance']], 
-                body: tableRows 
+                body: tableRows,
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [16, 185, 129] }
             });
 
             let finalY = doc.lastAutoTable.finalY + 10;
