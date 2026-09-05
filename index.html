@@ -34,6 +34,7 @@
         <div id="desktop-nav" class="hidden sm:flex flex-wrap gap-2 mb-6 pb-4 border-b text-xs font-bold justify-center">
             <button onclick="switchTab('purchase')" class="px-3 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl transition">പർച്ചേസ് / സെയിൽസ്</button>
             <button onclick="switchTab('stores')" class="px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl transition">🏪 കടകളും വിലകളും</button>
+            <button onclick="switchTab('store-list')" class="px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl transition text-emerald-700">📋 കടകളുടെ ലിസ്റ്റ്</button>
             <button onclick="switchTab('payments')" class="px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl transition text-blue-700">💵 പണം ഇടപാടുകൾ</button>
             <button onclick="switchTab('accounts')" class="px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl transition text-emerald-700">💰 അക്കൗണ്ട്സ്</button>
             <button onclick="switchTab('edit-sales')" class="px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl transition text-blue-700">✏️ സെയിൽസ് എഡിറ്റ്</button>
@@ -51,6 +52,7 @@
                 </div>
                 <div class="space-y-2.5 font-bold text-xs">
                     <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition flex items-center gap-2">🏪 കടകളും വിലകളും മാനേജ് ചെയ്യുക</button>
+                    <button onclick="switchTab('store-list'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition text-emerald-700 flex items-center gap-2">📋 കടകളുടെ ലിസ്റ്റ് (Store List)</button>
                     <button onclick="switchTab('payments'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition text-blue-700 flex items-center gap-2">💵 പണം ഇടപാടുകൾ (Payment Entry)</button>
                     <button onclick="switchTab('accounts'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-emerald-50 rounded-xl transition text-emerald-700 flex items-center gap-2">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
                     <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-3 bg-slate-50 hover:bg-blue-50 rounded-xl transition text-blue-700 flex items-center gap-2">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
@@ -223,6 +225,17 @@
                 <button onclick="clearForm('sales')" class="w-full bg-rose-100 text-rose-600 p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-rose-200 transition">റദ്ദാക്കുക (Cancel)</button>
             </div>
 
+            <!-- കടകളുടെ ലിസ്റ്റ് പേജ് (Store List) -->
+            <div id="section-store-list" class="space-y-4 hidden">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-xs sm:text-sm font-extrabold text-emerald-700 uppercase">കടകളുടെ ലിസ്റ്റ് (Store List)</h4>
+                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-blue-600 font-bold underline">തിരികെ</button>
+                </div>
+                <div id="store-list-container" class="space-y-3 max-h-80 overflow-y-auto border p-3 rounded-xl bg-slate-50 text-xs sm:text-sm">
+                    <p class="text-gray-400 text-center">ലോഡ് ചെയ്യുന്നു...</p>
+                </div>
+            </div>
+
             <!-- പണം ഇടപാടുകൾ (Payment Entry Page) -->
             <div id="section-payments" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
@@ -305,6 +318,7 @@
                     <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-white">
                     <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-white">
                     <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-white">
+                    <input type="number" id="store-opening-balance" placeholder="തുടക്കത്തിലെ ബാലൻസ് (Opening Balance)" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-white font-bold text-emerald-700">
                     
                     <h5 class="text-xs sm:text-sm font-bold text-slate-700 pt-2 border-t">ഈ കടയ്ക്കുള്ള പ്രത്യേക വിലകൾ (Rates):</h5>
                     <div class="grid grid-cols-2 gap-3 text-xs sm:text-sm">
@@ -413,7 +427,7 @@
         }
 
         window.switchTab = (tabName) => {
-            ['purchase', 'sales', 'stores', 'reports', 'edit-sales', 'edit-purchase', 'accounts', 'payments'].forEach(t => {
+            ['purchase', 'sales', 'stores', 'store-list', 'reports', 'edit-sales', 'edit-purchase', 'accounts', 'payments'].forEach(t => {
                 const el = document.getElementById(`section-${t}`);
                 if(el) el.classList.add('hidden');
                 const tabEl = document.getElementById(`tab-${t}`);
@@ -431,6 +445,7 @@
             } else {
                 mainTabs.classList.add('hidden');
                 if(tabName === 'stores') { setStoreMode('add'); loadStoresDropdown(); }
+                if(tabName === 'store-list') loadStoreList();
                 if(tabName === 'reports') loadStoresDropdown();
                 if(tabName === 'accounts') loadAccountsSummary();
                 if(tabName === 'payments') loadStoresDropdown();
@@ -470,6 +485,7 @@
                 document.getElementById('owner-name').value = '';
                 document.getElementById('store-place').value = '';
                 document.getElementById('store-phone').value = '';
+                document.getElementById('store-opening-balance').value = '';
             }
             setDefaultDate();
             showAlert("റദ്ദാക്കി", "ഫീൽഡുകൾ ക്ലിയർ ചെയ്തിരിക്കുന്നു.", true);
@@ -500,6 +516,7 @@
                 document.getElementById('owner-name').value = '';
                 document.getElementById('store-place').value = '';
                 document.getElementById('store-phone').value = '';
+                document.getElementById('store-opening-balance').value = '';
                 ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(i => {
                     document.getElementById(`store-rate-${i}`).value = defaultRates[i];
                 });
@@ -540,6 +557,7 @@
             document.getElementById('owner-name').value = data.owner || '';
             document.getElementById('store-place').value = data.place || '';
             document.getElementById('store-phone').value = data.phone || '';
+            document.getElementById('store-opening-balance').value = data.openingBalance || '';
             let rates = data.rates || defaultRates;
             ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(i => {
                 document.getElementById(`store-rate-${i}`).value = rates[i] || defaultRates[i];
@@ -552,6 +570,7 @@
             const owner = document.getElementById('owner-name').value;
             const place = document.getElementById('store-place').value;
             const phone = document.getElementById('store-phone').value;
+            const openingBalance = Number(document.getElementById('store-opening-balance').value) || 0;
             if(!name || !phone) return showAlert("ശ്രദ്ധിക്കുക", "പേരും ഫോൺ നമ്പറും നൽകുക!", false);
 
             let rates = {};
@@ -560,10 +579,10 @@
             });
 
             if(storeId) {
-                await updateDoc(doc(db, "stores", storeId), { name, owner, place, phone, rates, userId: currentUserId });
+                await updateDoc(doc(db, "stores", storeId), { name, owner, place, phone, openingBalance, rates, userId: currentUserId });
                 showAlert("വിജയം", "കട വിജയകരമായി എഡിറ്റ് ചെയ്ത് അപ്ഡേറ്റ് ചെയ്തു!");
             } else {
-                await addDoc(collection(db, "stores"), { name, owner, place, phone, rates, userId: currentUserId });
+                await addDoc(collection(db, "stores"), { name, owner, place, phone, openingBalance, rates, userId: currentUserId });
                 showAlert("വിജയം", "പുതിയ കട ADD ചെയ്തു!");
             }
             clearForm('stores');
@@ -591,6 +610,27 @@
             }
         }
 
+        // കടകളുടെ ലിസ്റ്റ് ലോഡ് ചെയ്യുന്ന ഫങ്ഷൻ
+        async function loadStoreList() {
+            const container = document.getElementById('store-list-container');
+            container.innerHTML = "ലോഡ് ചെയ്യുന്നു...";
+            const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
+            const snap = await getDocs(q);
+            if(snap.empty) return container.innerHTML = '<p class="text-gray-400 text-center">കടകൾ ലഭ്യമല്ല</p>';
+
+            let html = "";
+            snap.forEach(docSnap => {
+                let d = docSnap.data();
+                html += `
+                    <div class="bg-white p-3.5 border rounded-xl mb-3 shadow-sm">
+                        <div class="font-extrabold text-emerald-800 text-sm sm:text-base">${d.name} (${d.place || 'വിലാസമില്ല'})</div>
+                        <div class="text-xs sm:text-sm text-slate-600 mt-1">ഓണർ: ${d.owner || '-'} | ഫോൺ: ${d.phone || '-'}</div>
+                        <div class="text-xs sm:text-sm text-emerald-700 font-bold mt-1">തുടക്ക ബാലൻസ് (Opening Balance): ₹${d.openingBalance || 0}</div>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
         window.loginUser = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).catch(err => showAlert("പരാജയം", err.message, false));
         window.registerUser = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).then(() => showAlert("വിജയം", "അക്കൗണ്ട് ക്രിയേറ്റ് ചെയ്തു!")).catch(err => showAlert("പരാജയം", err.message, false));
         window.confirmLogout = () => { if(confirm("ലോഗ് ഔട്ട് ചെയ്യണോ?")) signOut(auth); }
@@ -601,7 +641,6 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
                 
-                // മൊബൈലിൽ മാത്രം മെനു ബട്ടൺ കാണിക്കുക
                 if (window.innerWidth <= 640) {
                     document.getElementById('menu-btn').classList.remove('hidden');
                 } else {
@@ -676,7 +715,7 @@
             let grandTotal = Number(document.getElementById('s-grand-total').innerText.replace('₹','')) || 0;
             let paid = Number(document.getElementById('s-paid-amt').value) || 0;
             let balance = grandTotal - paid;
-            document.getElementById('s-balance-amt').innerText = `₹${balance}`;
+            document.getElementById('s-balance-amt`).innerText = `₹${balance}`;
         }
 
         window.savePaymentEntry = async () => {
@@ -703,8 +742,8 @@
             const qStores = query(collection(db, "stores"), where("userId", "==", currentUserId));
             const snapStores = await getDocs(qStores);
             snapStores.forEach(doc => {
-                let name = doc.data().name;
-                storeAccounts[name] = { totalSales: 0, totalPaid: 0, balance: 0, hasSales: false, hasPurchase: false };
+                let d = doc.data();
+                storeAccounts[d.name] = { totalSales: 0, totalPaid: 0, openingBalance: Number(d.openingBalance || 0), balance: 0, hasSales: false, hasPurchase: false };
             });
 
             const qSales = query(collection(db, "sales"), where("userId", "==", currentUserId));
@@ -743,7 +782,7 @@
             let html = "";
             for(let store in storeAccounts) {
                 let acc = storeAccounts[store];
-                acc.balance = acc.totalSales - acc.totalPaid;
+                acc.balance = acc.openingBalance + acc.totalSales - acc.totalPaid;
                 
                 let secondLabel = "ലഭിച്ചത്";
                 if(acc.hasPurchase && !acc.hasSales) {
@@ -753,8 +792,11 @@
                 html += `
                     <div class="bg-white p-3.5 border rounded-xl mb-3 shadow-sm">
                         <div class="font-extrabold text-emerald-800 text-sm sm:text-base">${store}</div>
-                        <div class="flex justify-between text-slate-600 mt-1.5 text-xs sm:text-sm">
+                        <div class="flex justify-between text-slate-600 mt-1 text-xs sm:text-sm">
+                            <span>തുടക്ക ബാലൻസ്: ₹${acc.openingBalance}</span>
                             <span>ആകെ തുക: ₹${acc.totalSales}</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600 mt-1 text-xs sm:text-sm">
                             <span>${secondLabel}: ₹${acc.totalPaid}</span>
                         </div>
                         <div class="flex justify-between font-bold text-rose-600 mt-2 border-t pt-2 text-xs sm:text-sm">
@@ -883,7 +925,6 @@
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
 
-        // ഡെയ്‌ലി, വീക്ക്‌ലി, മന്ത്ലി ഫിൽട്ടറിംഗ് ശരിയാക്കിയ പ്രിവ്യൂ ഫങ്ഷൻ
         window.previewPDFReport = async () => {
             const duration = document.getElementById('report-duration').value;
             const store = document.getElementById('report-store').value;
@@ -896,8 +937,17 @@
             let runningBalance = 0;
             const today = new Date();
             const todayStr = today.toISOString().split('T')[0];
-            const currentMonth = today.toISOString().slice(0, 7); // YYYY-MM
+            const currentMonth = today.toISOString().slice(0, 7);
             let allTransactions = [];
+
+            // ഓപ്പണിംഗ് ബാലൻസ് കൂടി കണക്കിൽ കൂട്ടുന്നു
+            if(store) {
+                const qStore = query(collection(db, "stores"), where("userId", "==", currentUserId), where("name", "==", store));
+                const snapStore = await getDocs(qStore);
+                snapStore.forEach(doc => {
+                    runningBalance += Number(doc.data().openingBalance || 0);
+                });
+            }
 
             const qP = query(collection(db, "purchases"), where("userId", "==", currentUserId));
             const pSnap = await getDocs(qP);
@@ -956,7 +1006,6 @@
             content.innerHTML = rows.length > 0 ? rows.join('') : "സൂചികയിൽ ഡാറ്റ ലഭ്യമല്ല";
         }
 
-        // ടോട്ടൽ ക്വാണ്ടിറ്റി റോ (Total Row) കൂടി ഉൾപ്പെടുത്തിയ PDF ജനറേറ്റർ
         window.generatePDFReport = async () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -973,8 +1022,15 @@
             const todayStr = today.toISOString().split('T')[0];
             const currentMonth = today.toISOString().slice(0, 7);
 
-            // ടോട്ടൽ കൂട്ടാൻ വേരിയബിളുകൾ
             let totalQty = { idiyappam: 0, vellappam: 0, palappam: 0, pathiri: 0, porotta: 0, chapati: 0, amount: 0 };
+
+            if(store) {
+                const qStore = query(collection(db, "stores"), where("userId", "==", currentUserId), where("name", "==", store));
+                const snapStore = await getDocs(qStore);
+                snapStore.forEach(doc => {
+                    runningBalance += Number(doc.data().openingBalance || 0);
+                });
+            }
 
             const qP = query(collection(db, "purchases"), where("userId", "==", currentUserId));
             const pSnap = await getDocs(qP);
@@ -1046,7 +1102,6 @@
                 ]);
             });
 
-            // ആകെ തുക കാണിക്കുന്ന ടോട്ടൽ റോ (Total Row) ചേർക്കുന്നു
             tableRows.push([
                 'TOTAL', '-', '-', 
                 totalQty.idiyappam, 
