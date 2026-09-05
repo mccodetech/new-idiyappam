@@ -15,7 +15,7 @@
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-emerald-50 min-h-screen text-slate-800 p-2 sm:p-6 pb-20 flex items-center justify-center">
 
-    <div class="w-full max-w-4xl mx-auto bg-white p-5 sm:p-8 rounded-2xl shadow-xl border border-slate-100 relative">
+    <div class="w-full max-w-5xl mx-auto bg-white p-5 sm:p-8 rounded-2xl shadow-xl border border-slate-100 relative">
         
         <!-- കസ്റ്റം അലേർട്ട് മോഡൽ -->
         <div id="custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
@@ -27,10 +27,10 @@
             </div>
         </div>
 
-        <!-- ഹാംബർഗർ മെനു ബട്ടൺ (മൊബൈലിൽ ലോഗിൻ ചെയ്ത ശേഷം മാത്രം കാണാൻ) -->
+        <!-- ഹാംബർഗർ മെനു ബട്ടൺ -->
         <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-5 left-5 text-xl text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl shadow-sm transition hidden sm:hidden z-30" title="മെനു">☰</button>
 
-        <!-- കമ്പ്യൂട്ടറിനുള്ള ടോപ്പ് നാവിഗേഷൻ ബാർ (ലോഗിൻ ചെയ്ത ശേഷം മാത്രം കാണാൻ hidden) -->
+        <!-- കമ്പ്യൂട്ടറിനുള്ള ടോപ്പ് നാവിഗേഷൻ ബാർ -->
         <div id="desktop-nav" class="hidden flex-wrap gap-2 mb-6 pb-4 border-b text-xs font-bold justify-center">
             <button onclick="switchTab('purchase')" class="px-3 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl transition">പർച്ചേസ് / സെയിൽസ്</button>
             <button onclick="switchTab('stores')" class="px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl transition">🏪 കടകളും വിലകളും</button>
@@ -43,7 +43,7 @@
             <button onclick="confirmLogout()" class="px-3 py-2 bg-rose-100 text-rose-600 hover:bg-rose-200 rounded-xl transition">ലോഗ് ഔട്ട്</button>
         </div>
 
-        <!-- സൈഡ് ബാർ മെനു (മൊബൈലിൽ മാത്രം) -->
+        <!-- സൈഡ് ബാർ മെനു -->
         <div id="sidebar" class="absolute inset-y-0 left-0 w-72 bg-white shadow-2xl z-50 p-6 transform -translate-x-full transition-transform duration-300 rounded-r-2xl border-r flex flex-col justify-between hidden">
             <div>
                 <div class="flex justify-between items-center mb-6 border-b pb-3">
@@ -353,12 +353,23 @@
                 </div>
                 
                 <label class="block text-xs sm:text-sm font-bold text-slate-600">റിപ്പോർട്ട് തരം:</label>
-                <select id="report-duration" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
+                <select id="report-duration" onchange="toggleReportInputs()" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
                     <option value="all">ഇതുവരെയുള്ള മൊത്തം റിപ്പോർട്ട്</option>
-                    <option value="daily">ഡെയ്‌ലി റിപ്പോർട്ട് (ഇന്നത്തെ)</option>
-                    <option value="weekly">വീക്ക്‌ലി റിപ്പോർട്ട് (ഈ ആഴ്ച)</option>
-                    <option value="monthly">മന്ത്ലി റിപ്പോർട്ട് (ഈ മാസം)</option>
+                    <option value="daily">ഡെയ്‌ലി റിപ്പോർട്ട് (പ്രത്യേക തീയതി)</option>
+                    <option value="monthly">മന്ത്ലി റിപ്പോർട്ട് (പ്രത്യേക മാസം)</option>
                 </select>
+
+                <!-- ഡെയ്‌ലി റിപ്പോർട്ടിന് തീയതി തിരഞ്ഞെടുക്കാൻ -->
+                <div id="daily-input-container" class="hidden space-y-1">
+                    തീയതി തിരഞ്ഞെടുക്കുക:
+                    <input type="date" id="report-date-input" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
+                </div>
+
+                <!-- മന്ത്ലി റിപ്പോർട്ടിന് മാസം തിരഞ്ഞെടുക്കാൻ -->
+                <div id="monthly-input-container" class="hidden space-y-1">
+                    മാസം തിരഞ്ഞെടുക്കുക:
+                    <input type="month" id="report-month-input" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
+                </div>
 
                 <label class="block text-xs sm:text-sm font-bold text-slate-600">കട തിരഞ്ഞെടുക്കുക (ഓപ്ഷണൽ):</label>
                 <select id="report-store" class="w-full p-3 border rounded-xl text-sm sm:text-base bg-slate-50">
@@ -370,9 +381,10 @@
                     <button onclick="generatePDFReport()" class="flex-1 bg-slate-900 text-white p-3.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-black shadow">PDF ഡൗൺലോഡ്</button>
                 </div>
 
-                <div id="report-preview-box" class="bg-slate-50 p-4 rounded-xl border text-xs sm:text-sm max-h-60 overflow-y-auto hidden space-y-1.5">
+                <!-- പ്രിവ്യൂ ടേബിൾ ബോക്സ് -->
+                <div id="report-preview-box" class="bg-slate-50 p-4 rounded-xl border text-xs sm:text-sm max-h-72 overflow-y-auto hidden space-y-2">
                     <h5 class="font-bold text-slate-700 border-b pb-1.5">പ്രിവ്യൂ ഫലങ്ങൾ:</h5>
-                    <div id="preview-content"></div>
+                    <div id="preview-content" class="overflow-x-auto"></div>
                 </div>
             </div>
 
@@ -405,10 +417,13 @@
 
         function setDefaultDate() {
             const today = new Date().toISOString().split('T')[0];
-            ['p-date', 's-date', 'pay-date'].forEach(id => {
+            const currentMonth = today.slice(0, 7);
+            ['p-date', 's-date', 'pay-date', 'report-date-input'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el && !el.value) el.value = today;
             });
+            const monthEl = document.getElementById('report-month-input');
+            if(monthEl && !monthEl.value) monthEl.value = currentMonth;
         }
 
         window.showAlert = (title, msg, isSuccess = true) => {
@@ -446,12 +461,22 @@
                 mainTabs.classList.add('hidden');
                 if(tabName === 'stores') { setStoreMode('add'); loadStoresDropdown(); }
                 if(tabName === 'store-list') loadStoreList();
-                if(tabName === 'reports') loadStoresDropdown();
+                if(tabName === 'reports') { loadStoresDropdown(); toggleReportInputs(); }
                 if(tabName === 'accounts') loadAccountsSummary();
                 if(tabName === 'payments') loadStoresDropdown();
                 if(tabName === 'edit-sales') loadEditList('sales');
                 if(tabName === 'edit-purchase') loadEditList('purchases');
             }
+        }
+
+        window.toggleReportInputs = () => {
+            const duration = document.getElementById('report-duration').value;
+            const dailyBox = document.getElementById('daily-input-container');
+            const monthlyBox = document.getElementById('monthly-input-container');
+            dailyBox.classList.add('hidden');
+            monthlyBox.classList.add('hidden');
+            if(duration === 'daily') dailyBox.classList.remove('hidden');
+            if(duration === 'monthly') monthlyBox.classList.remove('hidden');
         }
 
         window.clearForm = (type) => {
@@ -548,7 +573,6 @@
             });
         }
 
-        // കടകളുടെ ലിസ്റ്റ് ലോഡ് ചെയ്യുന്ന ഫങ്ഷൻ
         async function loadStoreList() {
             const container = document.getElementById('store-list-container');
             container.innerHTML = "ലോഡ് ചെയ്യുന്നു...";
@@ -644,7 +668,6 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
                 
-                // കമ്പ്യൂട്ടറാണോ മൊബൈലാണോ എന്ന് നോക്കി മെനു സെക്ഷൻ മാറ്റുക
                 if (window.innerWidth <= 640) {
                     document.getElementById('menu-btn').classList.remove('hidden');
                     document.getElementById('desktop-nav').classList.add('hidden');
@@ -939,19 +962,18 @@
             window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
         }
 
+        // ശരിയായ തീയതി/മാസ ഫിൽട്ടറിംഗ് ഉള്ള പ്രിവ്യൂ ഫങ്ഷൻ
         window.previewPDFReport = async () => {
             const duration = document.getElementById('report-duration').value;
+            const selectedDate = document.getElementById('report-date-input').value;
+            const selectedMonth = document.getElementById('report-month-input').value;
             const store = document.getElementById('report-store').value;
             const box = document.getElementById('report-preview-box');
             const content = document.getElementById('preview-content');
             box.classList.remove('hidden');
             content.innerHTML = "ലോഡ് ചെയ്യുന്നു...";
 
-            let rows = [];
             let runningBalance = 0;
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
-            const currentMonth = today.toISOString().slice(0, 7);
             let allTransactions = [];
 
             if(store && storesDataCache) {
@@ -967,7 +989,9 @@
             pSnap.forEach(doc => {
                 let d = doc.data();
                 if(!store || d.store === store) {
-                    if(duration === 'all' || (duration === 'daily' && d.date === todayStr) || (duration === 'monthly' && d.date.startsWith(currentMonth))) {
+                    if(duration === 'all' || 
+                       (duration === 'daily' && d.date === selectedDate) || 
+                       (duration === 'monthly' && d.date.startsWith(selectedMonth))) {
                         allTransactions.push({ ...d, transType: 'Purchase', sortDate: d.timestamp?.seconds || 0 });
                     }
                 }
@@ -978,7 +1002,9 @@
             sSnap.forEach(doc => {
                 let d = doc.data();
                 if(!store || d.store === store) {
-                    if(duration === 'all' || (duration === 'daily' && d.date === todayStr) || (duration === 'monthly' && d.date.startsWith(currentMonth))) {
+                    if(duration === 'all' || 
+                       (duration === 'daily' && d.date === selectedDate) || 
+                       (duration === 'monthly' && d.date.startsWith(selectedMonth))) {
                         allTransactions.push({ ...d, transType: 'Sales', sortDate: d.timestamp?.seconds || 0 });
                     }
                 }
@@ -989,13 +1015,29 @@
             paySnap.forEach(doc => {
                 let d = doc.data();
                 if(!store || d.store === store) {
-                    if(duration === 'all' || (duration === 'daily' && d.date === todayStr) || (duration === 'monthly' && d.date.startsWith(currentMonth))) {
+                    if(duration === 'all' || 
+                       (duration === 'daily' && d.date === selectedDate) || 
+                       (duration === 'monthly' && d.date.startsWith(selectedMonth))) {
                         allTransactions.push({ ...d, transType: d.type === 'received' ? 'Payment Received' : 'Payment Given', totalAmount: d.amount, sortDate: d.timestamp?.seconds || 0 });
                     }
                 }
             });
 
             allTransactions.sort((a, b) => a.sortDate - b.sortDate);
+
+            // മനോഹരമായ ടേബിൾ രൂപത്തിൽ പ്രിവ്യൂ കാണിക്കുന്നു
+            let tableHtml = `
+                <table class="w-full text-left border-collapse text-[11px]">
+                    <thead>
+                        <tr class="bg-emerald-600 text-white">
+                            <th class="p-1.5 border">തീയതി</th>
+                            <th class="p-1.5 border">കട</th>
+                            <th class="p-1.5 border">തരം</th>
+                            <th class="p-1.5 border text-right">തുക</th>
+                            <th class="p-1.5 border text-right">ബാലൻസ്</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
             allTransactions.forEach(d => {
                 if(d.transType === 'Sales') {
@@ -1007,16 +1049,27 @@
                 } else {
                     runningBalance -= (d.totalAmount || 0);
                 }
-                rows.push(`<div>📅 ${d.date} | ${d.store} | ${d.transType} | Amt: ₹${d.totalAmount} | <b>Balance: ₹${runningBalance}</b></div>`);
+                tableHtml += `
+                    <tr class="border-b hover:bg-slate-100">
+                        <td class="p-1.5 border">${d.date}</td>
+                        <td class="p-1.5 border">${d.store}</td>
+                        <td class="p-1.5 border">${d.transType}</td>
+                        <td class="p-1.5 border text-right">₹${d.totalAmount}</td>
+                        <td class="p-1.5 border text-right font-bold text-rose-600">₹${runningBalance}</td>
+                    </tr>`;
             });
 
-            content.innerHTML = rows.length > 0 ? rows.join('') : "സൂചികയിൽ ഡാറ്റ ലഭ്യമല്ല";
+            tableHtml += `</tbody></table>`;
+            content.innerHTML = allTransactions.length > 0 ? tableHtml : "<p class='text-gray-400 text-center'>സൂചികയിൽ ഡാറ്റ ലഭ്യമല്ല</p>";
         }
 
+        // PDF ജനറേറ്റർ (ഫിൽട്ടർ അനുസരിച്ച്)
         window.generatePDFReport = async () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const duration = document.getElementById('report-duration').value;
+            const selectedDate = document.getElementById('report-date-input').value;
+            const selectedMonth = document.getElementById('report-month-input').value;
             const store = document.getElementById('report-store').value;
 
             doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
@@ -1025,9 +1078,6 @@
             let tableRows = [];
             let runningBalance = 0;
             let allTransactions = [];
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
-            const currentMonth = today.toISOString().slice(0, 7);
 
             if(store && storesDataCache) {
                 for(let id in storesDataCache) {
@@ -1044,7 +1094,7 @@
             pSnap.forEach(docSnap => {
                 let data = docSnap.data();
                 if(!store || data.store === store) {
-                    if(duration === 'all' || (duration === 'daily' && data.date === todayStr) || (duration === 'monthly' && data.date.startsWith(currentMonth))) {
+                    if(duration === 'all' || (duration === 'daily' && data.date === selectedDate) || (duration === 'monthly' && data.date.startsWith(selectedMonth))) {
                         allTransactions.push({ ...data, transType: 'Purchase', sortDate: data.timestamp?.seconds || 0 });
                     }
                 }
@@ -1055,7 +1105,7 @@
             sSnap.forEach(docSnap => {
                 let data = docSnap.data();
                 if(!store || data.store === store) {
-                    if(duration === 'all' || (duration === 'daily' && data.date === todayStr) || (duration === 'monthly' && data.date.startsWith(currentMonth))) {
+                    if(duration === 'all' || (duration === 'daily' && data.date === selectedDate) || (duration === 'monthly' && data.date.startsWith(selectedMonth))) {
                         allTransactions.push({ ...data, transType: 'Sales', sortDate: data.timestamp?.seconds || 0 });
                     }
                 }
@@ -1066,7 +1116,7 @@
             paySnap.forEach(docSnap => {
                 let data = docSnap.data();
                 if(!store || data.store === store) {
-                    if(duration === 'all' || (duration === 'daily' && data.date === todayStr) || (duration === 'monthly' && data.date.startsWith(currentMonth))) {
+                    if(duration === 'all' || (duration === 'daily' && data.date === selectedDate) || (duration === 'monthly' && data.date.startsWith(selectedMonth))) {
                         allTransactions.push({ ...data, transType: data.type === 'received' ? 'Payment Received' : 'Payment Given', totalAmount: data.amount, sortDate: data.timestamp?.seconds || 0 });
                     }
                 }
