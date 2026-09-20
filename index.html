@@ -767,83 +767,84 @@
         }
 
         async function loadAccountsSummary() {
-            const container = document.getElementById('accounts-list-container');
-            container.innerHTML = "ലോഡ് ചെയ്യുന്നു...";
-            let storeAccounts = {};
+    const container = document.getElementById('accounts-list-container');
+    container.innerHTML = "ലോഡ് ചെയ്യുന്നു...";
+    let storeAccounts = {};
 
-            const qStores = query(collection(db, "stores"), where("userId", "==", currentUserId));
-            const snapStores = await getDocs(qStores);
-            snapStores.forEach(doc => {
-                let data = doc.data();
-                storeAccounts[data.name] = { 
-                    totalSales: 0, 
-                    totalPaid: 0, 
-                    balance: 0, 
-                    openingBalance: Number(data.openingBalance || 0), 
-                    hasSales: false, 
-                    hasPurchase: false 
-                };
-            });
+    const qStores = query(collection(db, "stores"), where("userId", "==", currentUserId));
+    const snapStores = await getDocs(qStores);
+    snapStores.forEach(doc => {
+        let data = doc.data();
+        storeAccounts[data.name] = { 
+            totalSales: 0, 
+            totalGiven: 0, 
+            totalReceived: 0,
+            totalPurchase: 0,
+            balance: 0, 
+            openingBalance: Number(data.openingBalance || 0)
+        };
+    });
 
-            const qSales = query(collection(db, "sales"), where("userId", "==", currentUserId));
-            const snapSales = await getDocs(qSales);
-            snapSales.forEach(doc => {
-                let d = doc.data();
-                if(storeAccounts[d.store]) {
-                    storeAccounts[d.store].totalSales += (d.totalAmount || 0);
-                    storeAccounts[d.store].totalPaid += (d.paidAmount || 0);
-                    storeAccounts[d.store].hasSales = true;
-                }
-            });
-
-            const qPurchases = query(collection(db, "purchases"), where("userId", "==", currentUserId));
-            const snapPurchases = await getDocs(qPurchases);
-            snapPurchases.forEach(doc => {
-                let d = doc.data();
-                if(storeAccounts[d.store]) {
-                    storeAccounts[d.store].hasPurchase = true;
-                }
-            });
-
-            const qPayments = query(collection(db, "payments"), where("userId", "==", currentUserId));
-            const snapPayments = await getDocs(qPayments);
-            snapPayments.forEach(doc => {
-                let d = doc.data();
-                if(storeAccounts[d.store]) {
-                    if(d.type === 'received') {
-                        storeAccounts[d.store].totalPaid += (d.amount || 0);
-                    } else if(d.type === 'given') {
-                        storeAccounts[d.store].totalSales += (d.amount || 0);
-                    }
-                }
-            });
-
-            let html = "";
-            for(let store in storeAccounts) {
-                let acc = storeAccounts[store];
-                acc.balance = acc.openingBalance + (acc.totalSales - acc.totalPaid);
-                
-                let secondLabel = "ലഭിച്ചത്";
-                if(acc.hasPurchase && !acc.hasSales) {
-                    secondLabel = "നൽകിയത്";
-                }
-
-                html += `
-                    <div class="bg-white p-3.5 border rounded-xl mb-3 shadow-sm">
-                        <div class="font-extrabold text-emerald-800 text-sm sm:text-base">${store}</div>
-                        <div class="flex justify-between text-slate-600 mt-1.5 text-xs sm:text-sm">
-                            <span>ആകെ തുക: ₹${acc.totalSales}</span>
-                            <span>${secondLabel}: ₹${acc.totalPaid}</span>
-                        </div>
-                        ${acc.openingBalance !== 0 ? `<div class="text-xs text-rose-500 font-bold mt-1">തുടക്കത്തിലെ ബാലൻസ് (Opening): ₹${acc.openingBalance}</div>` : ''}
-                        <div class="flex justify-between font-bold text-rose-600 mt-2 border-t pt-2 text-xs sm:text-sm">
-                            <span>ബാക്കി ബാലൻസ്:</span>
-                            <span>₹${acc.balance}</span>
-                        </div>
-                    </div>`;
-            }
-            container.innerHTML = html || "<p class='text-gray-400 text-center'>കടകൾ ലഭ്യമല്ല</p>";
+    // സെയിൽസ് കണക്കുകൾ (Income)
+    const qSales = query(collection(db, "sales"), where("userId", "==", currentUserId));
+    const snapSales = await getDocs(qSales);
+    snapSales.forEach(doc => {
+        let d = doc.data();
+        if(storeAccounts[d.store]) {
+            storeAccounts[d.store].totalSales += (d.totalAmount || 0);
+            storeAccounts[d.store].totalReceived += (d.paidAmount || 0);
         }
+    });
+
+    // പർച്ചേസ് കണക്കുകൾ (Expense)
+    const qPurchases = query(collection(db, "purchases"), where("userId", "==", currentUserId));
+    const snapPurchases = await getDocs(qPurchases);
+    snapPurchases.forEach(doc => {
+        let d = doc.data();
+        if(storeAccounts[d.store]) {
+            storeAccounts[d.store].totalPurchase += (d.totalAmount || 0);
+            storeAccounts[d.store].totalReceived += (d.paidAmount || 0);
+        }
+    });
+
+    // പണമിടപാടുകൾ (Payments)
+    const qPayments = query(collection(db, "payments"), where("userId", "==", currentUserId));
+    const snapPayments = await getDocs(qPayments);
+    snapPayments.forEach(doc => {
+        let d = doc.data();
+        if(storeAccounts[d.store]) {
+            if(d.type === 'received') {
+                storeAccounts[d.store].totalReceived += (d.amount || 0);
+            } else if(d.type === 'given') {
+                storeAccounts[d.store].totalGiven += (d.amount || 0);
+            }
+        }
+    });
+
+    let html = "";
+    for(let store in storeAccounts) {
+        let acc = storeAccounts[store];
+        // ബാലൻസ് കണക്കുകൂട്ടൽ: ഓപ്പണിങ് ബാലൻസ് + സെയിൽസ് - ലഭിച്ച തുക
+        acc.balance = acc.openingBalance + acc.totalSales - acc.totalReceived;
+        
+        html += `
+            <div class="bg-white p-3.5 border rounded-xl mb-3 shadow-sm">
+                <div class="font-extrabold text-emerald-800 text-sm sm:text-base">${store}</div>
+                <div class="grid grid-cols-2 gap-2 text-slate-600 mt-1.5 text-xs sm:text-sm">
+                    <div>ആകെ സെയിൽസ്: <span class="font-bold text-emerald-600">₹${acc.totalSales}</span></div>
+                    <div>ആകെ പർച്ചേസ്: <span class="font-bold text-blue-600">₹${acc.totalPurchase}</span></div>
+                    <div>ലഭിച്ച തുക: <span class="font-bold">₹${acc.totalReceived}</span></div>
+                    <div>നൽകിയ തുക: <span class="font-bold">₹${acc.totalGiven}</span></div>
+                </div>
+                ${acc.openingBalance !== 0 ? `<div class="text-xs text-rose-500 font-bold mt-1">തുടക്കത്തിലെ ബാലൻസ് (Opening): ₹${acc.openingBalance}</div>` : ''}
+                <div class="flex justify-between font-bold text-rose-600 mt-2 border-t pt-2 text-xs sm:text-sm">
+                    <span>ബാക്കി ബാലൻസ്:</span>
+                    <span>₹${acc.balance}</span>
+                </div>
+            </div>`;
+    }
+    container.innerHTML = html || "<p class='text-gray-400 text-center'>കടകൾ ലഭ്യമല്ല</p>";
+}
 
         window.loadEditList = async (colName) => {
             const container = document.getElementById(colName === 'sales' ? 'edit-sales-list' : 'edit-purchase-list');
