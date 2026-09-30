@@ -359,7 +359,7 @@
                     <option value="monthly">മന്ത്ലി റിപ്പോർട്ട് (പ്രത്യേക മാസം)</option>
                 </select>
 
-                <!-- ഡെയ്‌ലി റിപ്പോർട്ടിന് തീയതി തിരഞ്ഞെടുക്കാൻ -->
+                <!-- ഡെയ്‌‌ലി റിപ്പോർട്ടിന് തീയതി തിരഞ്ഞെടുക്കാൻ -->
                 <div id="daily-input-container" class="hidden space-y-1.5 text-slate-300 text-xs">
                     തീയതി തിരഞ്ഞെടുക്കുക:
                     <input type="date" id="report-date-input" class="w-full p-3.5 border border-slate-700 rounded-2xl text-sm sm:text-base bg-slate-800 text-white outline-none">
@@ -732,7 +732,7 @@
                 snap.forEach(docSnap => {
                     const data = docSnap.data();
                     storesDataCache[docSnap.id] = data;
-                    const opt = `<option value="${data.name}" data-rates='${JSON.stringify(data.rates \vert{}\vert{} defaultRates)}' data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
+                    const opt = `<option value="${data.name}" data-rates='${JSON.stringify(data.rates || defaultRates)}' data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
                     if(pSelect) pSelect.innerHTML += opt;
                     if(sSelect) sSelect.innerHTML += opt;
                     if(paySelect) paySelect.innerHTML += opt;
@@ -778,7 +778,7 @@
             let grandTotal = Number(document.getElementById('s-grand-total').innerText.replace('₹','')) || 0;
             let paid = Number(document.getElementById('s-paid-amt').value) || 0;
             let balance = grandTotal - paid;
-            document.getElementById('s-balance-amt`).innerText = `₹${balance}`;
+            document.getElementById('s-balance-amt').innerText = `₹${balance}`;
         }
 
         window.savePaymentEntry = async () => {
@@ -1193,7 +1193,7 @@
                 'TOTAL', '-', '-', 
                 totalQty.idiyappam, 
                 totalQty.vellappam, 
-                totalQuote.palappam = totalQty.palappam, 
+                totalQty.palappam, 
                 totalQty.pathiri, 
                 totalQty.porotta, 
                 totalQty.chapati, 
