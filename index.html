@@ -359,7 +359,7 @@
                     <option value="monthly">മന്ത്ലി റിപ്പോർട്ട് (പ്രത്യേക മാസം)</option>
                 </select>
 
-                <!-- ഡെയ്‌‌ലി റിപ്പോർട്ടിന് തീയതി തിരഞ്ഞെടുക്കാൻ -->
+                <!-- ഡെയ്‌ലി റിപ്പോർട്ടിന് തീയതി തിരഞ്ഞെടുക്കാൻ -->
                 <div id="daily-input-container" class="hidden space-y-1.5 text-slate-300 text-xs">
                     തീയതി തിരഞ്ഞെടുക്കുക:
                     <input type="date" id="report-date-input" class="w-full p-3.5 border border-slate-700 rounded-2xl text-sm sm:text-base bg-slate-800 text-white outline-none">
@@ -662,8 +662,31 @@
             }
         }
 
-        window.loginUser = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).catch(err => showAlert("പരാജയം", err.message, false));
-        window.registerUser = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value).then(() => showAlert("വിജയം", "അക്കൗണ്ട് ക്രിയേറ്റ് ചെയ്തു!")).catch(err => showAlert("പരാജയം", err.message, false));
+        // ലോഗിൻ ഫങ്ഷൻ (ശരിയായ എറർ ഹാൻഡ്‌ലിംഗോടുകൂടി)
+        window.loginUser = async () => {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            if(!email || !password) return showAlert("ശ്രദ്ധിക്കുക", "ഇമെയിലും പാസ്‌വേർഡും നൽകുക!", false);
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch(err) {
+                showAlert("ലോഗിൻ പരാജയപ്പെട്ടു", err.message, false);
+            }
+        }
+
+        // രജിസ്ട്രേഷൻ ഫങ്ഷൻ
+        window.registerUser = async () => {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            if(!email || !password) return showAlert("ശ്രദ്ധിക്കുക", "ഇമെയിലും പാസ്‌വേർഡും നൽകുക!", false);
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                showAlert("വിജയം", "അക്കൗണ്ട് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
+            } catch(err) {
+                showAlert("രജിസ്ട്രേഷൻ പരാജയം", err.message, false);
+            }
+        }
+
         window.confirmLogout = () => { if(confirm("ലോഗ് ഔട്ട് ചെയ്യണോ?")) signOut(auth); }
 
         onAuthStateChanged(auth, (user) => {
@@ -1120,8 +1143,8 @@
                 }
             });
 
-            const qPay = query(collection(db, "payments"), where("userId", "==", currentUserId));
-            const paySnap = await getDocs(qPay);
+            let qPay = query(collection(db, "payments"), where("userId", "==", currentUserId));
+            let paySnap = await getDocs(qPay);
             paySnap.forEach(docSnap => {
                 let data = docSnap.data();
                 if(!store || data.store === store) {
@@ -1180,7 +1203,7 @@
                 `Rs.${runningBalance}`
             ]);
 
-            .autoTable({ 
+            doc.autoTable({ 
                 startY: 36, 
                 head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Palappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount', 'Balance']], 
                 body: tableRows,
