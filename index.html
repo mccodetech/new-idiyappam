@@ -30,7 +30,7 @@
         <!-- ഹാംബർഗർ മെനു ബട്ടൺ -->
         <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-5 left-5 text-xl text-emerald-400 bg-slate-800/80 border border-slate-700 px-3.5 py-2 rounded-2xl shadow-lg transition hidden sm:hidden z-30" title="മെനു">☰</button>
 
-        <!-- കമ്പ്യൂട്ടറിനുള്ള ടോപ്പ് നാവിഗേഷൻ ബാർ (Capsule UI) -->
+        <!-- കമ്പ്യൂട്ടറിനുള്ള ടോപ്പ് നാവിഗേഷൻ ബാർ -->
         <div id="desktop-nav" class="hidden flex-wrap gap-2 mb-6 pb-4 border-b border-slate-700 text-xs font-bold justify-center">
             <button onclick="switchTab('purchase')" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl shadow-md transition">പർച്ചേസ് / സെയിൽസ്</button>
             <button onclick="switchTab('stores')" class="px-4 py-2.5 bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 rounded-2xl transition">🏪 കടകളും വിലകളും</button>
@@ -359,7 +359,7 @@
                     <option value="monthly">മന്ത്ലി റിപ്പോർട്ട് (പ്രത്യേക മാസം)</option>
                 </select>
 
-                <!-- ഡെയ്‌ലി റിപ്പോർട്ടിന് തീയതി തിരഞ്ഞെടുക്കാൻ -->
+                <!-- ഡെയ്‌‌ലി റിപ്പോർട്ടിന് തീയതി തിരഞ്ഞെടുക്കാൻ -->
                 <div id="daily-input-container" class="hidden space-y-1.5 text-slate-300 text-xs">
                     തീയതി തിരഞ്ഞെടുക്കുക:
                     <input type="date" id="report-date-input" class="w-full p-3.5 border border-slate-700 rounded-2xl text-sm sm:text-base bg-slate-800 text-white outline-none">
@@ -577,23 +577,27 @@
             const container = document.getElementById('store-list-container');
             container.innerHTML = "<p class='text-slate-400 text-center py-4'>ലോഡ് ചെയ്യുന്നു...</p>";
             let html = "";
-            const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
-            const snap = await getDocs(q);
-            
-            snap.forEach(docSnap => {
-                let data = docSnap.data();
-                html += `
-                    <div class="bg-slate-900 p-4 border border-slate-700/80 rounded-2xl mb-3 shadow-md">
-                        <div class="font-extrabold text-emerald-400 text-sm sm:text-base">${data.name}</div>
-                        <div class="text-slate-300 text-xs sm:text-sm mt-2 space-y-1">
-                            <div>ഓണർ: <span class="text-white font-medium">${data.owner || '-'}</span></div>
-                            <div>സ്ഥലം: <span class="text-white font-medium">${data.place || '-'}</span></div>
-                            <div>ഫോൺ: <span class="text-white font-medium">${data.phone || '-'}</span></div>
-                            <div>തുടക്കത്തിലെ ബാലൻസ്: <span class="text-rose-400 font-bold">₹${data.openingBalance || 0}</span></div>
-                        </div>
-                    </div>`;
-            });
-            container.innerHTML = html || "<p class='text-slate-400 text-center py-4'>കടകൾ ലഭ്യമല്ല</p>";
+            try {
+                const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
+                const snap = await getDocs(q);
+                
+                snap.forEach(docSnap => {
+                    let data = docSnap.data();
+                    html += `
+                        <div class="bg-slate-900 p-4 border border-slate-700/80 rounded-2xl mb-3 shadow-md">
+                            <div class="font-extrabold text-emerald-400 text-sm sm:text-base">${data.name}</div>
+                            <div class="text-slate-300 text-xs sm:text-sm mt-2 space-y-1">
+                                <div>ഓണർ: <span class="text-white font-medium">${data.owner || '-'}</span></div>
+                                <div>സ്ഥലം: <span class="text-white font-medium">${data.place || '-'}</span></div>
+                                <div>ഫോൺ: <span class="text-white font-medium">${data.phone || '-'}</span></div>
+                                <div>തുടക്കത്തിലെ ബാലൻസ്: <span class="text-rose-400 font-bold">₹${data.openingBalance || 0}</span></div>
+                            </div>
+                        </div>`;
+                });
+                container.innerHTML = html || "<p class='text-slate-400 text-center py-4'>കടകൾ ലഭ്യമല്ല. പുതിയ കടകൾ ADD ചെയ്യുക.</p>";
+            } catch (error) {
+                container.innerHTML = `<p class='text-rose-400 text-center py-4'>ഡാറ്റ ലോഡ് ചെയ്യുന്നതിൽ പിഴവുണ്ടായി: ${error.message}</p>`;
+            }
         }
 
         window.fillStoreDataForEdit = () => {
@@ -701,19 +705,23 @@
             if(rSelect) rSelect.innerHTML = '<option value="">എല്ലാ കടകളും (All Stores)</option>';
             
             storesDataCache = {};
-            const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
-            const snap = await getDocs(q);
-            snap.forEach(docSnap => {
-                const data = docSnap.data();
-                storesDataCache[docSnap.id] = data;
-                const opt = `<option value="${data.name}" data-rates='${JSON.stringify(data.rates || defaultRates)}' data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
-                if(pSelect) pSelect.innerHTML += opt;
-                if(sSelect) sSelect.innerHTML += opt;
-                if(paySelect) paySelect.innerHTML += opt;
-                if(rSelect) rSelect.innerHTML += `<option value="${data.name}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
-            });
-            updateRatesView('p');
-            updateRatesView('s');
+            try {
+                const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
+                const snap = await getDocs(q);
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    storesDataCache[docSnap.id] = data;
+                    const opt = `<option value="${data.name}" data-rates='${JSON.stringify(data.rates || defaultRates)}' data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
+                    if(pSelect) pSelect.innerHTML += opt;
+                    if(sSelect) sSelect.innerHTML += opt;
+                    if(paySelect) paySelect.innerHTML += opt;
+                    if(rSelect) rSelect.innerHTML += `<option value="${data.name}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
+                });
+                updateRatesView('p');
+                updateRatesView('s');
+            } catch(e) {
+                console.error("Error loading stores:", e);
+            }
         }
 
         window.updateRatesView = (type) => {
@@ -1172,7 +1180,7 @@
                 `Rs.${runningBalance}`
             ]);
 
-            doc.autoTable({ 
+            .autoTable({ 
                 startY: 36, 
                 head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Palappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount', 'Balance']], 
                 body: tableRows,
