@@ -662,7 +662,6 @@
             }
         }
 
-        // ലോഗിൻ ഫങ്ഷൻ (ശരിയായ എറർ ഹാൻഡ്‌ലിംഗോടുകൂടി)
         window.loginUser = async () => {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -674,7 +673,6 @@
             }
         }
 
-        // രജിസ്ട്രേഷൻ ഫങ്ഷൻ
         window.registerUser = async () => {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -734,7 +732,7 @@
                 snap.forEach(docSnap => {
                     const data = docSnap.data();
                     storesDataCache[docSnap.id] = data;
-                    const opt = `<option value="${data.name}" data-rates='${JSON.stringify(data.rates || defaultRates)}' data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
+                    const opt = `<option value="${data.name}" data-rates='${JSON.stringify(data.rates \vert{}\vert{} defaultRates)}' data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
                     if(pSelect) pSelect.innerHTML += opt;
                     if(sSelect) sSelect.innerHTML += opt;
                     if(paySelect) paySelect.innerHTML += opt;
@@ -780,7 +778,7 @@
             let grandTotal = Number(document.getElementById('s-grand-total').innerText.replace('₹','')) || 0;
             let paid = Number(document.getElementById('s-paid-amt').value) || 0;
             let balance = grandTotal - paid;
-            document.getElementById('s-balance-amt').innerText = `₹${balance}`;
+            document.getElementById('s-balance-amt`).innerText = `₹${balance}`;
         }
 
         window.savePaymentEntry = async () => {
@@ -1143,8 +1141,8 @@
                 }
             });
 
-            let qPay = query(collection(db, "payments"), where("userId", "==", currentUserId));
-            let paySnap = await getDocs(qPay);
+            const qPay = query(collection(db, "payments"), where("userId", "==", currentUserId));
+            const paySnap = await getDocs(qPay);
             paySnap.forEach(docSnap => {
                 let data = docSnap.data();
                 if(!store || data.store === store) {
@@ -1195,7 +1193,7 @@
                 'TOTAL', '-', '-', 
                 totalQty.idiyappam, 
                 totalQty.vellappam, 
-                totalQty.palappam, 
+                totalQuote.palappam = totalQty.palappam, 
                 totalQty.pathiri, 
                 totalQty.porotta, 
                 totalQty.chapati, 
