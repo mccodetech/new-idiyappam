@@ -56,7 +56,7 @@
                     <button onclick="switchTab('payments'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">💵 പണം ഇടപാടുകൾ (Payment Entry)</button>
                     <button onclick="switchTab('accounts'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
                     <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
-                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
+                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">✏️️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
                     <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition flex items-center gap-2">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
                 </div>
             </div>
@@ -74,7 +74,7 @@
             <h3 class="text-xs sm:text-sm font-bold mb-3 text-emerald-400 uppercase tracking-wider">ലോഗിൻ ചെയ്യുക</h3>
             <label class="block text-xs text-slate-300 mb-1 font-medium">ഇമെയിൽ / യൂസർ നെയിം:</label>
             <input type="email" id="email" placeholder="name@gmail.com" class="w-full p-3 mb-3 border border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-900 text-white outline-none">
-            <label class="block text-xs text-slate-300 mb-1 font-medium">പാസ്‌വേർഡ് (കുറഞ്ഞത് 6 അക്കം):</label>
+            <label class="block text-xs text-slate-300 mb-1 font-medium">പാസ്‌‌വേർഡ് (കുറഞ്ഞത് 6 അക്കം):</label>
             <div class="relative mb-5">
                 <input type="password" id="password" placeholder="••••••" class="w-full p-3 border border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-900 text-white outline-none">
                 <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-xs text-emerald-400 font-bold hover:underline">കാണുക</button>
@@ -303,19 +303,18 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 text-xs font-bold">
-                    <button onclick="setStoreMode('add')" id="store-mode-add" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow-lg transition">ADD</button>
-                    <button onclick="setStoreMode('edit')" id="store-mode-edit" class="py-2.5 bg-slate-800 text-slate-300 border border-slate-700 rounded-xl hover:bg-slate-700 transition">EDIT</button>
+                    <button onclick="setStoreMode('add')" id="store-mode-add" class="py-2.5 bg-slate-800 text-slate-300 border border-slate-700 rounded-xl hover:bg-slate-700 transition">ADD</button>
+                    <button onclick="setStoreMode('edit')" id="store-mode-edit" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow-lg transition">EDIT</button>
                     <button onclick="setStoreMode('delete')" id="store-mode-delete" class="py-2.5 bg-slate-800 text-slate-300 border border-slate-700 rounded-xl hover:bg-slate-700 transition">DELETE</button>
                 </div>
 
                 <div id="store-form-container" class="bg-slate-800/60 p-3.5 rounded-xl border border-slate-700 space-y-2.5">
-                    <label id="store-form-label" class="block text-xs sm:text-sm font-bold text-emerald-400">പുതിയ കട ചേർക്കുക (ADD)</label>
-                    <select id="existing-store-select" onchange="fillStoreDataForEdit()" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none hidden">
+                    <label id="store-form-label" class="block text-xs sm:text-sm font-bold text-emerald-400">കട എഡിറ്റ് ചെയ്യുക (EDIT)</label>
+                    <select id="existing-store-select" onchange="fillStoreDataForEdit()" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
                         <option value="">എഡിറ്റ് ചെയ്യാൻ കട തിരഞ്ഞെടുക്കുക</option>
                     </select>
                     <input type="hidden" id="edit-store-id" value="">
                     
-                    <!-- പുതിയ ലേഔട്ട് അനുസരിച്ച് കൃത്യമായ ഫീൽഡ് ക്രമീകരണം -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         <div>
                             <label class="block text-[11px] font-bold text-slate-300 mb-1">വാട്സാപ്പ് നമ്പർ:</label>
@@ -715,7 +714,6 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
                 
-                // മൊബൈലിൽ ആണെങ്കിൽ മെനു ബട്ടൺ കാണിക്കുക, ഡെസ്ക്ടോപ്പിൽ ടോപ്പ് നാവ് കാണിക്കുക
                 if (window.innerWidth <= 768) {
                     document.getElementById('menu-btn').classList.remove('hidden');
                 } else {
@@ -1094,16 +1092,20 @@
                 }
             });
 
-            let calculatedInitialBalance = runningBalance;
-            if(filteredTransactions.length > 0) {
-                let lastTx = filteredTransactions[filteredTransactions.length - 1];
-                let lastNetChange = 0;
-                if(lastTx.transType === 'Sales') lastNetChange = (lastTx.balanceAmount !== undefined ? lastTx.balanceAmount : lastTx.totalAmount || 0);
-                else if(lastTx.transType === 'Payment Received') lastNetChange = -(lastTx.totalAmount || 0);
-                else if(lastTx.transType === 'Payment Given') lastNetChange = (lastTx.totalAmount || 0);
-                else lastNetChange = -(lastTx.totalAmount || 0);
-                
-                calculatedInitialBalance = lastTx.currentBalance - lastNetChange;
+            // ഇവിടെയാണ് കടയുടെ യഥാർത്ഥ Opening Balance കൃത്യമായി എടുക്കുന്നത്
+            let calculatedInitialBalance = openingBalance;
+            if(duration !== 'all') {
+                calculatedInitialBalance = runningBalance;
+                if(filteredTransactions.length > 0) {
+                    let lastTx = filteredTransactions[filteredTransactions.length - 1];
+                    let lastNetChange = 0;
+                    if(lastTx.transType === 'Sales') lastNetChange = (lastTx.balanceAmount !== undefined ? lastTx.balanceAmount : lastTx.totalAmount || 0);
+                    else if(lastTx.transType === 'Payment Received') lastNetChange = -(lastTx.totalAmount || 0);
+                    else if(lastTx.transType === 'Payment Given') lastNetChange = (lastTx.totalAmount || 0);
+                    else lastNetChange = -(lastTx.totalAmount || 0);
+                    
+                    calculatedInitialBalance = lastTx.currentBalance - lastNetChange;
+                }
             }
 
             return { initialBalance: calculatedInitialBalance, transactions: filteredTransactions, finalBalance: runningBalance };
@@ -1159,7 +1161,7 @@
             const doc = new jsPDF();
             const duration = document.getElementById('report-duration').value;
             const selectedDate = document.getElementById('report-date-input').value;
-            const selectedMonth = document.getElementById('report-month-input-input' || 'report-month-input').value;
+            const selectedMonth = document.getElementById('report-month-input').value;
             const store = document.getElementById('report-store').value;
 
             doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
