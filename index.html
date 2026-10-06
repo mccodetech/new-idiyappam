@@ -56,7 +56,7 @@
                     <button onclick="switchTab('payments'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">💵 പണം ഇടപാടുകൾ (Payment Entry)</button>
                     <button onclick="switchTab('accounts'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
                     <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
-                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">✏️️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
+                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
                     <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition flex items-center gap-2">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
                 </div>
             </div>
@@ -74,7 +74,7 @@
             <h3 class="text-xs sm:text-sm font-bold mb-3 text-emerald-400 uppercase tracking-wider">ലോഗിൻ ചെയ്യുക</h3>
             <label class="block text-xs text-slate-300 mb-1 font-medium">ഇമെയിൽ / യൂസർ നെയിം:</label>
             <input type="email" id="email" placeholder="name@gmail.com" class="w-full p-3 mb-3 border border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-900 text-white outline-none">
-            <label class="block text-xs text-slate-300 mb-1 font-medium">പാസ്‌‌വേർഡ് (കുറഞ്ഞത് 6 അക്കം):</label>
+            <label class="block text-xs text-slate-300 mb-1 font-medium">പാസ്‌വേർഡ് (കുറഞ്ഞത് 6 അക്കം):</label>
             <div class="relative mb-5">
                 <input type="password" id="password" placeholder="••••••" class="w-full p-3 border border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-900 text-white outline-none">
                 <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-xs text-emerald-400 font-bold hover:underline">കാണുക</button>
@@ -1092,7 +1092,6 @@
                 }
             });
 
-            // ഇവിടെയാണ് കടയുടെ യഥാർത്ഥ Opening Balance കൃത്യമായി എടുക്കുന്നത്
             let calculatedInitialBalance = openingBalance;
             if(duration !== 'all') {
                 calculatedInitialBalance = runningBalance;
@@ -1127,32 +1126,41 @@
                 <table class="w-full text-left border-collapse text-[11px] text-slate-200">
                     <thead>
                         <tr class="bg-emerald-600 text-white">
-                            <th class="p-1.5 border border-slate-700">തീയതി</th>
-                            <th class="p-1.5 border border-slate-700">കട</th>
-                            <th class="p-1.5 border border-slate-700">തരം</th>
-                            <th class="p-1.5 border border-slate-700 text-right">തുക</th>
-                            <th class="p-1.5 border border-slate-700 text-right">ബാലൻസ്</th>
+                              <th class="p-1.5 border border-slate-700">തീയതി</th>
+                              <th class="p-1.5 border border-slate-700">കട</th>
+                              <th class="p-1.5 border border-slate-700">തരം</th>
+                              <th class="p-1.5 border border-slate-700 text-right">തുക</th>
+                              <th class="p-1.5 border border-slate-700 text-right">ബാലൻസ്</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="border-b border-slate-800 bg-slate-800/40">
-                            <td class="p-1.5 border border-slate-700/50" colspan="3"><b>തുടക്കത്തിലെ ബാലൻസ് (Opening Balance)</b></td>
-                            <td class="p-1.5 border border-slate-700/50 text-right">-</td>
-                            <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${reportData.initialBalance}</td>
+                              <td class="p-1.5 border border-slate-700/50" colspan="3"><b>തുടക്കത്തിലെ ബാലൻസ് (Opening Balance)</b></td>
+                              <td class="p-1.5 border border-slate-700/50 text-right">-</td>
+                              <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${reportData.initialBalance}</td>
                         </tr>`;
 
             reportData.transactions.forEach(d => {
+                let isIncome = (d.transType === 'Payment Received' || d.transType === 'Purchase');
+                let colorClass = isIncome ? 'text-emerald-400' : 'text-rose-400';
+                let sign = isIncome ? '+' : '-';
                 tableHtml += `
                     <tr class="border-b border-slate-800 hover:bg-slate-800/50">
                         <td class="p-1.5 border border-slate-700/50">${d.date}</td>
                         <td class="p-1.5 border border-slate-700/50">${d.store}</td>
                         <td class="p-1.5 border border-slate-700/50">${d.transType}</td>
-                        <td class="p-1.5 border border-slate-700/50 text-right">₹${d.totalAmount}</td>
+                        <td class="p-1.5 border border-slate-700/50 text-right ${colorClass} font-bold">${sign}₹${d.totalAmount}</td>
                         <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${d.currentBalance}</td>
                     </tr>`;
             });
 
-            tableHtml += `</tbody></table>`;
+            tableHtml += `
+                    <tr class="border-t border-slate-700 bg-slate-800/60">
+                        <td class="p-1.5 border border-slate-700/50" colspan="3"><b>അവസാനത്തെ ബാലൻസ് (Closing Balance)</b></td>
+                        <td class="p-1.5 border border-slate-700/50 text-right">-</td>
+                        <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${reportData.finalBalance}</td>
+                    </tr>
+                  </tbody></table>`;
             content.innerHTML = reportData.transactions.length > 0 ? tableHtml : "<p class='text-slate-400 text-center py-2'>സൂചികയിൽ ഡാറ്റ ലഭ്യമല്ല</p>";
         }
 
@@ -1174,28 +1182,31 @@
             tableRows.push(['-', 'Opening Balance', '-', 0, 0, 0, 0, 0, 0, '-', `Rs.${reportData.initialBalance}`]);
 
             reportData.transactions.forEach(data => {
-                let itm = data.items || {};
-                totalQty.idiyappam += Number(itm.idiyappam || 0);
-                totalQty.vellappam += Number(itm.vellappam || 0);
-                totalQty.palappam += Number(itm.palappam || 0);
-                totalQty.pathiri += Number(itm.pathiri || 0);
-                totalQty.porotta += Number(itm.porotta || 0);
-                totalQty.chapati += Number(itm.chapati || 0);
-                totalQty.amount += Number(data.totalAmount || 0);
+                  let itm = data.items || {};
+                  totalQty.idiyappam += Number(itm.idiyappam || 0);
+                  totalQty.vellappam += Number(itm.vellappam || 0);
+                  totalQty.palappam += Number(itm.palappam || 0);
+                  totalQty.pathiri += Number(itm.pathiri || 0);
+                  totalQty.porotta += Number(itm.porotta || 0);
+                  totalQty.chapati += Number(itm.chapati || 0);
+                  totalQty.amount += Number(data.totalAmount || 0);
 
-                tableRows.push([
-                    data.date, 
-                    data.store, 
-                    data.transType, 
-                    itm.idiyappam||0, 
-                    itm.vellappam||0, 
-                    itm.palappam||0, 
-                    itm.pathiri||0, 
-                    itm.porotta||0, 
-                    itm.chapati||0, 
-                    `Rs.${data.totalAmount}`, 
-                    `Rs.${data.currentBalance}`
-                ]);
+                  let isIncome = (data.transType === 'Payment Received' || data.transType === 'Purchase');
+                  let amtPrefix = isIncome ? '+' : '-';
+
+                  tableRows.push([
+                      data.date, 
+                      data.store, 
+                      data.transType, 
+                      itm.idiyappam||0, 
+                      itm.vellappam||0, 
+                      itm.palappam||0, 
+                      itm.pathiri||0, 
+                      itm.porotta||0, 
+                      itm.chapati||0, 
+                      `${amtPrefix}Rs.${data.totalAmount}`, 
+                      `Rs.${data.currentBalance}`
+                  ]);
             });
 
             tableRows.push([
@@ -1210,12 +1221,25 @@
                 `Rs.${reportData.finalBalance}`
             ]);
 
+            // Closing balance row for PDF summary
+            tableRows.push(['-', 'Closing Balance', '-', '-', '-', '-', '-', '-', '-', '-', `Rs.${reportData.finalBalance}`]);
+
             doc.autoTable({ 
                 startY: 36, 
                 head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Palappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount', 'Balance']], 
                 body: tableRows,
                 styles: { fontSize: 8 },
-                headStyles: { fillColor: [16, 185, 129] }
+                headStyles: { fillColor: [16, 185, 129] },
+                didParseCell: function(data) {
+                    if (data.section === 'body' && data.column.index === 9) {
+                        let text = data.cell.text[0];
+                        if (text && text.startsWith('+')) {
+                            data.cell.styles.textColor = [16, 185, 129]; // Green for income/received
+                        } else if (text && text.startsWith('-')) {
+                            data.cell.styles.textColor = [244, 63, 94]; // Red for expenses/sales
+                        }
+                    }
+                }
             });
 
             let finalY = doc.lastAutoTable.finalY + 10;
