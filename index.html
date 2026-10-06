@@ -56,7 +56,7 @@
                     <button onclick="switchTab('payments'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">💵 പണം ഇടപാടുകൾ (Payment Entry)</button>
                     <button onclick="switchTab('accounts'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
                     <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
-                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
+                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">✏️️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
                     <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition flex items-center gap-2">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
                 </div>
             </div>
@@ -489,6 +489,7 @@
                 if(tabName === 'edit-purchase') loadEditList('purchases');
             }
         }
+        window.switchTab = switchTab;
 
         window.toggleReportInputs = () => {
             const duration = document.getElementById('report-duration').value;
@@ -725,7 +726,7 @@
                 switchTab('purchase');
             } else {
                 currentUserId = null;
-                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
             }
@@ -1206,8 +1207,6 @@
 
                 let isIncome = (data.transType === 'Payment Received');
                 let amtPrefix = isIncome ? '+' : '-';
-
-.
 
                 tableRows.push([
                     data.date, 
