@@ -725,7 +725,7 @@
                 switchTab('purchase');
             } else {
                 currentUserId = null;
-                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
                 document.getElementById('menu-btn').classList.add('hidden');
             }
@@ -881,7 +881,6 @@
             let html = "";
             for(let store in storeAccounts) {
                 let acc = storeAccounts[store];
-                // തികച്ചും ഒരേ രീതിയിൽ (Opening Balance + Sales Balance - Received Payments + Purchases - Given Payments)
                 acc.balance = acc.openingBalance + acc.totalSales - acc.totalReceived + acc.totalPurchase - acc.totalGiven;
                 
                 html += `
@@ -1026,16 +1025,12 @@
         }
 
         async function fetchFilteredTransactions(duration, selectedDate, selectedMonth, store) {
-            let openingBalance = 0;
+            let storeOpeningBalance = 0;
             if(store && storesDataCache) {
                 for(let id in storesDataCache) {
                     if(storesDataCache[id].name === store) {
-                        openingBalance += Number(storesDataCache[id].openingBalance || 0);
+                        storeOpeningBalance = Number(storesDataCache[id].openingBalance || 0);
                     }
-                }
-            } else if(!store && storesDataCache) {
-                for(let id in storesDataCache) {
-                    openingBalance += Number(storesDataCache[id].openingBalance || 0);
                 }
             }
 
@@ -1070,7 +1065,8 @@
 
             allTransactions.sort((a, b) => a.sortDate - b.sortDate);
 
-            let runningBalance = openingBalance;
+            // കൃത്യമായ Opening Balance കണക്കാക്കൽ (തിരഞ്ഞെടുത്ത മാസത്തിന് മുമ്പുള്ള എല്ലാ ഇടപാടുകളും ചേർത്തുകൊണ്ട്)
+            let runningBalance = storeOpeningBalance;
             let filteredTransactions = [];
 
             allTransactions.forEach(d => {
@@ -1091,14 +1087,14 @@
                 } else if(d.transType === 'Payment Given') {
                     netChange = (d.totalAmount || 0);
                 } else if(d.transType === 'Purchase') {
-                    netChange = (d.totalAmount || 0); // പർച്ചേസ് കൂട്ടുക
+                    netChange = (d.totalAmount || 0);
                 }
 
                 if(include) {
                     runningBalance += netChange;
                     filteredTransactions.push({ ...d, currentBalance: runningBalance });
                 } else {
-                    if(duration === 'monthly' && d.date < selectedMonth) {
+                    if(duration === 'monthly' && d.date < (selectedMonth + '-01')) {
                         runningBalance += netChange;
                     } else if(duration === 'daily' && d.date < selectedDate) {
                         runningBalance += netChange;
@@ -1106,19 +1102,18 @@
                 }
             });
 
-            let calculatedInitialBalance = openingBalance;
-            if(duration !== 'all') {
-                calculatedInitialBalance = runningBalance;
-                if(filteredTransactions.length > 0) {
-                    let lastTx = filteredTransactions[filteredTransactions.length - 1];
-                    let lastNetChange = 0;
-                    if(lastTx.transType === 'Sales') lastNetChange = (lastTx.balanceAmount !== undefined ? lastTx.balanceAmount : lastTx.totalAmount || 0);
-                    else if(lastTx.transType === 'Payment Received') lastNetChange = -(lastTx.totalAmount || 0);
-                    else if(lastTx.transType === 'Payment Given') lastNetChange = (lastTx.totalAmount || 0);
-                    else if(lastTx.transType === 'Purchase') lastNetChange = (lastTx.totalAmount || 0);
-                    
-                    calculatedInitialBalance = lastTx.currentBalance - lastNetChange;
-                }
+            let calculatedInitialBalance = runningBalance;
+            if(duration !== 'all' && filteredTransactions.length > 0) {
+                let firstTx = filteredTransactions[0];
+                let firstNet = 0;
+                if(firstTx.transType === 'Sales') firstNet = (firstTx.balanceAmount !== undefined ? firstTx.balanceAmount : firstTx.totalAmount || 0);
+                else if(firstTx.transType === 'Payment Received') firstNet = -(firstTx.totalAmount || 0);
+                else if(firstTx.transType === 'Payment Given') firstNet = (firstTx.totalAmount || 0);
+                else if(firstTx.transType === 'Purchase') firstNet = (firstTx.totalAmount || 0);
+
+                calculatedInitialBalance = firstTx.currentBalance - firstNet;
+            } else if(duration === 'all') {
+                calculatedInitialBalance = storeOpeningBalance;
             }
 
             return { initialBalance: calculatedInitialBalance, transactions: filteredTransactions, finalBalance: runningBalance };
@@ -1204,7 +1199,7 @@
                 let itm = data.items || {};
                 totalQty.idiyappam += Number(itm.idiyappam || 0);
                 totalQty.vellappam += Number(itm.vellappam || 0);
-                totalQty.palappam += Number(itm.palappam || 1);
+                totalQty.palappam += Number(itm.palappam || 0);
                 totalQty.pathiri += Number(itm.pathiri || 0);
                 totalQty.porotta += Number(itm.porotta || 0);
                 totalQty.chapati += Number(itm.chapati || 0);
