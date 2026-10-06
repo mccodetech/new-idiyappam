@@ -828,7 +828,8 @@
                     totalReceived: 0,
                     totalPurchase: 0,
                     balance: 0, 
-                    openingBalance: Number(data.openingBalance || 0)
+                    openingBalance: Number(data.openingBalance || 0),
+                    firstTxDate: null // കടയിൽ ആദ്യമായി അക്കൗണ്ട് ചേർത്ത തീയതി കണ്ടെത്താൻ
                 };
             });
 
@@ -837,10 +838,13 @@
             snapSales.forEach(doc => {
                 let d = doc.data();
                 if(!storeAccounts[d.store]) {
-                    storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0 };
+                    storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0, firstTxDate: null };
                 }
                 storeAccounts[d.store].totalSales += (d.totalAmount || 0);
                 storeAccounts[d.store].totalReceived += (d.paidAmount || 0);
+                if(!storeAccounts[d.store].firstTxDate || d.date < storeAccounts[d.store].firstTxDate) {
+                    storeAccounts[d.store].firstTxDate = d.date;
+                }
             });
 
             const qPurchases = query(collection(db, "purchases"), where("userId", "==", currentUserId));
@@ -848,10 +852,13 @@
             snapPurchases.forEach(doc => {
                 let d = doc.data();
                 if(!storeAccounts[d.store]) {
-                    storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0 };
+                    storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0, firstTxDate: null };
                 }
                 storeAccounts[d.store].totalPurchase += (d.totalAmount || 0);
                 storeAccounts[d.store].totalReceived += (d.paidAmount || 0);
+                if(!storeAccounts[d.store].firstTxDate || d.date < storeAccounts[d.store].firstTxDate) {
+                    storeAccounts[d.store].firstTxDate = d.date;
+                }
             });
 
             const qPayments = query(collection(db, "payments"), where("userId", "==", currentUserId));
@@ -859,12 +866,15 @@
             snapPayments.forEach(doc => {
                 let d = doc.data();
                 if(!storeAccounts[d.store]) {
-                    storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0 };
+                    storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0, firstTxDate: null };
                 }
                 if(d.type === 'received') {
                     storeAccounts[d.store].totalReceived += (d.amount || 0);
                 } else if(d.type === 'given') {
                     storeAccounts[d.store].totalGiven += (d.amount || 0);
+                }
+                if(!storeAccounts[d.store].firstTxDate || d.date < storeAccounts[d.store].firstTxDate) {
+                    storeAccounts[d.store].firstTxDate = d.date;
                 }
             });
 
@@ -875,16 +885,19 @@
                 
                 html += `
                     <div class="bg-slate-900 p-3.5 border border-slate-700/80 rounded-xl mb-2.5 shadow-md">
-                        <div class="font-extrabold text-emerald-400 text-sm">${store}</div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-slate-300 mt-2 text-xs">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <div class="font-extrabold text-emerald-400 text-sm">${store}</div>
+                            <div class="text-[11px] text-slate-400">തുടങ്ങിയ തീയതി: <span class="text-white font-bold">${acc.firstTxDate || 'ഇടപാടുകൾ ഇല്ല'}</span></div>
+                        </div>
+                        ${acc.openingBalance !== 0 ? `<div class="text-[11px] text-rose-400 font-bold mb-2">തുടക്കത്തിലെ ബാലൻസ് (Opening): ₹${acc.openingBalance}</div>` : ''}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-slate-300 text-xs border-t border-slate-800 pt-2">
                             <div>ആകെ സെയിൽസ്: <span class="font-bold text-emerald-400">₹${acc.totalSales}</span></div>
                             <div>ആകെ പർച്ചേസ്: <span class="font-bold text-blue-400">₹${acc.totalPurchase}</span></div>
-                            <div>ലഭിച്ച തുക: <span class="font-bold text-white">₹${acc.totalReceived}</span></div>
-                            <div>നൽകിയ തുക: <span class="font-bold text-white">₹${acc.totalGiven}</span></div>
+                            <div>ലഭിച്ച തുക: <span class="font-bold text-emerald-400">₹${acc.totalReceived}</span></div>
+                            <div>നൽകിയ തുക: <span class="font-bold text-rose-400">₹${acc.totalGiven}</span></div>
                         </div>
-                        ${acc.openingBalance !== 0 ? `<div class="text-[11px] text-rose-400 font-bold mt-1.5">തുടക്കത്തിലെ ബാലൻസ് (Opening): ₹${acc.openingBalance}</div>` : ''}
                         <div class="flex justify-between font-bold text-rose-400 mt-2.5 border-t border-slate-800 pt-2 text-xs">
-                            <span>ബാക്കി ബാലൻസ്:</span>
+                            <span>ബാക്കി ബാലൻസ് (Closing):</span>
                             <span>₹${acc.balance}</span>
                         </div>
                     </div>`;
@@ -975,7 +988,7 @@
             }
 
             await addDoc(collection(db, colName), {
-                date: dateInput.value, store: storeSelect.value, items: itemsData, totalAmount, paidAmount, balanceAmount, userId: currentUserId, timestamp: new Date()
+              date: dateInput.value, store: storeSelect.value, items: itemsData, totalAmount, paidAmount, balanceAmount, userId: currentUserId, timestamp: new Date()
             });
             
             showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
@@ -1126,18 +1139,18 @@
                 <table class="w-full text-left border-collapse text-[11px] text-slate-200">
                     <thead>
                         <tr class="bg-emerald-600 text-white">
-                              <th class="p-1.5 border border-slate-700">തീയതി</th>
-                              <th class="p-1.5 border border-slate-700">കട</th>
-                              <th class="p-1.5 border border-slate-700">തരം</th>
-                              <th class="p-1.5 border border-slate-700 text-right">തുക</th>
-                              <th class="p-1.5 border border-slate-700 text-right">ബാലൻസ്</th>
+                            <th class="p-1.5 border border-slate-700">തീയതി</th>
+                            <th class="p-1.5 border border-slate-700">കട</th>
+                            <th class="p-1.5 border border-slate-700">തരം</th>
+                            <th class="p-1.5 border border-slate-700 text-right">തുക</th>
+                            <th class="p-1.5 border border-slate-700 text-right">ബാലൻസ്</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="border-b border-slate-800 bg-slate-800/40">
-                              <td class="p-1.5 border border-slate-700/50" colspan="3"><b>തുടക്കത്തിലെ ബാലൻസ് (Opening Balance)</b></td>
-                              <td class="p-1.5 border border-slate-700/50 text-right">-</td>
-                              <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${reportData.initialBalance}</td>
+                            <td class="p-1.5 border border-slate-700/50" colspan="3"><b>തുടക്കത്തിലെ ബാലൻസ് (Opening Balance)</b></td>
+                            <td class="p-1.5 border border-slate-700/50 text-right">-</td>
+                            <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${reportData.initialBalance}</td>
                         </tr>`;
 
             reportData.transactions.forEach(d => {
@@ -1155,12 +1168,12 @@
             });
 
             tableHtml += `
-                    <tr class="border-t border-slate-700 bg-slate-800/60">
-                        <td class="p-1.5 border border-slate-700/50" colspan="3"><b>അവസാനത്തെ ബാലൻസ് (Closing Balance)</b></td>
-                        <td class="p-1.5 border border-slate-700/50 text-right">-</td>
-                        <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${reportData.finalBalance}</td>
-                    </tr>
-                  </tbody></table>`;
+                <tr class="border-t border-slate-700 bg-slate-800/60">
+                    <td class="p-1.5 border border-slate-700/50" colspan="3"><b>അവസാനത്തെ ബാലൻസ് (Closing Balance)</b></td>
+                    <td class="p-1.5 border border-slate-700/50 text-right">-</td>
+                    <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${reportData.finalBalance}</td>
+                </tr>
+                </tbody></table>`;
             content.innerHTML = reportData.transactions.length > 0 ? tableHtml : "<p class='text-slate-400 text-center py-2'>സൂചികയിൽ ഡാറ്റ ലഭ്യമല്ല</p>";
         }
 
@@ -1172,8 +1185,14 @@
             const selectedMonth = document.getElementById('report-month-input').value;
             const store = document.getElementById('report-store').value;
 
-            doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
-            doc.text(`Store Ledger Report (${duration ? duration.toUpperCase() : 'ALL'}): ${store ? store : 'All Stores'}`, 14, 28);
+            // ഹെഡിംഗിൽ ഷോപ്പിന്റെ പേരും സമയവും വ്യക്തമായി കാണിക്കുന്നു
+            let durationText = duration === 'all' ? 'ALL TIME' : duration === 'daily' ? `DATE: ${selectedDate}` : `MONTH: ${selectedMonth}`;
+            let storeText = store ? store : 'All Stores';
+
+            doc.setFontSize(14);
+            doc.text("New Idiyappam Company - Chembrasseri East", 14, 15);
+            doc.setFontSize(10);
+            doc.text(`Store: ${storeText}  |  Report Type: ${durationText}`, 14, 22);
 
             const reportData = await fetchFilteredTransactions(duration, selectedDate, selectedMonth, store);
             let tableRows = [];
@@ -1182,31 +1201,31 @@
             tableRows.push(['-', 'Opening Balance', '-', 0, 0, 0, 0, 0, 0, '-', `Rs.${reportData.initialBalance}`]);
 
             reportData.transactions.forEach(data => {
-                  let itm = data.items || {};
-                  totalQty.idiyappam += Number(itm.idiyappam || 0);
-                  totalQty.vellappam += Number(itm.vellappam || 0);
-                  totalQty.palappam += Number(itm.palappam || 0);
-                  totalQty.pathiri += Number(itm.pathiri || 0);
-                  totalQty.porotta += Number(itm.porotta || 0);
-                  totalQty.chapati += Number(itm.chapati || 0);
-                  totalQty.amount += Number(data.totalAmount || 0);
+                let itm = data.items || {};
+                totalQty.idiyappam += Number(itm.idiyappam || 0);
+                totalQty.vellappam += Number(itm.vellappam || 0);
+                totalQty.palappam += Number(itm.palappam || 0);
+                totalQty.pathiri += Number(itm.pathiri || 0);
+                totalQty.porotta += Number(itm.porotta || 0);
+                totalQty.chapati += Number(itm.chapati || 0);
+                totalQty.amount += Number(data.totalAmount || 0);
 
-                  let isIncome = (data.transType === 'Payment Received' || data.transType === 'Purchase');
-                  let amtPrefix = isIncome ? '+' : '-';
+                let isIncome = (data.transType === 'Payment Received' || data.transType === 'Purchase');
+                let amtPrefix = isIncome ? '+' : '-';
 
-                  tableRows.push([
-                      data.date, 
-                      data.store, 
-                      data.transType, 
-                      itm.idiyappam||0, 
-                      itm.vellappam||0, 
-                      itm.palappam||0, 
-                      itm.pathiri||0, 
-                      itm.porotta||0, 
-                      itm.chapati||0, 
-                      `${amtPrefix}Rs.${data.totalAmount}`, 
-                      `Rs.${data.currentBalance}`
-                  ]);
+                tableRows.push([
+                    data.date, 
+                    data.store, 
+                    data.transType, 
+                    itm.idiyappam||0, 
+                    itm.vellappam||0, 
+                    itm.palappam||0, 
+                    itm.pathiri||0, 
+                    itm.porotta||0, 
+                    itm.chapati||0, 
+                    `${amtPrefix}Rs.${data.totalAmount}`, 
+                    `Rs.${data.currentBalance}`
+                ]);
             });
 
             tableRows.push([
@@ -1221,11 +1240,10 @@
                 `Rs.${reportData.finalBalance}`
             ]);
 
-            // Closing balance row for PDF summary
             tableRows.push(['-', 'Closing Balance', '-', '-', '-', '-', '-', '-', '-', '-', `Rs.${reportData.finalBalance}`]);
 
             doc.autoTable({ 
-                startY: 36, 
+                startY: 28, 
                 head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Palappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount', 'Balance']], 
                 body: tableRows,
                 styles: { fontSize: 8 },
@@ -1234,9 +1252,9 @@
                     if (data.section === 'body' && data.column.index === 9) {
                         let text = data.cell.text[0];
                         if (text && text.startsWith('+')) {
-                            data.cell.styles.textColor = [16, 185, 129]; // Green for income/received
+                            data.cell.styles.textColor = [16, 185, 129]; 
                         } else if (text && text.startsWith('-')) {
-                            data.cell.styles.textColor = [244, 63, 94]; // Red for expenses/sales
+                            data.cell.styles.textColor = [244, 63, 94]; 
                         }
                     }
                 }
@@ -1244,7 +1262,7 @@
 
             let finalY = doc.lastAutoTable.finalY + 10;
             doc.text(`Final Ledger Balance: Rs.${reportData.finalBalance}`, 14, finalY);
-            doc.save(`Ledger_Report.pdf`);
+            doc.save(`Ledger_Report_${storeText.replace(/\s+/g, '_')}.pdf`);
         }
     </script>
 </body>
