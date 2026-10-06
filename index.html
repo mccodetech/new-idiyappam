@@ -314,11 +314,33 @@
                         <option value="">എഡിറ്റ് ചെയ്യാൻ കട തിരഞ്ഞെടുക്കുക</option>
                     </select>
                     <input type="hidden" id="edit-store-id" value="">
-                    <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                    <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                    <input type="text" id="store-place" placeholder="സ്ഥലം (Place)" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                    <input type="text" id="store-phone" placeholder="വാട്സാപ്പ് നമ്പർ" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                    <input type="number" id="store-opening-balance" placeholder="തുടക്കത്തിലെ ബാലൻസ് (Opening Balance)" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-rose-400 font-bold outline-none">
+                    
+                    <!-- പുതിയ ലേഔട്ട് അനുസരിച്ച് കൃത്യമായ ഫീൽഡ് ക്രമീകരണം -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">വാട്സാപ്പ് നമ്പർ:</label>
+                            <input type="text" id="store-phone" placeholder="9846236747" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">തുടക്കത്തിലെ ബാലൻസ് (Opening Balance):</label>
+                            <input type="number" id="store-opening-balance" placeholder="0" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-rose-400 font-bold outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-2">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">കടയുടെ പേര്:</label>
+                            <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">ഓണറുടെ പേര്:</label>
+                            <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">സ്ഥലം (Place):</label>
+                            <input type="text" id="store-place" placeholder="സ്ഥലം" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
+                        </div>
+                    </div>
                     
                     <h5 class="text-xs sm:text-sm font-bold text-slate-300 pt-2 border-t border-slate-700">ഈ കടയ്ക്കുള്ള പ്രത്യേക വിലകൾ (Rates):</h5>
                     <div class="grid grid-cols-2 gap-2 text-xs">
@@ -999,6 +1021,10 @@
                         openingBalance += Number(storesDataCache[id].openingBalance || 0);
                     }
                 }
+            } else if(!store && storesDataCache) {
+                for(let id in storesDataCache) {
+                    openingBalance += Number(storesDataCache[id].openingBalance || 0);
+                }
             }
 
             let allTransactions = [];
@@ -1032,7 +1058,6 @@
 
             allTransactions.sort((a, b) => a.sortDate - b.sortDate);
 
-            // Calculate balance prior to selected timeframe for monthly/daily filters
             let runningBalance = openingBalance;
             let filteredTransactions = [];
 
@@ -1061,7 +1086,6 @@
                     runningBalance += netChange;
                     filteredTransactions.push({ ...d, currentBalance: runningBalance });
                 } else {
-                    // If it's before the selected timeframe, accumulate into opening balance for the report view
                     if(duration === 'monthly' && d.date < selectedMonth) {
                         runningBalance += netChange;
                     } else if(duration === 'daily' && d.date < selectedDate) {
@@ -1070,7 +1094,19 @@
                 }
             });
 
-            return { initialBalance: runningBalance - (filteredTransactions.length > 0 ? (filteredTransactions[filteredTransactions.length-1].currentBalance - (filteredTransactions[filteredTransactions.length-1].transType === 'Sales' ? (filteredTransactions[filteredTransactions.length-1].balanceAmount !== undefined ? filteredTransactions[filteredTransactions.length-1].balanceAmount : filteredTransactions[filteredTransactions.length-1].totalAmount || 0) : filteredTransactions[filteredTransactions.length-1].transType === 'Payment Received' ? -(filteredTransactions[filteredTransactions.length-1].totalAmount || 0) : filteredTransactions[filteredTransactions.length-1].transType === 'Payment Given' ? (filteredTransactions[filteredTransactions.length-1].totalAmount || 0) : -(filteredTransactions[filteredTransactions.length-1].totalAmount || 0))) : 0), transactions: filteredTransactions, finalBalance: runningBalance };
+            let calculatedInitialBalance = runningBalance;
+            if(filteredTransactions.length > 0) {
+                let lastTx = filteredTransactions[filteredTransactions.length - 1];
+                let lastNetChange = 0;
+                if(lastTx.transType === 'Sales') lastNetChange = (lastTx.balanceAmount !== undefined ? lastTx.balanceAmount : lastTx.totalAmount || 0);
+                else if(lastTx.transType === 'Payment Received') lastNetChange = -(lastTx.totalAmount || 0);
+                else if(lastTx.transType === 'Payment Given') lastNetChange = (lastTx.totalAmount || 0);
+                else lastNetChange = -(lastTx.totalAmount || 0);
+                
+                calculatedInitialBalance = lastTx.currentBalance - lastNetChange;
+            }
+
+            return { initialBalance: calculatedInitialBalance, transactions: filteredTransactions, finalBalance: runningBalance };
         }
 
         window.previewPDFReport = async () => {
@@ -1084,7 +1120,6 @@
             content.innerHTML = "<p class='text-slate-400 text-center py-2'>ലോഡ് ചെയ്യുന്നു...</p>";
 
             const reportData = await fetchFilteredTransactions(duration, selectedDate, selectedMonth, store);
-            let runningBalance = reportData.initialBalance;
 
             let tableHtml = `
                 <table class="w-full text-left border-collapse text-[11px] text-slate-200">
@@ -1124,7 +1159,7 @@
             const doc = new jsPDF();
             const duration = document.getElementById('report-duration').value;
             const selectedDate = document.getElementById('report-date-input').value;
-            const selectedMonth = document.getElementById('report-month-input').value;
+            const selectedMonth = document.getElementById('report-month-input-input' || 'report-month-input').value;
             const store = document.getElementById('report-store').value;
 
             doc.text("New Idiyappam Company - Chembrasseri East", 14, 20);
@@ -1134,7 +1169,6 @@
             let tableRows = [];
             let totalQty = { idiyappam: 0, vellappam: 0, palappam: 0, pathiri: 0, porotta: 0, chapati: 0, amount: 0 };
 
-            // Add Opening Balance row to PDF
             tableRows.push(['-', 'Opening Balance', '-', 0, 0, 0, 0, 0, 0, '-', `Rs.${reportData.initialBalance}`]);
 
             reportData.transactions.forEach(data => {
