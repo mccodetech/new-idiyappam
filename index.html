@@ -56,7 +56,7 @@
                     <button onclick="switchTab('payments'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">💵 പണം ഇടപാടുകൾ (Payment Entry)</button>
                     <button onclick="switchTab('accounts'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
                     <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
-                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">✏️️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
+                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">✏ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
                     <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition flex items-center gap-2">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
                 </div>
             </div>
@@ -841,7 +841,7 @@
                 if(!storeAccounts[d.store]) {
                     storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0, firstTxDate: null };
                 }
-                storeAccounts[d.store].totalSales += (d.balanceAmount !== undefined ? d.balanceAmount : d.totalAmount || 0);
+                storeAccounts[d.store].totalSales += (d.totalAmount || 0);
                 storeAccounts[d.store].totalReceived += (d.paidAmount || 0);
                 if(!storeAccounts[d.store].firstTxDate || d.date < storeAccounts[d.store].firstTxDate) {
                     storeAccounts[d.store].firstTxDate = d.date;
@@ -856,7 +856,7 @@
                     storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0, firstTxDate: null };
                 }
                 storeAccounts[d.store].totalPurchase += (d.totalAmount || 0);
-                storeAccounts[d.store].totalReceived += (d.paidAmount || 0);
+                storeAccounts[d.store].totalReceived += (d.paidAmount || 0); // പർച്ചേസ് ചെയ്യുമ്പോൾ കടക്ക് നൽകിയത്/നൽകാനുള്ളത്
                 if(!storeAccounts[d.store].firstTxDate || d.date < storeAccounts[d.store].firstTxDate) {
                     storeAccounts[d.store].firstTxDate = d.date;
                 }
@@ -882,7 +882,8 @@
             let html = "";
             for(let store in storeAccounts) {
                 let acc = storeAccounts[store];
-                acc.balance = acc.openingBalance + acc.totalSales - acc.totalReceived + acc.totalPurchase - acc.totalGiven;
+                // ശരിയായ അക്കൗണ്ടിംഗ് ലോജിക്: Balance = Opening + Sales (Debit) - Received (Credit) - Purchase (Credit/Expense) + Given (Debit)
+                acc.balance = acc.openingBalance + acc.totalSales - acc.totalReceived - acc.totalPurchase + acc.totalGiven;
                 
                 html += `
                     <div class="bg-slate-900 p-3.5 border border-slate-700/80 rounded-xl mb-2.5 shadow-md">
@@ -1081,13 +1082,13 @@
 
                 let netChange = 0;
                 if(d.transType === 'Sales') {
-                    netChange = (d.balanceAmount !== undefined ? d.balanceAmount : d.totalAmount || 0);
+                    netChange = (d.totalAmount || 0);
                 } else if(d.transType === 'Payment Received') {
                     netChange = -(d.totalAmount || 0);
                 } else if(d.transType === 'Payment Given') {
                     netChange = (d.totalAmount || 0);
                 } else if(d.transType === 'Purchase') {
-                    netChange = (d.totalAmount || 0);
+                    netChange = -(d.totalAmount || 0);
                 }
 
                 if(include) {
@@ -1106,10 +1107,10 @@
             if(duration !== 'all' && filteredTransactions.length > 0) {
                 let firstTx = filteredTransactions[0];
                 let firstNet = 0;
-                if(firstTx.transType === 'Sales') firstNet = (firstTx.balanceAmount !== undefined ? firstTx.balanceAmount : firstTx.totalAmount || 0);
+                if(firstTx.transType === 'Sales') firstNet = (firstTx.totalAmount || 0);
                 else if(firstTx.transType === 'Payment Received') firstNet = -(firstTx.totalAmount || 0);
                 else if(firstTx.transType === 'Payment Given') firstNet = (firstTx.totalAmount || 0);
-                else if(firstTx.transType === 'Purchase') firstNet = (firstTx.totalAmount || 0);
+                else if(firstTx.transType === 'Purchase') firstNet = -(firstTx.totalAmount || 0);
 
                 calculatedInitialBalance = firstTx.currentBalance - firstNet;
             } else if(duration === 'all') {
@@ -1150,7 +1151,7 @@
                         </tr>`;
 
             reportData.transactions.forEach(d => {
-                let isIncome = (d.transType === 'Payment Received');
+                let isIncome = (d.transType === 'Sales' || d.transType === 'Payment Given');
                 let colorClass = isIncome ? 'text-emerald-400' : 'text-rose-400';
                 let sign = isIncome ? '+' : '-';
                 tableHtml += `
@@ -1205,7 +1206,7 @@
                 totalQty.chapati += Number(itm.chapati || 0);
                 totalQty.amount += Number(data.totalAmount || 0);
 
-                let isIncome = (data.transType === 'Payment Received');
+                let isIncome = (data.transType === 'Sales' || data.transType === 'Payment Given');
                 let amtPrefix = isIncome ? '+' : '-';
 
                 tableRows.push([
@@ -1245,9 +1246,8 @@
                 headStyles: { fillColor: [16, 185, 129] },
                 didParseCell: function(data) {
                     if (data.section === 'body' && data.column.index === 9) {
-                        let text = data.cell.text[0];
                         let transType = data.row.raw[2];
-                        if (transType === 'Payment Received') {
+                        if (transType === 'Sales' || transType === 'Payment Given') {
                             data.cell.styles.textColor = [16, 185, 129]; 
                         } else {
                             data.cell.styles.textColor = [244, 63, 94]; 
