@@ -4,1262 +4,437 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</title>
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jsPDF & AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <style>
-        body { font-family: 'Noto Sans Malayalam', sans-serif; }
-    </style>
+
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 min-h-screen text-slate-100 p-2 sm:p-6 pb-20 flex items-center justify-center">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-malayalam antialiased relative selection:bg-emerald-500 selection:text-white">
 
-    <div class="w-full max-w-5xl mx-auto bg-slate-900/90 backdrop-blur-xl p-3 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-700/50 relative">
+    <!-- background decorative glows -->
+    <div class="fixed top-0 left-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-5xl mx-auto p-3 sm:p-6 pb-20 relative z-10">
         
-        <!-- കസ്റ്റം അലേർട്ട് മോഡൽ -->
-        <div id="custom-alert" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
-            <div class="bg-slate-800 border border-slate-700 p-6 rounded-3xl shadow-2xl max-w-sm w-full text-center transform transition-all">
-                <div id="alert-icon" class="text-4xl mb-3">✅</div>
+        <!-- Custom Alert Modal -->
+        <div id="custom-alert" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+            <div class="bg-slate-900 border border-slate-700/80 p-6 rounded-3xl shadow-2xl max-w-sm w-full text-center transform transition-all animate-scale-in">
+                <div id="alert-icon" class="text-4xl mb-2">✅</div>
                 <h4 id="alert-title" class="font-extrabold text-white text-base mb-1">വിജയകരമാണ്</h4>
-                <p id="alert-msg" class="text-xs sm:text-sm text-slate-300 mb-5">സന്ദേശം ഇവിടെ</p>
-                <button onclick="closeAlert()" class="w-full bg-emerald-600 text-white py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-lg hover:bg-emerald-500 transition">ശരി</button>
+                <p id="alert-msg" class="text-xs sm:text-sm text-slate-300 mb-6">സന്ദേശം ഇവിടെ</p>
+                <button onclick="closeAlert()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-lg shadow-emerald-900/30 transition">ശരി</button>
             </div>
         </div>
 
-        <!-- ഹാംബർഗർ മെനു ബട്ടൺ (മൊബൈൽ മാത്രം) -->
-        <button onclick="toggleSidebar()" id="menu-btn" class="absolute top-4 left-4 text-lg text-emerald-400 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-xl shadow-lg transition hidden z-30" title="മെനു">☰</button>
-
-        <!-- കമ്പ്യൂട്ടറിനുള്ള ടോപ്പ് നാവിഗേഷൻ ബാർ (ഡെസ്ക്ടോപ്പ് മാത്രം) -->
-        <div id="desktop-nav" class="hidden sm:flex flex-wrap gap-2 mb-6 pb-4 border-b border-slate-700 text-xs font-bold justify-center">
-            <button onclick="switchTab('purchase')" class="px-3.5 py-2.5 bg-emerald-600 text-white rounded-xl shadow-md transition">പർച്ചേസ് / സെയിൽസ്</button>
-            <button onclick="switchTab('stores')" class="px-3.5 py-2.5 bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 rounded-xl transition">🏪 കടകളും വിലകളും</button>
-            <button onclick="switchTab('store-list')" class="px-3.5 py-2.5 bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 rounded-xl transition">📋 കടകളുടെ ലിസ്റ്റ്</button>
-            <button onclick="switchTab('payments')" class="px-3.5 py-2.5 bg-slate-800 text-blue-400 hover:bg-slate-700 border border-slate-700 rounded-xl transition">💵 പണം ഇടപാടുകൾ</button>
-            <button onclick="switchTab('accounts')" class="px-3.5 py-2.5 bg-slate-800 text-emerald-400 hover:bg-slate-700 border border-slate-700 rounded-xl transition">💰 അക്കൗണ്ട്സ്</button>
-            <button onclick="switchTab('edit-sales')" class="px-3.5 py-2.5 bg-slate-800 text-blue-400 hover:bg-slate-700 border border-slate-700 rounded-xl transition">✏️ സെയിൽസ് എഡിറ്റ്</button>
-            <button onclick="switchTab('edit-purchase')" class="px-3.5 py-2.5 bg-slate-800 text-emerald-400 hover:bg-slate-700 border border-slate-700 rounded-2xl transition">✏️ പർച്ചേസ് എഡിറ്റ്</button>
-            <button onclick="switchTab('reports')" class="px-3.5 py-2.5 bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 rounded-xl transition">📊 റിപ്പോർട്ടുകൾ</button>
-            <button onclick="confirmLogout()" class="px-3.5 py-2.5 bg-rose-950/50 text-rose-400 border border-rose-900/50 hover:bg-rose-900 rounded-xl transition">ലോഗ് ഔട്ട്</button>
+        <!-- Mobile Header Bar -->
+        <div class="flex items-center justify-between sm:hidden mb-4 bg-slate-900/80 backdrop-blur-md p-3 rounded-2xl border border-slate-800">
+            <button onclick="toggleSidebar()" id="menu-btn" class="text-lg text-emerald-400 bg-slate-800 p-2 rounded-xl border border-slate-700 hidden">☰</button>
+            <span class="text-xs font-bold text-emerald-400">ന്യൂ ഇടിയപ്പം കമ്പനി</span>
+            <button onclick="confirmLogout()" class="text-xs font-bold text-rose-400 bg-rose-950/40 p-2 rounded-xl border border-rose-900/40">ലോഗ് ഔട്ട്</button>
         </div>
 
-        <!-- സൈഡ് ബാർ മെനു (മൊബൈൽ) -->
-        <div id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-slate-900 border-r border-slate-800 shadow-2xl z-50 p-5 transform -translate-x-full transition-transform duration-300 rounded-r-3xl flex flex-col justify-between hidden">
-            <div>
-                <div class="flex justify-between items-center mb-6 border-b border-slate-800 pb-3">
-                    <h3 class="text-sm font-extrabold text-emerald-400">മെനു</h3>
-                    <button onclick="toggleSidebar()" class="text-xs font-bold text-slate-400 hover:text-rose-400 bg-slate-800 px-3 py-1.5 rounded-xl">✕ അടയ്ക്കുക</button>
-                </div>
-                <div class="space-y-2 font-bold text-xs">
-                    <button onclick="switchTab('stores'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-xl transition flex items-center gap-2">🏪 കടകളും വിലകളും മാനേജ് ചെയ്യുക</button>
-                    <button onclick="switchTab('store-list'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition flex items-center gap-2">📋 കടകളുടെ ലിസ്റ്റ്</button>
-                    <button onclick="switchTab('payments'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">💵 പണം ഇടപാടുകൾ (Payment Entry)</button>
-                    <button onclick="switchTab('accounts'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
-                    <button onclick="switchTab('edit-sales'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-blue-950/40 border border-slate-700/50 rounded-2xl transition text-blue-400 flex items-center gap-2">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
-                    <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition text-emerald-400 flex items-center gap-2">✏ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
-                    <button onclick="switchTab('reports'); toggleSidebar();" class="w-full text-left p-3 bg-slate-800/60 hover:bg-emerald-950/40 border border-slate-700/50 rounded-2xl transition flex items-center gap-2">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
-                </div>
-            </div>
-            <button onclick="confirmLogout()" class="w-full bg-rose-600 text-white p-3 rounded-xl text-xs font-bold shadow-lg hover:bg-rose-500 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
-        </div>
-
-        <!-- ഹെഡിങ് -->
-        <div class="text-center mb-6 mt-10 sm:mt-0">
-            <h1 class="text-xl sm:text-3xl font-extrabold text-emerald-400 tracking-wide">ന്യൂ ഇടിയപ്പം കമ്പനി</h1>
-            <p class="text-xs sm:text-sm text-slate-400 font-semibold tracking-wider mt-0.5">ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</p>
-        </div>
-
-        <!-- 1. ലോഗിൻ സെക്ഷൻ -->
-        <div id="login-section" class="max-w-md mx-auto bg-slate-800/50 border border-slate-700 p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl">
-            <h3 class="text-xs sm:text-sm font-bold mb-3 text-emerald-400 uppercase tracking-wider">ലോഗിൻ ചെയ്യുക</h3>
-            <label class="block text-xs text-slate-300 mb-1 font-medium">ഇമെയിൽ / യൂസർ നെയിം:</label>
-            <input type="email" id="email" placeholder="name@gmail.com" class="w-full p-3 mb-3 border border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-900 text-white outline-none">
-            <label class="block text-xs text-slate-300 mb-1 font-medium">പാസ്‌വേർഡ് (കുറഞ്ഞത് 6 അക്കം):</label>
-            <div class="relative mb-5">
-                <input type="password" id="password" placeholder="••••••" class="w-full p-3 border border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 bg-slate-900 text-white outline-none">
-                <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-xs text-emerald-400 font-bold hover:underline">കാണുക</button>
-            </div>
-            <button onclick="loginUser()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-bold text-sm hover:bg-emerald-500 shadow-lg mb-2.5 transition">ലോഗിൻ</button>
-            <button onclick="registerUser()" class="w-full bg-slate-700 text-slate-200 p-3 rounded-xl text-xs font-semibold hover:bg-slate-600 transition">അക്കൗണ്ട് ഉണ്ടാക്കുക</button>
-        </div>
-
-        <!-- 2. ഡാഷ്‌ബോർഡ് -->
-        <div id="dashboard-section" class="hidden">
+        <!-- Main Card Container -->
+        <div class="glass-card p-4 sm:p-8 rounded-3xl shadow-2xl relative">
             
-            <div id="main-tabs" class="grid grid-cols-2 gap-2 mb-5 text-xs font-bold">
-                <button onclick="switchTab('purchase')" id="tab-purchase" class="py-3 bg-emerald-600 text-white rounded-xl shadow-lg transition">പർച്ചേസ്</button>
-                <button onclick="switchTab('sales')" id="tab-sales" class="py-3 bg-slate-800 text-slate-300 border border-slate-700 rounded-2xl hover:bg-slate-700 transition">സെയിൽസ്</button>
+            <!-- Desktop Navigation Header -->
+            <div id="desktop-nav" class="hidden sm:flex flex-wrap gap-2 mb-6 pb-4 border-b border-slate-800 text-xs font-bold justify-center">
+                <button onclick="switchTab('purchase')" class="nav-btn bg-emerald-600 text-white">പർച്ചേസ് / സെയിൽസ്</button>
+                <button onclick="switchTab('stores')" class="nav-btn text-slate-300">🏪 കടകളും വിലകളും</button>
+                <button onclick="switchTab('store-list')" class="nav-btn text-slate-300">📋 കടകളുടെ ലിസ്റ്റ്</button>
+                <button onclick="switchTab('payments')" class="nav-btn text-blue-400">💵 പണം ഇടപാടുകൾ</button>
+                <button onclick="switchTab('accounts')" class="nav-btn text-emerald-400">💰 അക്കൗണ്ട്സ്</button>
+                <button onclick="switchTab('edit-sales')" class="nav-btn text-blue-400">✏️ സെയിൽസ് എഡിറ്റ്</button>
+                <button onclick="switchTab('edit-purchase')" class="nav-btn text-emerald-400">✏️ പർച്ചേസ് എഡിറ്റ്</button>
+                <button onclick="switchTab('reports')" class="nav-btn text-slate-300">📊 റിപ്പോർട്ടുകൾ</button>
+                <button onclick="confirmLogout()" class="nav-btn bg-rose-950/40 text-rose-400 border-rose-900/40 hover:bg-rose-900">ലോഗ് ഔട്ട്</button>
             </div>
 
-            <!-- പർച്ചേസ് -->
-            <div id="section-purchase" class="space-y-3.5">
-                <h4 class="text-xs sm:text-sm font-extrabold text-emerald-400 uppercase tracking-wide" id="p-form-title">പർച്ചേസ് എൻട്രി</h4>
-                <input type="hidden" id="edit-purchase-id" value="">
-                <input type="date" id="p-date" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none">
-                <select id="p-store" onchange="updateRatesView('p')" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
+            <!-- Mobile Sidebar -->
+            <div id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-slate-900/95 backdrop-blur-xl border-r border-slate-800 shadow-2xl z-50 p-5 transform -translate-x-full transition-transform duration-300 rounded-r-3xl flex flex-col justify-between hidden">
+                <div>
+                    <div class="flex justify-between items-center mb-6 border-b border-slate-800 pb-3">
+                        <h3 class="text-sm font-extrabold text-emerald-400">മെനു</h3>
+                        <button onclick="toggleSidebar()" class="text-xs font-bold text-slate-400 hover:text-rose-400 bg-slate-800 px-3 py-1.5 rounded-xl">✕ അടയ്ക്കുക</button>
+                    </div>
+                    <div class="space-y-2 font-bold text-xs">
+                        <button onclick="switchTab('stores'); toggleSidebar();" class="sidebar-btn">🏪 കടകളും വിലകളും മാനേജ് ചെയ്യുക</button>
+                        <button onclick="switchTab('store-list'); toggleSidebar();" class="sidebar-btn">📋 കടകളുടെ ലിസ്റ്റ്</button>
+                        <button onclick="switchTab('payments'); toggleSidebar();" class="sidebar-btn text-blue-400">💵 പണം ഇടപാടുകൾ (Payment Entry)</button>
+                        <button onclick="switchTab('accounts'); toggleSidebar();" class="sidebar-btn text-emerald-400">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
+                        <button onclick="switchTab('edit-sales'); toggleSidebar();" class="sidebar-btn text-blue-400">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
+                        <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="sidebar-btn text-emerald-400">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
+                        <button onclick="switchTab('reports'); toggleSidebar();" class="sidebar-btn">📊 റിപ്പോർട്ടുകൾ & പ്രിവ്യൂ</button>
+                    </div>
+                </div>
+                <button onclick="confirmLogout()" class="w-full bg-rose-600 text-white p-3.5 rounded-2xl text-xs font-bold shadow-lg hover:bg-rose-500 transition">ലോഗ് ഔട്ട് ചെയ്യുക</button>
+            </div>
+
+            <!-- Header Title -->
+            <div class="text-center mb-8">
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 tracking-wide">ന്യൂ ഇടിയപ്പം കമ്പനി</h1>
+                <p class="text-xs sm:text-sm text-slate-400 font-medium tracking-widest uppercase mt-1">ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</p>
+            </div>
+
+            <!-- Login Section -->
+            <div id="login-section" class="max-w-md mx-auto bg-slate-900/60 border border-slate-800 p-6 sm:p-8 rounded-3xl shadow-xl backdrop-blur-md">
+                <h3 class="text-xs sm:text-sm font-bold mb-4 text-emerald-400 uppercase tracking-wider text-center">ലോഗിൻ ചെയ്യുക</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1 font-medium">ഇമെയിൽ / യൂസർ നെയിം:</label>
+                        <input type="email" id="email" placeholder="name@gmail.com" class="custom-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1 font-medium">പാസ്‌വേർഡ്:</label>
+                        <div class="relative">
+                            <input type="password" id="password" placeholder="••••••" class="custom-input pr-16">
+                            <button type="button" onclick="togglePassword()" class="absolute right-3 top-3.5 text-xs text-emerald-400 font-bold hover:underline">കാണുക</button>
+                        </div>
+                    </div>
+                    <button onclick="loginUser()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 rounded-2xl font-bold text-sm shadow-lg shadow-emerald-950 transition">ലോഗിൻ</button>
+                    <button onclick="registerUser()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 p-3 rounded-2xl text-xs font-semibold transition">അക്കൗണ്ട് ഉണ്ടാക്കുക</button>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="hidden">
                 
-                <div class="bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700 space-y-2.5 text-xs sm:text-sm">
-                    <div class="grid grid-cols-4 gap-2 font-bold text-slate-400 pb-2 border-b border-slate-700">
-                        <span>ഐറ്റം</span><span>വില</span><span>എണ്ണം</span><span class="text-right">തുക</span>
-                    </div>
-                    <!-- ഇടിയപ്പം -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">ഇടിയപ്പം</span><span id="p-rate-idiyappam" class="text-slate-400">5</span>
-                        <input type="number" id="p-qty-idiyappam" placeholder="0" oninput="calculateRowTotal('p', 'idiyappam')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="p-amt-idiyappam" class="font-bold text-right text-emerald-400">₹0</span>
-                    </div>
-                    <!-- വെള്ളപ്പം -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">വെള്ളപ്പം</span><span id="p-rate-vellappam" class="text-slate-400">6</span>
-                        <input type="number" id="p-qty-vellappam" placeholder="0" oninput="calculateRowTotal('p', 'vellappam')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="p-amt-vellappam" class="font-bold text-right text-emerald-400">₹0</span>
-                    </div>
-                    <!-- പാലപ്പം -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">പാലപ്പം</span><span id="p-rate-palappam" class="text-slate-400">6</span>
-                        <input type="number" id="p-qty-palappam" placeholder="0" oninput="calculateRowTotal('p', 'palappam')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="p-amt-palappam" class="font-bold text-right text-emerald-400">₹0</span>
-                    </div>
-                    <!-- പത്തിരി -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">പത്തിരി</span><span id="p-rate-pathiri" class="text-slate-400">4</span>
-                        <input type="number" id="p-qty-pathiri" placeholder="0" oninput="calculateRowTotal('p', 'pathiri')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="p-amt-pathiri" class="font-bold text-right text-emerald-400">₹0</span>
-                    </div>
-                    <!-- പൊറോട്ട -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">പൊറോട്ട</span><span id="p-rate-porotta" class="text-slate-400">10</span>
-                        <input type="number" id="p-qty-porotta" placeholder="0" oninput="calculateRowTotal('p', 'porotta')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="p-amt-porotta" class="font-bold text-right text-emerald-400">₹0</span>
-                    </div>
-                    <!-- ചപ്പാത്തി -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">ചപ്പാത്തി</span><span id="p-rate-chapati" class="text-slate-400">8</span>
-                        <input type="number" id="p-qty-chapati" placeholder="0" oninput="calculateRowTotal('p', 'chapati')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="p-amt-chapati" class="font-bold text-right text-emerald-400">₹0</span>
-                    </div>
+                <div id="main-tabs" class="grid grid-cols-2 gap-2 mb-6 text-xs font-bold">
+                    <button onclick="switchTab('purchase')" id="tab-purchase" class="py-3.5 bg-emerald-600 text-white rounded-2xl shadow-lg transition">പർച്ചേസ്</button>
+                    <button onclick="switchTab('sales')" id="tab-sales" class="py-3.5 bg-slate-900 text-slate-400 border border-slate-800 rounded-2xl hover:bg-slate-800 transition">സെയിൽസ്</button>
                 </div>
 
-                <div class="text-right font-extrabold text-sm sm:text-base text-emerald-400 pr-2">ആകെ തുക: <span id="p-grand-total">₹0</span></div>
-                
-                <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700 text-xs sm:text-sm space-y-2">
-                    <div class="flex justify-between items-center font-semibold text-slate-300">
-                        <span>നൽകിയ പണം (Paid):</span>
-                        <input type="number" id="p-paid-amt" placeholder="0" class="w-32 p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white font-bold text-sm outline-none">
-                    </div>
-                </div>
-
-                <div class="flex gap-2 mt-3">
-                    <button onclick="saveTransaction('purchase')" class="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-emerald-500 shadow-lg transition">പർച്ചേസ് സേവ്</button>
-                    <button onclick="clearForm('purchase')" class="w-32 bg-rose-950/60 text-rose-400 border border-rose-900/50 p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-rose-900 transition">റദ്ദാക്കുക</button>
-                </div>
-            </div>
-
-            <!-- സെയിൽസ് -->
-            <div id="section-sales" class="space-y-3.5 hidden">
-                <h4 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-wide" id="s-form-title">സെയിൽസ് / ഓർഡർ</h4>
-                <input type="hidden" id="edit-sales-id" value="">
-                <input type="date" id="s-date" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none">
-                <select id="s-store" onchange="updateRatesView('s')" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
-                
-                <div class="bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700 space-y-2.5 text-xs sm:text-sm">
-                    <div class="grid grid-cols-4 gap-2 font-bold text-slate-400 pb-2 border-b border-slate-700">
-                        <span>ഐറ്റം</span><span>വില</span><span>എണ്ണം</span><span class="text-right">തുക</span>
-                    </div>
-                    <!-- ഇടിയപ്പം -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">ഇടിയപ്പം</span><span id="s-rate-idiyappam" class="text-slate-400">5</span>
-                        <input type="number" id="s-qty-idiyappam" placeholder="0" oninput="calculateRowTotal('s', 'idiyappam')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="s-amt-idiyappam" class="font-bold text-right text-blue-400">₹0</span>
-                    </div>
-                    <!-- വെള്ളപ്പം -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">വെള്ളപ്പം</span><span id="s-rate-vellappam" class="text-slate-400">6</span>
-                        <input type="number" id="s-qty-vellappam" placeholder="0" oninput="calculateRowTotal('s', 'vellappam')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="s-amt-vellappam" class="font-bold text-right text-blue-400">₹0</span>
-                    </div>
-                    <!-- പാലപ്പം -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">പാലപ്പം</span><span id="s-rate-palappam" class="text-slate-400">6</span>
-                        <input type="number" id="s-qty-palappam" placeholder="0" oninput="calculateRowTotal('s', 'palappam')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="s-amt-palappam" class="font-bold text-right text-blue-400">₹0</span>
-                    </div>
-                    <!-- പത്തിരി -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">പത്തിരി</span><span id="s-rate-pathiri" class="text-slate-400">4</span>
-                        <input type="number" id="s-qty-pathiri" placeholder="0" oninput="calculateRowTotal('s', 'pathiri')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="s-amt-pathiri" class="font-bold text-right text-blue-400">₹0</span>
-                    </div>
-                    <!-- പൊറോട്ട -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">പൊറോട്ട</span><span id="s-rate-porotta" class="text-slate-400">10</span>
-                        <input type="number" id="s-qty-porotta" placeholder="0" oninput="calculateRowTotal('s', 'porotta')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="s-amt-porotta" class="font-bold text-right text-blue-400">₹0</span>
-                    </div>
-                    <!-- ചപ്പാത്തി -->
-                    <div class="grid grid-cols-4 gap-2 items-center">
-                        <span class="font-semibold text-xs sm:text-sm">ചപ്പാത്തി</span><span id="s-rate-chapati" class="text-slate-400">8</span>
-                        <input type="number" id="s-qty-chapati" placeholder="0" oninput="calculateRowTotal('s', 'chapati')" class="p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white text-sm outline-none">
-                        <span id="s-amt-chapati" class="font-bold text-right text-blue-400">₹0</span>
-                    </div>
-                </div>
-
-                <div class="text-right font-extrabold text-sm sm:text-base text-blue-400 pr-2">ആകെ തുക: <span id="s-grand-total">₹0</span></div>
-
-                <!-- ലഭിച്ച പണവും ബാലൻസും -->
-                <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700 text-xs sm:text-sm space-y-2.5">
-                    <div class="flex justify-between items-center font-semibold text-slate-300">
-                        <span>ലഭിച്ച തുക (Received):</span>
-                        <input type="number" id="s-paid-amt" placeholder="0" oninput="calculateBalance()" class="w-32 p-2 border border-slate-700 rounded-lg text-center bg-slate-900 text-white font-bold text-sm outline-none">
-                    </div>
-                    <div class="flex justify-between items-center font-bold text-rose-400 pt-2 border-t border-slate-700">
-                        <span>ബാക്കി ബാലൻസ് (Balance):</span>
-                        <span id="s-balance-amt">₹0</span>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-2 mt-3">
-                    <button onclick="saveTransaction('sales')" class="bg-blue-600 text-white p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-blue-500 shadow-lg transition">സെയിൽസ് സേവ്</button>
-                    <button onclick="sendWhatsAppOrder()" class="bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-emerald-500 shadow-lg transition">വാട്സാപ്പ് ബിൽ</button>
-                </div>
-                <button onclick="clearForm('sales')" class="w-full bg-rose-950/60 text-rose-400 border border-rose-900/50 p-2.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-rose-900 transition">റദ്ദാക്കുക (Cancel)</button>
-            </div>
-
-            <!-- കടകളുടെ ലിസ്റ്റ് പേജ് (Store List) -->
-            <div id="section-store-list" class="space-y-3.5 hidden">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-xs sm:text-sm font-extrabold text-emerald-400 uppercase tracking-wide">കടകളുടെ ലിസ്റ്റ് (Store List)</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-emerald-400 font-bold hover:underline">തിരികെ</button>
-                </div>
-                <div id="store-list-container" class="space-y-3 max-h-96 overflow-y-auto border border-slate-700 p-3 rounded-xl bg-slate-800/50 text-xs sm:text-sm">
-                    <p class="text-slate-400 text-center py-4">ലോഡ് ചെയ്യുന്നു...</p>
-                </div>
-            </div>
-
-            <!-- പണം ഇടപാടുകൾ (Payment Entry Page) -->
-            <div id="section-payments" class="space-y-3.5 hidden">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-wide">പണം ഇടപാട് രേഖപ്പെടുത്തുക</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-blue-400 font-bold hover:underline">തിരികെ</button>
-                </div>
-                <input type="date" id="pay-date" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none">
-                <select id="pay-store" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
-                
-                <div class="bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700 space-y-3 text-xs sm:text-sm">
-                    <label class="block font-bold text-slate-300">ഇടപാടിന്റെ തരം:</label>
-                    <select id="pay-type" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white font-bold outline-none">
-                        <option value="received">പണം ലഭിച്ചത് (Payment Received)</option>
-                        <option value="given">പണം നൽകിയത് (Payment Given)</option>
-                    </select>
-
-                    <label class="block font-bold text-slate-300 mt-1">തുക (Amount):</label>
-                    <input type="number" id="pay-amount" placeholder="0" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white font-bold outline-none">
-                </div>
-
-                <div class="flex gap-2 mt-3">
-                    <button onclick="savePaymentEntry()" class="flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold text-xs sm:text-sm shadow-lg hover:bg-blue-500 transition">ഇടപാട് സേവ്</button>
-                    <button onclick="clearForm('payments')" class="w-32 bg-rose-950/60 text-rose-400 border border-rose-900/50 p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-rose-900 transition">റദ്ദാക്കുക</button>
-                </div>
-            </div>
-
-            <!-- അക്കൗണ്ട്സ് & ബാലൻസ് പേജ് -->
-            <div id="section-accounts" class="space-y-3.5 hidden">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-xs sm:text-sm font-extrabold text-emerald-400 uppercase tracking-wide">കടകളുടെ അക്കൗണ്ട്സ് & ബാലൻസ്</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-emerald-400 font-bold hover:underline">തിരികെ</button>
-                </div>
-                <div id="accounts-list-container" class="space-y-3 max-h-96 overflow-y-auto border border-slate-700 p-3 rounded-xl bg-slate-800/50 text-xs sm:text-sm">
-                    <p class="text-slate-400 text-center py-4">ലോഡ് ചെയ്യുന്നു...</p>
-                </div>
-            </div>
-
-            <!-- സെയിൽസ് എഡിറ്റ് ലിസ്റ്റ് പേജ് -->
-            <div id="section-edit-sales" class="space-y-3.5 hidden">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-wide">സെയിൽസ് എഡിറ്റ് ചെയ്യുക</h4>
-                    <button onclick="switchTab('sales')" class="text-xs sm:text-sm text-blue-400 font-bold hover:underline">തിരികെ</button>
-                </div>
-                <div id="edit-sales-list" class="space-y-2.5 max-h-96 overflow-y-auto border border-slate-700 p-3 rounded-xl bg-slate-800/50 text-xs sm:text-sm">
-                    <p class="text-slate-400 text-center py-4">ലോഡ് ചെയ്യുന്നു...</p>
-                </div>
-            </div>
-
-            <!-- പർച്ചേസ് എഡിറ്റ് ലിസ്റ്റ് പേജ് -->
-            <div id="section-edit-purchase" class="space-y-3.5 hidden">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-xs sm:text-sm font-extrabold text-emerald-400 uppercase tracking-wide">പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-emerald-400 font-bold hover:underline">തിരികെ</button>
-                </div>
-                <div id="edit-purchase-list" class="space-y-2.5 max-h-96 overflow-y-auto border border-slate-700 p-3 rounded-xl bg-slate-800/50 text-xs sm:text-sm">
-                    <p class="text-slate-400 text-center py-4">ലോഡ് ചെയ്യുന്നു...</p>
-                </div>
-            </div>
-
-            <!-- കടകൾ മാനേജ് ചെയ്യാനുള്ള പേജ് -->
-            <div id="section-stores" class="space-y-3.5 hidden">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-xs sm:text-sm font-extrabold text-slate-300 uppercase tracking-wide">കടകളും വിലകളും മാനേജ് ചെയ്യുക</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-emerald-400 font-bold hover:underline">തിരികെ</button>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2 text-xs font-bold">
-                    <button onclick="setStoreMode('add')" id="store-mode-add" class="py-2.5 bg-slate-800 text-slate-300 border border-slate-700 rounded-xl hover:bg-slate-700 transition">ADD</button>
-                    <button onclick="setStoreMode('edit')" id="store-mode-edit" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow-lg transition">EDIT</button>
-                    <button onclick="setStoreMode('delete')" id="store-mode-delete" class="py-2.5 bg-slate-800 text-slate-300 border border-slate-700 rounded-xl hover:bg-slate-700 transition">DELETE</button>
-                </div>
-
-                <div id="store-form-container" class="bg-slate-800/60 p-3.5 rounded-xl border border-slate-700 space-y-2.5">
-                    <label id="store-form-label" class="block text-xs sm:text-sm font-bold text-emerald-400">കട എഡിറ്റ് ചെയ്യുക (EDIT)</label>
-                    <select id="existing-store-select" onchange="fillStoreDataForEdit()" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                        <option value="">എഡിറ്റ് ചെയ്യാൻ കട തിരഞ്ഞെടുക്കുക</option>
-                    </select>
-                    <input type="hidden" id="edit-store-id" value="">
+                <!-- Purchase Entry Section -->
+                <div id="section-purchase" class="space-y-4">
+                    <h4 class="text-xs sm:text-sm font-extrabold text-emerald-400 uppercase tracking-wide" id="p-form-title">പർച്ചേസ് എൻട്രി</h4>
+                    <input type="hidden" id="edit-purchase-id" value="">
                     
-                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-300 mb-1">വാട്സാപ്പ് നമ്പർ:</label>
-                            <input type="text" id="store-phone" placeholder="9846236747" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-300 mb-1">തുടക്കത്തിലെ ബാലൻസ് (Opening Balance):</label>
-                            <input type="number" id="store-opening-balance" placeholder="0" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-rose-400 font-bold outline-none">
-                        </div>
-                   </div>
-
-                   <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-2">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-300 mb-1">കടയുടെ പേര്:</label>
-                            <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-300 mb-1">ഓണറുടെ പേര്:</label>
-                            <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-300 mb-1">സ്ഥലം (Place):</label>
-                            <input type="text" id="store-place" placeholder="സ്ഥലം" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                        </div>
-                   </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="date" id="p-date" class="custom-input">
+                        <select id="p-store" onchange="updateRatesView('p')" class="custom-input"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
+                    </div>
                     
-                    <h5 class="text-xs sm:text-sm font-bold text-slate-300 pt-2 border-t border-slate-700">ഈ കടയ്ക്കുള്ള പ്രത്യേക വിലകൾ (Rates):</h5>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>ഇടിയപ്പം: <input type="number" id="store-rate-idiyappam" value="5" class="w-full p-2 mt-1 border border-slate-700 rounded-lg bg-slate-900 text-white text-sm outline-none"></div>
-                        <div>വെള്ളപ്പം: <input type="number" id="store-rate-vellappam" value="6" class="w-full p-2 mt-1 border border-slate-700 rounded-lg bg-slate-900 text-white text-sm outline-none"></div>
-                        <div>പാലപ്പം: <input type="number" id="store-rate-palappam" value="6" class="w-full p-2 mt-1 border border-slate-700 rounded-lg bg-slate-900 text-white text-sm outline-none"></div>
-                        <div>പത്തിരി: <input type="number" id="store-rate-pathiri" value="4" class="w-full p-2 mt-1 border border-slate-700 rounded-lg bg-slate-900 text-white text-sm outline-none"></div>
-                        <div>പൊറോട്ട: <input type="number" id="store-rate-porotta" value="10" class="w-full p-2 mt-1 border border-slate-700 rounded-lg bg-slate-900 text-white text-sm outline-none"></div>
-                        <div>ചപ്പാത്തി: <input type="number" id="store-rate-chapati" value="8" class="w-full p-2 mt-1 border border-slate-700 rounded-lg bg-slate-900 text-white text-sm outline-none"></div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs sm:text-sm">
+                        <div class="grid grid-cols-4 gap-2 font-bold text-slate-400 pb-2 border-b border-slate-800">
+                            <span>ഐറ്റം</span><span>വില</span><span>എണ്ണം</span><span class="text-right">തുക</span>
+                        </div>
+                        
+                        <!-- Items Loop Container -->
+                        <div id="p-items-container" class="space-y-3">
+                            <!-- Items inserted dynamically or via template below -->
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">ഇടിയപ്പം</span><span id="p-rate-idiyappam" class="text-slate-400">5</span>
+                                <input type="number" id="p-qty-idiyappam" placeholder="0" oninput="calculateRowTotal('p', 'idiyappam')" class="custom-input text-center p-2">
+                                <span id="p-amt-idiyappam" class="font-bold text-right text-emerald-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">വെള്ളപ്പം</span><span id="p-rate-vellappam" class="text-slate-400">6</span>
+                                <input type="number" id="p-qty-vellappam" placeholder="0" oninput="calculateRowTotal('p', 'vellappam')" class="custom-input text-center p-2">
+                                <span id="p-amt-vellappam" class="font-bold text-right text-emerald-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">പാലപ്പം</span><span id="p-rate-palappam" class="text-slate-400">6</span>
+                                <input type="number" id="p-qty-palappam" placeholder="0" oninput="calculateRowTotal('p', 'palappam')" class="custom-input text-center p-2">
+                                <span id="p-amt-palappam" class="font-bold text-right text-emerald-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">പത്തിരി</span><span id="p-rate-pathiri" class="text-slate-400">4</span>
+                                <input type="number" id="p-qty-pathiri" placeholder="0" oninput="calculateRowTotal('p', 'pathiri')" class="custom-input text-center p-2">
+                                <span id="p-amt-pathiri" class="font-bold text-right text-emerald-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">പൊറോട്ട</span><span id="p-rate-porotta" class="text-slate-400">10</span>
+                                <input type="number" id="p-qty-porotta" placeholder="0" oninput="calculateRowTotal('p', 'porotta')" class="custom-input text-center p-2">
+                                <span id="p-amt-porotta" class="font-bold text-right text-emerald-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">ചപ്പാത്തി</span><span id="p-rate-chapati" class="text-slate-400">8</span>
+                                <input type="number" id="p-qty-chapati" placeholder="0" oninput="calculateRowTotal('p', 'chapati')" class="custom-input text-center p-2">
+                                <span id="p-amt-chapati" class="font-bold text-right text-emerald-400">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right font-extrabold text-base text-emerald-400 pr-2">ആകെ തുക: <span id="p-grand-total">₹0</span></div>
+                    
+                    <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800 text-xs sm:text-sm">
+                        <div class="flex justify-between items-center font-semibold text-slate-300">
+                            <span>നൽകിയ പണം (Paid):</span>
+                            <input type="number" id="p-paid-amt" placeholder="0" class="custom-input w-36 text-center font-bold">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="saveTransaction('purchase')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg transition">പർച്ചേസ് സേവ്</button>
+                        <button onclick="clearForm('purchase')" class="w-28 bg-rose-950/40 text-rose-400 border border-rose-900/40 p-3.5 rounded-2xl font-bold text-xs sm:text-sm hover:bg-rose-900 transition">റദ്ദാക്കുക</button>
                     </div>
                 </div>
 
-                <div id="store-delete-container" class="bg-slate-800/60 p-3.5 rounded-xl border border-slate-700 space-y-2.5 hidden">
-                    <label class="block text-xs sm:text-sm font-bold text-rose-400">ഡിലീറ്റ് ചെയ്യേണ്ട കട തിരഞ്ഞെടുക്കുക:</label>
-                    <select id="delete-store-select" class="w-full p-2.5 border border-slate-700 rounded-xl text-sm bg-slate-900 text-white outline-none">
-                        <option value="">കട തിരഞ്ഞെടുക്കുക</option>
+                <!-- Sales Entry Section -->
+                <div id="section-sales" class="space-y-4 hidden">
+                    <h4 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-wide" id="s-form-title">സെയിൽസ് / ഓർഡർ</h4>
+                    <input type="hidden" id="edit-sales-id" value="">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="date" id="s-date" class="custom-input">
+                        <select id="s-store" onchange="updateRatesView('s')" class="custom-input"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
+                    </div>
+                    
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs sm:text-sm">
+                        <div class="grid grid-cols-4 gap-2 font-bold text-slate-400 pb-2 border-b border-slate-800">
+                            <span>ഐറ്റം</span><span>വില</span><span>എണ്ണം</span><span class="text-right">തുക</span>
+                        </div>
+                        
+                        <div id="s-items-container" class="space-y-3">
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">ഇടിയപ്പം</span><span id="s-rate-idiyappam" class="text-slate-400">5</span>
+                                <input type="number" id="s-qty-idiyappam" placeholder="0" oninput="calculateRowTotal('s', 'idiyappam')" class="custom-input text-center p-2">
+                                <span id="s-amt-idiyappam" class="font-bold text-right text-blue-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">വെള്ളപ്പം</span><span id="s-rate-vellappam" class="text-slate-400">6</span>
+                                <input type="number" id="s-qty-vellappam" placeholder="0" oninput="calculateRowTotal('s', 'vellappam')" class="custom-input text-center p-2">
+                                <span id="s-amt-vellappam" class="font-bold text-right text-blue-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">പാലപ്പം</span><span id="s-rate-palappam" class="text-slate-400">6</span>
+                                <input type="number" id="s-qty-palappam" placeholder="0" oninput="calculateRowTotal('s', 'palappam')" class="custom-input text-center p-2">
+                                <span id="s-amt-palappam" class="font-bold text-right text-blue-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">പത്തിരി</span><span id="s-rate-pathiri" class="text-slate-400">4</span>
+                                <input type="number" id="s-qty-pathiri" placeholder="0" oninput="calculateRowTotal('s', 'pathiri')" class="custom-input text-center p-2">
+                                <span id="s-amt-pathiri" class="font-bold text-right text-blue-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">പൊറോട്ട</span><span id="s-rate-porotta" class="text-slate-400">10</span>
+                                <input type="number" id="s-qty-porotta" placeholder="0" oninput="calculateRowTotal('s', 'porotta')" class="custom-input text-center p-2">
+                                <span id="s-amt-porotta" class="font-bold text-right text-blue-400">₹0</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2 items-center">
+                                <span class="font-medium text-slate-200">ചപ്പാത്തി</span><span id="s-rate-chapati" class="text-slate-400">8</span>
+                                <input type="number" id="s-qty-chapati" placeholder="0" oninput="calculateRowTotal('s', 'chapati')" class="custom-input text-center p-2">
+                                <span id="s-amt-chapati" class="font-bold text-right text-blue-400">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right font-extrabold text-base text-blue-400 pr-2">ആകെ തുക: <span id="s-grand-total">₹0</span></div>
+
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-xs sm:text-sm space-y-3">
+                        <div class="flex justify-between items-center font-semibold text-slate-300">
+                            <span>ലഭിച്ച തുക (Received):</span>
+                            <input type="number" id="s-paid-amt" placeholder="0" oninput="calculateBalance()" class="custom-input w-36 text-center font-bold">
+                        </div>
+                        <div class="flex justify-between items-center font-bold text-rose-400 pt-2 border-t border-slate-800">
+                            <span>ബാക്കി ബാലൻസ് (Balance):</span>
+                            <span id="s-balance-amt">₹0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 pt-2">
+                        <button onclick="saveTransaction('sales')" class="bg-blue-600 hover:bg-blue-500 text-white p-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg transition">സെയിൽസ് സേവ്</button>
+                        <button onclick="sendWhatsAppOrder()" class="bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg transition">വാട്സാപ്പ് ബിൽ</button>
+                    </div>
+                    <button onclick="clearForm('sales')" class="w-full bg-rose-950/40 text-rose-400 border border-rose-900/40 p-3 rounded-2xl font-bold text-xs sm:text-sm hover:bg-rose-900 transition">റദ്ദാക്കുക (Cancel)</button>
+                </div>
+
+                <!-- Store List Section -->
+                <div id="section-store-list" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-extrabold text-emerald-400 uppercase tracking-wide">കടകളുടെ ലിസ്റ്റ് (Store List)</h4>
+                        <button onclick="switchTab('purchase')" class="text-xs text-emerald-400 font-bold hover:underline">തിരികെ</button>
+                    </div>
+                    <div id="store-list-container" class="space-y-3 max-h-96 overflow-y-auto border border-slate-800 p-3 rounded-2xl bg-slate-900/50 text-xs sm:text-sm custom-scrollbar">
+                        <p class="text-slate-500 text-center py-4">ലോഡ് ചെയ്യുന്നു...</p>
+                    </div>
+                </div>
+
+                <!-- Payment Entry Section -->
+                <div id="section-payments" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-wide">പണം ഇടപാട് രേഖപ്പെടുത്തുക</h4>
+                        <button onclick="switchTab('purchase')" class="text-xs text-blue-400 font-bold hover:underline">തിരികെ</button>
+                    </div>
+                    
+                    <input type="date" id="pay-date" class="custom-input">
+                    <select id="pay-store" class="custom-input"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
+                    
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs sm:text-sm">
+                        <label class="block font-bold text-slate-300">ഇടപാടിന്റെ തരം:</label>
+                        <select id="pay-type" class="custom-input font-bold">
+                            <option value="received">പണം ലഭിച്ചത് (Payment Received)</option>
+                            <option value="given">പണം നൽകിയത് (Payment Given)</option>
+                        </select>
+
+                        <label class="block font-bold text-slate-300">തുക (Amount):</label>
+                        <input type="number" id="pay-amount" placeholder="0" class="custom-input font-bold">
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="savePaymentEntry()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white p-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg transition">ഇടപാട് സേവ്</button>
+                        <button onclick="clearForm('payments')" class="w-28 bg-rose-950/40 text-rose-400 border border-rose-900/40 p-3.5 rounded-2xl font-bold text-xs sm:text-sm hover:bg-rose-900 transition">റദ്ദാക്കുക</button>
+                    </div>
+                </div>
+
+                <!-- Accounts & Balance Section -->
+                <div id="section-accounts" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-extrabold text-emerald-400 uppercase tracking-wide">കടകളുടെ അക്കൗണ്ട്സ് & ബാലൻസ്</h4>
+                        <button onclick="switchTab('purchase')" class="text-xs text-emerald-400 font-bold hover:underline">തിരികെ</button>
+                    </div>
+                    <div id="accounts-list-container" class="space-y-3 max-h-96 overflow-y-auto border border-slate-800 p-3 rounded-2xl bg-slate-900/50 text-xs sm:text-sm custom-scrollbar">
+                        <p class="text-slate-500 text-center py-4">ലോഡ് ചെയ്യുന്നു...</p>
+                    </div>
+                </div>
+
+                <!-- Edit Sales Section -->
+                <div id="section-edit-sales" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-wide">സെയിൽസ് എഡിറ്റ് ചെയ്യുക</h4>
+                        <button onclick="switchTab('sales')" class="text-xs text-blue-400 font-bold hover:underline">തിരികെ</button>
+                    </div>
+                    <div id="edit-sales-list" class="space-y-2.5 max-h-96 overflow-y-auto border border-slate-800 p-3 rounded-2xl bg-slate-900/50 text-xs sm:text-sm custom-scrollbar">
+                        <p class="text-slate-500 text-center py-4">ലോഡ് ചെയ്യുന്നു...</p>
+                    </div>
+                </div>
+
+                <!-- Edit Purchase Section -->
+                <div id="section-edit-purchase" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-extrabold text-emerald-400 uppercase tracking-wide">പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</h4>
+                        <button onclick="switchTab('purchase')" class="text-xs text-emerald-400 font-bold hover:underline">തിരികെ</button>
+                    </div>
+                    <div id="edit-purchase-list" class="space-y-2.5 max-h-96 overflow-y-auto border border-slate-800 p-3 rounded-2xl bg-slate-900/50 text-xs sm:text-sm custom-scrollbar">
+                        <p class="text-slate-500 text-center py-4">ലോഡ് ചെയ്യുന്നു...</p>
+                    </div>
+                </div>
+
+                <!-- Manage Stores Section -->
+                <div id="section-stores" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-extrabold text-slate-300 uppercase tracking-wide">കടകളും വിലകളും മാനേജ് ചെയ്യുക</h4>
+                        <button onclick="switchTab('purchase')" class="text-xs text-emerald-400 font-bold hover:underline">തിരികെ</button>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 text-xs font-bold">
+                        <button onclick="setStoreMode('add')" id="store-mode-add" class="py-2.5 bg-slate-800 text-slate-300 rounded-xl hover:bg-slate-700 transition">ADD</button>
+                        <button onclick="setStoreMode('edit')" id="store-mode-edit" class="py-2.5 bg-emerald-600 text-white rounded-xl shadow-lg transition">EDIT</button>
+                        <button onclick="setStoreMode('delete')" id="store-mode-delete" class="py-2.5 bg-slate-800 text-slate-300 rounded-xl hover:bg-slate-700 transition">DELETE</button>
+                    </div>
+
+                    <div id="store-form-container" class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-3">
+                        <label id="store-form-label" class="block text-xs sm:text-sm font-bold text-emerald-400">കട എഡിറ്റ് ചെയ്യുക (EDIT)</label>
+                        <select id="existing-store-select" onchange="fillStoreDataForEdit()" class="custom-input">
+                            <option value="">എഡിറ്റ് ചെയ്യാൻ കട തിരഞ്ഞെടുക്കുക</option>
+                        </select>
+                        <input type="hidden" id="edit-store-id" value="">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 mb-1">വാട്സാപ്പ് നമ്പർ:</label>
+                                <input type="text" id="store-phone" placeholder="9846236747" class="custom-input">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 mb-1">തുടക്കത്തിലെ ബാലൻസ്:</label>
+                                <input type="number" id="store-opening-balance" placeholder="0" class="custom-input text-rose-400 font-bold">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 mb-1">കടയുടെ പേര്:</label>
+                                <input type="text" id="store-name" placeholder="കടയുടെ പേര്" class="custom-input">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 mb-1">ഓണറുടെ പേര്:</label>
+                                <input type="text" id="owner-name" placeholder="ഓണറുടെ പേര്" class="custom-input">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 mb-1">സ്ഥലം (Place):</label>
+                                <input type="text" id="store-place" placeholder="സ്ഥലം" class="custom-input">
+                            </div>
+                        </div>
+                        
+                        <h5 class="text-xs font-bold text-slate-300 pt-2 border-t border-slate-800">ഈ കടയ്ക്കുള്ള പ്രത്യേക വിലകൾ (Rates):</h5>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                            <div>ഇടിയപ്പം: <input type="number" id="store-rate-idiyappam" value="5" class="custom-input p-2 mt-1"></div>
+                            <div>വെള്ളപ്പം: <input type="number" id="store-rate-vellappam" value="6" class="custom-input p-2 mt-1"></div>
+                            <div>പാലപ്പം: <input type="number" id="store-rate-palappam" value="6" class="custom-input p-2 mt-1"></div>
+                            <div>പത്തിരി: <input type="number" id="store-rate-pathiri" value="4" class="custom-input p-2 mt-1"></div>
+                            <div>പൊറോട്ട: <input type="number" id="store-rate-porotta" value="10" class="custom-input p-2 mt-1"></div>
+                            <div>ചപ്പാത്തി: <input type="number" id="store-rate-chapati" value="8" class="custom-input p-2 mt-1"></div>
+                        </div>
+                    </div>
+
+                    <div id="store-delete-container" class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-3 hidden">
+                        <label class="block text-xs sm:text-sm font-bold text-rose-400">ഡിലീറ്റ് ചെയ്യേണ്ട കട തിരഞ്ഞെടുക്കുക:</label>
+                        <select id="delete-store-select" class="custom-input"><option value="">കട തിരഞ്ഞെടുക്കുക</option></select>
+                        <button onclick="deleteStoreAction()" class="w-full bg-rose-600 hover:bg-rose-500 text-white p-3 rounded-xl font-bold text-xs shadow-lg transition">തിരഞ്ഞെടുത്ത കട ഡിലീറ്റ് ചെയ്യുക</button>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="saveStoreAction()" id="store-action-btn" class="flex-1 bg-emerald-600 text-white p-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg transition">കട സേവ് ചെയ്യുക</button>
+                        <button onclick="clearForm('stores')" class="w-28 bg-rose-950/40 text-rose-400 border border-rose-900/40 p-3.5 rounded-2xl font-bold text-xs sm:text-sm hover:bg-rose-900 transition">റദ്ദാക്കുക</button>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div id="section-reports" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-extrabold text-slate-300 uppercase tracking-wide">റിപ്പോർട്ട് & പ്രിവ്യൂ</h4>
+                        <button onclick="switchTab('purchase')" class="text-xs text-emerald-400 font-bold hover:underline">തിരികെ</button>
+                    </div>
+                    
+                    <label class="block text-xs font-bold text-slate-300">റിപ്പോർട്ട് തരം:</label>
+                    <select id="report-duration" onchange="toggleReportInputs()" class="custom-input">
+                        <option value="all">ഇതുവരെയുള്ള മൊത്തം റിപ്പോർട്ട്</option>
+                        <option value="daily">ഡെയ്‌ലി റിപ്പോർട്ട് (പ്രത്യേക തീയതി)</option>
+                        <option value="monthly">മന്ത്ലി റിപ്പോർട്ട് (പ്രത്യേക മാസം)</option>
                     </select>
-                    <button onclick="deleteStoreAction()" class="w-full bg-rose-600 text-white p-3 rounded-xl font-bold text-xs shadow-lg hover:bg-rose-500 mt-1 transition">തിരഞ്ഞെടുത്ത കട ഡിലീറ്റ് ചെയ്യുക</button>
+
+                    <div id="daily-input-container" class="hidden space-y-1 text-slate-300 text-xs">
+                        തീയതി തിരഞ്ഞെടുക്കുക:
+                        <input type="date" id="report-date-input" class="custom-input">
+                    </div>
+
+                    <div id="monthly-input-container" class="hidden space-y-1 text-slate-300 text-xs">
+                        മാസം തിരഞ്ഞെടുക്കുക:
+                        <input type="month" id="report-month-input" class="custom-input">
+                    </div>
+
+                    <label class="block text-xs font-bold text-slate-300">കട തിരഞ്ഞെടുക്കുക (ഓപ്ഷണൽ):</label>
+                    <select id="report-store" class="custom-input">
+                        <option value="">എല്ലാ കടകളും (All Stores)</option>
+                    </select>
+
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="previewPDFReport()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white p-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg transition">പ്രിവ്യൂ കാണുക</button>
+                        <button onclick="generatePDFReport()" class="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white p-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg transition">PDF ഡൗൺലോഡ്</button>
+                    </div>
+
+                    <div id="report-preview-box" class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-xs sm:text-sm max-h-72 overflow-y-auto hidden space-y-2 custom-scrollbar">
+                        <h5 class="font-bold text-emerald-400 border-b border-slate-800 pb-2">പ്രിവ്യൂ ഫലങ്ങൾ:</h5>
+                        <div id="preview-content" class="overflow-x-auto"></div>
+                    </div>
                 </div>
 
-                <div class="flex gap-2 mt-3">
-                    <button onclick="saveStoreAction()" id="store-action-btn" class="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition">കട സേവ് ചെയ്യുക</button>
-                    <button onclick="clearForm('stores')" class="w-32 bg-rose-950/60 text-rose-400 border border-rose-900/50 p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-rose-900 transition">റദ്ദാക്കുക</button>
-                </div>
             </div>
-
-            <!-- റിപ്പോർട്ടുകൾ -->
-            <div id="section-reports" class="space-y-3.5 hidden">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-xs sm:text-sm font-extrabold text-slate-300 uppercase tracking-wide">റിപ്പോർട്ട് & പ്രിവ്യൂ</h4>
-                    <button onclick="switchTab('purchase')" class="text-xs sm:text-sm text-emerald-400 font-bold hover:underline">തിരികെ</button>
-                </div>
-                
-                <label class="block text-xs sm:text-sm font-bold text-slate-300">റിപ്പോർട്ട് തരം:</label>
-                <select id="report-duration" onchange="toggleReportInputs()" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none">
-                    <option value="all">ഇതുവരെയുള്ള മൊത്തം റിപ്പോർട്ട്</option>
-                    <option value="daily">ഡെയ്‌ലി റിപ്പോർട്ട് (പ്രത്യേക തീയതി)</option>
-                    <option value="monthly">മന്ത്ലി റിപ്പോർട്ട് (പ്രത്യേക മാസം)</option>
-                </select>
-
-                <!-- ഡെയ്‌ലി റിപ്പോർട്ടിന് തീയതി തിരഞ്ഞെടുക്കാൻ -->
-                <div id="daily-input-container" class="hidden space-y-1 text-slate-300 text-xs">
-                    തീയതി തിരഞ്ഞെടുക്കുക:
-                    <input type="date" id="report-date-input" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none">
-                </div>
-
-                <!-- മന്ത്ലി റിപ്പോർട്ടിന് മാസം തിരഞ്ഞെടുക്കാൻ -->
-                <div id="monthly-input-container" class="hidden space-y-1 text-slate-300 text-xs">
-                    മാസം തിരഞ്ഞെടുക്കുക:
-                    <input type="month" id="report-month-input" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none">
-                </div>
-
-                <label class="block text-xs sm:text-sm font-bold text-slate-300">കട തിരഞ്ഞെടുക്കുക (ഓപ്ഷണൽ):</label>
-                <select id="report-store" class="w-full p-3 border border-slate-700 rounded-xl text-sm bg-slate-800 text-white outline-none">
-                    <option value="">എല്ലാ കടകളും (All Stores)</option>
-                </select>
-
-                <div class="flex gap-2 mt-3">
-                    <button onclick="previewPDFReport()" class="flex-1 bg-slate-700 text-white p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-slate-600 shadow-lg transition">പ്രിവ്യൂ കാണുക</button>
-                    <button onclick="generatePDFReport()" class="flex-1 bg-emerald-700 text-white p-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-emerald-600 shadow-lg transition">PDF ഡൗൺലോഡ്</button>
-                </div>
-
-                <!-- പ്രിവ്യൂ ടേബിൾ ബോക്സ് -->
-                <div id="report-preview-box" class="bg-slate-800/60 p-3 rounded-xl border border-slate-700 text-xs sm:text-sm max-h-72 overflow-y-auto hidden space-y-2">
-                    <h5 class="font-bold text-emerald-400 border-b border-slate-700 pb-1.5">പ്രിവ്യൂ ഫലങ്ങൾ:</h5>
-                    <div id="preview-content" class="overflow-x-auto"></div>
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <!-- സ്ക്രിപ്റ്റുകൾ -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAM9SV2IvvcjBTCZRc1F6xawdMh2zFnczY",
-            authDomain: "new-idiyappam.firebaseapp.com",
-            projectId: "new-idiyappam",
-            storageBucket: "new-idiyappam.firebasestorage.app",
-            messagingSenderId: "457609504945",
-            appId: "1:457609504945:web:a7dc39a0abdd8e70255a90",
-            measurementId: "G-98MPHCF5MB"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let storesDataCache = {};
-        let currentUserId = null;
-        const defaultRates = { idiyappam: 5, vellappam: 6, palappam: 6, pathiri: 4, porotta: 10, chapati: 8 };
-
-        function setDefaultDate() {
-            const today = new Date().toISOString().split('T')[0];
-            const currentMonth = today.slice(0, 7);
-            ['p-date', 's-date', 'pay-date', 'report-date-input'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el && !el.value) el.value = today;
-            });
-            const monthEl = document.getElementById('report-month-input');
-            if(monthEl && !monthEl.value) monthEl.value = currentMonth;
-        }
-
-        window.showAlert = (title, msg, isSuccess = true) => {
-            document.getElementById('alert-title').innerText = title;
-            document.getElementById('alert-msg').innerText = msg;
-            document.getElementById('alert-icon').innerText = isSuccess ? '✅' : '⚠️';
-            document.getElementById('custom-alert').classList.remove('hidden');
-        }
-        window.closeAlert = () => document.getElementById('custom-alert').classList.add('hidden');
-        window.togglePassword = () => { const p = document.getElementById('password'); p.type = p.type === 'password' ? 'text' : 'password'; }
-        
-        window.toggleSidebar = () => {
-            const sb = document.getElementById('sidebar');
-            sb.classList.toggle('hidden');
-            setTimeout(() => sb.classList.toggle('-translate-x-full'), 10);
-        }
-
-        window.switchTab = (tabName) => {
-            ['purchase', 'sales', 'stores', 'store-list', 'reports', 'edit-sales', 'edit-purchase', 'accounts', 'payments'].forEach(t => {
-                const el = document.getElementById(`section-${t}`);
-                if(el) el.classList.add('hidden');
-                const tabEl = document.getElementById(`tab-${t}`);
-                if(tabEl) tabEl.className = "py-3 bg-slate-800 text-slate-300 border border-slate-700 rounded-xl hover:bg-slate-700 transition text-xs font-bold";
-            });
-            document.getElementById(`section-${tabName}`).classList.remove('hidden');
-            const targetTab = document.getElementById(`tab-${tabName}`);
-            if(targetTab) targetTab.className = "py-3 bg-emerald-600 text-white rounded-xl shadow-lg transition text-xs font-bold";
-
-            const mainTabs = document.getElementById('main-tabs');
-            if(tabName === 'purchase' || tabName === 'sales') {
-                mainTabs.classList.remove('hidden');
-                loadStoresDropdown();
-                setDefaultDate();
-            } else {
-                mainTabs.classList.add('hidden');
-                if(tabName === 'stores') { setStoreMode('add'); loadStoresDropdown(); }
-                if(tabName === 'store-list') loadStoreList();
-                if(tabName === 'reports') { loadStoresDropdown(); toggleReportInputs(); }
-                if(tabName === 'accounts') loadAccountsSummary();
-                if(tabName === 'payments') loadStoresDropdown();
-                if(tabName === 'edit-sales') loadEditList('sales');
-                if(tabName === 'edit-purchase') loadEditList('purchases');
-            }
-        }
-        window.switchTab = switchTab;
-
-        window.toggleReportInputs = () => {
-            const duration = document.getElementById('report-duration').value;
-            const dailyBox = document.getElementById('daily-input-container');
-            const monthlyBox = document.getElementById('monthly-input-container');
-            dailyBox.classList.add('hidden');
-            monthlyBox.classList.add('hidden');
-            if(duration === 'daily') dailyBox.classList.remove('hidden');
-            if(duration === 'monthly') monthlyBox.classList.remove('hidden');
-        }
-
-        window.clearForm = (type) => {
-            if(type === 'purchase') {
-                document.getElementById('edit-purchase-id').value = '';
-                document.getElementById('p-store').value = '';
-                document.getElementById('p-paid-amt').value = '';
-                document.getElementById('p-form-title').innerText = "പർച്ചേസ് എൻട്രി";
-                ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                    document.getElementById(`p-qty-${item}`).value = '';
-                    document.getElementById(`p-amt-${item}`).innerText = '₹0';
-                });
-                document.getElementById('p-grand-total').innerText = '₹0';
-            } else if(type === 'sales') {
-                document.getElementById('edit-sales-id').value = '';
-                document.getElementById('s-store').value = '';
-                document.getElementById('s-paid-amt').value = '';
-                document.getElementById('s-balance-amt').innerText = '₹0';
-                document.getElementById('s-form-title').innerText = "സെയിൽസ് / ഓർഡർ";
-                ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                    document.getElementById(`s-qty-${item}`).value = '';
-                    document.getElementById(`s-amt-${item}`).innerText = '₹0';
-                });
-                document.getElementById('s-grand-total').innerText = '₹0';
-            } else if(type === 'payments') {
-                document.getElementById('pay-store').value = '';
-                document.getElementById('pay-amount').value = '';
-            } else if(type === 'stores') {
-                document.getElementById('edit-store-id').value = '';
-                document.getElementById('store-name').value = '';
-                document.getElementById('owner-name').value = '';
-                document.getElementById('store-place').value = '';
-                document.getElementById('store-phone').value = '';
-                document.getElementById('store-opening-balance').value = '';
-            }
-            setDefaultDate();
-            showAlert("റദ്ദാക്കി", "ഫീൽഡുകൾ ക്ലിയർ ചെയ്തിരിക്കുന്നു.", true);
-        }
-
-        window.setStoreMode = async (mode) => {
-            ['add', 'edit', 'delete'].forEach(m => {
-                const btn = document.getElementById(`store-mode-${m}`);
-                btn.className = "py-2.5 bg-slate-800 text-slate-300 border border-slate-700 rounded-xl hover:bg-slate-700 transition";
-            });
-            document.getElementById(`store-mode-${mode}`).className = "py-2.5 bg-emerald-600 text-white rounded-xl shadow-lg transition";
-
-            const formContainer = document.getElementById('store-form-container');
-            const deleteContainer = document.getElementById('store-delete-container');
-            const editSelect = document.getElementById('existing-store-select');
-            const formLabel = document.getElementById('store-form-label');
-            const actionBtn = document.getElementById('store-action-btn');
-
-            if(mode === 'add') {
-                formContainer.classList.remove('hidden');
-                deleteContainer.classList.add('hidden');
-                editSelect.classList.add('hidden');
-                formLabel.innerText = "പുതിയ കട ചേർക്കുക (ADD)";
-                actionBtn.innerText = "കട സേവ് ചെയ്യുക";
-                actionBtn.className = "flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition";
-                document.getElementById('edit-store-id').value = '';
-                document.getElementById('store-name').value = '';
-                document.getElementById('owner-name').value = '';
-                document.getElementById('store-place').value = '';
-                document.getElementById('store-phone').value = '';
-                document.getElementById('store-opening-balance').value = '';
-                ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(i => {
-                    document.getElementById(`store-rate-${i}`).value = defaultRates[i];
-                });
-            } else if(mode === 'edit') {
-                formContainer.classList.remove('hidden');
-                deleteContainer.classList.add('hidden');
-                editSelect.classList.remove('hidden');
-                formLabel.innerText = "കട എഡിറ്റ് ചെയ്യുക (EDIT)";
-                actionBtn.innerText = "മാറ്റങ്ങൾ അപ്ഡേറ്റ് ചെയ്യുക";
-                actionBtn.className = "flex-1 bg-blue-600 text-white p-3 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition";
-                await loadStoresForDropdown('existing-store-select');
-            } else if(mode === 'delete') {
-                formContainer.classList.add('hidden');
-                deleteContainer.classList.remove('hidden');
-                await loadStoresForDropdown('delete-store-select');
-            }
-        }
-
-        async function loadStoresForDropdown(elementId) {
-            const select = document.getElementById(elementId);
-            select.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
-            storesDataCache = {};
-            const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
-            const snap = await getDocs(q);
-            snap.forEach(docSnap => {
-                const data = docSnap.data();
-                storesDataCache[docSnap.id] = data;
-                select.innerHTML += `<option value="${docSnap.id}">${data.name} (${data.place || 'വിലാസമില്ല'})</option>`;
-            });
-        }
-
-        async function loadStoreList() {
-            const container = document.getElementById('store-list-container');
-            container.innerHTML = "<p class='text-slate-400 text-center py-4'>ലോഡ് ചെയ്യുന്നു...</p>";
-            let html = "";
-            try {
-                const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
-                const snap = await getDocs(q);
-                
-                snap.forEach(docSnap => {
-                    let data = docSnap.data();
-                    html += `
-                        <div class="bg-slate-900 p-3.5 border border-slate-700/80 rounded-xl mb-2.5 shadow-md">
-                            <div class="font-extrabold text-emerald-400 text-sm">${data.name}</div>
-                            <div class="text-slate-300 text-xs mt-1.5 space-y-0.5">
-                                <div>ഓണർ: <span class="text-white font-medium">${data.owner || '-'}</span></div>
-                                <div>സ്ഥലം: <span class="text-white font-medium">${data.place || '-'}</span></div>
-                                <div>ഫോൺ: <span class="text-white font-medium">${data.phone || '-'}</span></div>
-                                <div>തുടക്കത്തിലെ ബാലൻസ്: <span class="text-rose-400 font-bold">₹${data.openingBalance || 0}</span></div>
-                            </div>
-                        </div>`;
-                });
-                container.innerHTML = html || "<p class='text-slate-400 text-center py-4'>കടകൾ ലഭ്യമല്ല. പുതിയ കടകൾ ADD ചെയ്യുക.</p>";
-            } catch (error) {
-                container.innerHTML = `<p class='text-rose-400 text-center py-4'>ഡാറ്റ ലോഡ് ചെയ്യുന്നതിൽ പിഴവുണ്ടായി: ${error.message}</p>`;
-            }
-        }
-
-        window.fillStoreDataForEdit = () => {
-            const id = document.getElementById('existing-store-select').value;
-            if(!id) return;
-            const data = storesDataCache[id];
-            document.getElementById('edit-store-id').value = id;
-            document.getElementById('store-name').value = data.name || '';
-            document.getElementById('owner-name').value = data.owner || '';
-            document.getElementById('store-place').value = data.place || '';
-            document.getElementById('store-phone').value = data.phone || '';
-            document.getElementById('store-opening-balance').value = data.openingBalance || '';
-            let rates = data.rates || defaultRates;
-            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(i => {
-                document.getElementById(`store-rate-${i}`).value = rates[i] || defaultRates[i];
-            });
-        }
-
-        window.saveStoreAction = async () => {
-            const storeId = document.getElementById('edit-store-id').value;
-            const name = document.getElementById('store-name').value.trim();
-            const owner = document.getElementById('owner-name').value.trim();
-            const place = document.getElementById('store-place').value.trim();
-            const phone = document.getElementById('store-phone').value.trim();
-            const openingBalance = Number(document.getElementById('store-opening-balance').value) || 0;
-            if(!name || !phone) return showAlert("ശ്രദ്ധിക്കുക", "പേരും ഫോൺ നമ്പറും നൽകുക!", false);
-
-            let rates = {};
-            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(i => {
-                rates[i] = Number(document.getElementById(`store-rate-${i}`).value) || defaultRates[i];
-            });
-
-            if(storeId) {
-                await updateDoc(doc(db, "stores", storeId), { name, owner, place, phone, openingBalance, rates, userId: currentUserId });
-                showAlert("വിജയം", "കട വിജയകരമായി എഡിറ്റ് ചെയ്ത് അപ്ഡേറ്റ് ചെയ്തു!");
-            } else {
-                await addDoc(collection(db, "stores"), { name, owner, place, phone, openingBalance, rates, userId: currentUserId });
-                showAlert("വിജയം", "പുതിയ കട ADD ചെയ്തു!");
-            }
-            clearForm('stores');
-            loadStoresDropdown();
-            if(storeId) setStoreMode('edit');
-        }
-
-        window.deleteStoreAction = async () => {
-            const storeId = document.getElementById('delete-store-select').value;
-            if(!storeId) return showAlert("ശ്രദ്ധിക്കുക", "ഡിലീറ്റ് ചെയ്യാൻ കട തിരഞ്ഞെടുക്കുക!", false);
-
-            const storeName = storesDataCache[storeId]?.name;
-            const pCheck = await getDocs(query(collection(db, "purchases"), where("userId", "==", currentUserId), where("store", "==", storeName)));
-            const sCheck = await getDocs(query(collection(db, "sales"), where("userId", "==", currentUserId), where("store", "==", storeName)));
-
-            if(!pCheck.empty || !sCheck.empty) {
-                return showAlert("മുന്നറിയിപ്പ്", "ഈ കടയുമായി ബന്ധപ്പെട്ട പർച്ചേസ്/സെയിൽസ് ഡാറ്റ നിലവിലുള്ളതിനാൽ കട ഡിലീറ്റ് ചെയ്യാൻ കഴിയില്ല!", false);
-            }
-
-            if(confirm("ഈ കട പൂർണ്ണമായി DELETE ചെയ്യണമെന്ന് ഉറപ്പാണോ?")) {
-                await deleteDoc(doc(db, "stores", storeId));
-                showAlert("വിജയം", "കട ഡിലീറ്റ് ചെയ്തു!");
-                setStoreMode('delete');
-                loadStoresDropdown();
-            }
-        }
-
-        window.loginUser = async () => {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            if(!email || !password) return showAlert("ശ്രദ്ധിക്കുക", "ഇമെയിലും പാസ്‌വേർഡും നൽകുക!", false);
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch(err) {
-                showAlert("ലോഗിൻ പരാജയപ്പെട്ടു", err.message, false);
-            }
-        }
-
-        window.registerUser = async () => {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            if(!email || !password) return showAlert("ശ്രദ്ധിക്കുക", "ഇമെയിലും പാസ്‌വേർഡും നൽകുക!", false);
-            try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                showAlert("വിജയം", "അക്കൗണ്ട് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!");
-            } catch(err) {
-                showAlert("രജിസ്ട്രേഷൻ പരാജയം", err.message, false);
-            }
-        }
-
-        window.confirmLogout = () => { if(confirm("ലോഗ് ഔട്ട് ചെയ്യണോ?")) signOut(auth); }
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('dashboard-section').classList.remove('hidden');
-                
-                if (window.innerWidth <= 768) {
-                    document.getElementById('menu-btn').classList.remove('hidden');
-                } else {
-                    document.getElementById('menu-btn').classList.add('hidden');
-                }
-
-                loadStoresDropdown();
-                setDefaultDate();
-                switchTab('purchase');
-            } else {
-                currentUserId = null;
-                document.getElementById('login-section').classList.remove('hidden');
-                document.getElementById('dashboard-section').classList.add('hidden');
-                document.getElementById('menu-btn').classList.add('hidden');
-            }
-        });
-
-        async function loadStoresDropdown() {
-            const pSelect = document.getElementById('p-store');
-            const sSelect = document.getElementById('s-store');
-            const paySelect = document.getElementById('pay-store');
-            const rSelect = document.getElementById('report-store');
-            if(pSelect) pSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
-            if(sSelect) sSelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
-            if(paySelect) paySelect.innerHTML = '<option value="">കട തിരഞ്ഞെടുക്കുക</option>';
-            if(rSelect) rSelect.innerHTML = '<option value="">എല്ലാ കടകളും (All Stores)</option>';
-            
-            storesDataCache = {};
-            try {
-                const q = query(collection(db, "stores"), where("userId", "==", currentUserId));
-                const snap = await getDocs(q);
-                snap.forEach(docSnap => {
-                    const data = docSnap.data();
-                    storesDataCache[docSnap.id] = data;
-                    const opt = `<option value="${data.name}" data-rates='${JSON.stringify(data.rates || defaultRates)}' data-phone="${data.phone}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
-                    if(pSelect) pSelect.innerHTML += opt;
-                    if(sSelect) sSelect.innerHTML += opt;
-                    if(paySelect) paySelect.innerHTML += opt;
-                    if(rSelect) rSelect.innerHTML += `<option value="${data.name}">${data.name}${data.place ? ', '+data.place : ''}</option>`;
-                });
-                updateRatesView('p');
-                updateRatesView('s');
-            } catch(e) {
-                console.error("Error loading stores:", e);
-            }
-        }
-
-        window.updateRatesView = (type) => {
-            const select = document.getElementById(`${type}-store`);
-            const opt = select.options[select.selectedIndex];
-            let rates = defaultRates;
-            if(opt && opt.getAttribute('data-rates')) {
-                try { rates = JSON.parse(opt.getAttribute('data-rates')); } catch(e){}
-            }
-            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(i => {
-                document.getElementById(`${type}-rate-${i}`).innerText = rates[i] || defaultRates[i];
-                calculateRowTotal(type, i);
-            });
-        }
-
-        window.calculateRowTotal = (type, item) => {
-            const rate = Number(document.getElementById(`${type}-rate-${item}`).innerText) || 0;
-            const qty = Number(document.getElementById(`${type}-qty-${item}`).value) || 0;
-            const amt = rate * qty;
-            document.getElementById(`${type}-amt-${item}`).innerText = `₹${amt}`;
-
-            let grandTotal = 0;
-            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(i => {
-                let r = Number(document.getElementById(`${type}-rate-${i}`).innerText) || 0;
-                let q = Number(document.getElementById(`${type}-qty-${i}`).value) || 0;
-                grandTotal += r * q;
-            });
-            document.getElementById(`${type}-grand-total`).innerText = `₹${grandTotal}`;
-            if(type === 'sales') calculateBalance();
-        }
-
-        window.calculateBalance = () => {
-            let grandTotal = Number(document.getElementById('s-grand-total').innerText.replace('₹','')) || 0;
-            let paid = Number(document.getElementById('s-paid-amt').value) || 0;
-            let balance = grandTotal - paid;
-            document.getElementById('s-balance-amt').innerText = `₹${balance}`;
-        }
-
-        window.savePaymentEntry = async () => {
-            const date = document.getElementById('pay-date').value;
-            const store = document.getElementById('pay-store').value;
-            const type = document.getElementById('pay-type').value;
-            const amount = Number(document.getElementById('pay-amount').value) || 0;
-
-            if(!date || !store || amount <= 0) return showAlert("ശ്രദ്ധിക്കുക", "തീയതി, കട, തുക എന്നിവ ശരിയായി നൽകുക!", false);
-
-            await addDoc(collection(db, "payments"), {
-                date, store, type, amount, userId: currentUserId, timestamp: new Date()
-            });
-
-            showAlert("വിജയം", "പണമിടപാട് വിജയകരമായി സേവ് ചെയ്തു!");
-            clearForm('payments');
-        }
-
-        async function loadAccountsSummary() {
-            const container = document.getElementById('accounts-list-container');
-            container.innerHTML = "<p class='text-slate-400 text-center py-4'>ലോഡ് ചെയ്യുന്നു...</p>";
-            let storeAccounts = {};
-
-            const qStores = query(collection(db, "stores"), where("userId", "==", currentUserId));
-            const snapStores = await getDocs(qStores);
-            snapStores.forEach(doc => {
-                let data = doc.data();
-                storeAccounts[data.name] = { 
-                    totalSales: 0, 
-                    totalGiven: 0, 
-                    totalReceived: 0,
-                    totalPurchase: 0,
-                    balance: 0, 
-                    openingBalance: Number(data.openingBalance || 0),
-                    firstTxDate: null 
-                };
-            });
-
-            const qSales = query(collection(db, "sales"), where("userId", "==", currentUserId));
-            const snapSales = await getDocs(qSales);
-            snapSales.forEach(doc => {
-                let d = doc.data();
-                if(!storeAccounts[d.store]) {
-                    storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0, firstTxDate: null };
-                }
-                storeAccounts[d.store].totalSales += (d.totalAmount || 0);
-                storeAccounts[d.store].totalReceived += (d.paidAmount || 0);
-                if(!storeAccounts[d.store].firstTxDate || d.date < storeAccounts[d.store].firstTxDate) {
-                    storeAccounts[d.store].firstTxDate = d.date;
-                }
-            });
-
-            const qPurchases = query(collection(db, "purchases"), where("userId", "==", currentUserId));
-            const snapPurchases = await getDocs(qPurchases);
-            snapPurchases.forEach(doc => {
-                let d = doc.data();
-                if(!storeAccounts[d.store]) {
-                    storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0, firstTxDate: null };
-                }
-                storeAccounts[d.store].totalPurchase += (d.totalAmount || 0);
-                storeAccounts[d.store].totalReceived += (d.paidAmount || 0); // പർച്ചേസ് ചെയ്യുമ്പോൾ കടക്ക് നൽകിയത്/നൽകാനുള്ളത്
-                if(!storeAccounts[d.store].firstTxDate || d.date < storeAccounts[d.store].firstTxDate) {
-                    storeAccounts[d.store].firstTxDate = d.date;
-                }
-            });
-
-            const qPayments = query(collection(db, "payments"), where("userId", "==", currentUserId));
-            const snapPayments = await getDocs(qPayments);
-            snapPayments.forEach(doc => {
-                let d = doc.data();
-                if(!storeAccounts[d.store]) {
-                    storeAccounts[d.store] = { totalSales: 0, totalGiven: 0, totalReceived: 0, totalPurchase: 0, balance: 0, openingBalance: 0, firstTxDate: null };
-                }
-                if(d.type === 'received') {
-                    storeAccounts[d.store].totalReceived += (d.amount || 0);
-                } else if(d.type === 'given') {
-                    storeAccounts[d.store].totalGiven += (d.amount || 0);
-                }
-                if(!storeAccounts[d.store].firstTxDate || d.date < storeAccounts[d.store].firstTxDate) {
-                    storeAccounts[d.store].firstTxDate = d.date;
-                }
-            });
-
-            let html = "";
-            for(let store in storeAccounts) {
-                let acc = storeAccounts[store];
-                // ശരിയായ അക്കൗണ്ടിംഗ് ലോജിക്: Balance = Opening + Sales (Debit) - Received (Credit) - Purchase (Credit/Expense) + Given (Debit)
-                acc.balance = acc.openingBalance + acc.totalSales - acc.totalReceived - acc.totalPurchase + acc.totalGiven;
-                
-                html += `
-                    <div class="bg-slate-900 p-3.5 border border-slate-700/80 rounded-xl mb-2.5 shadow-md">
-                        <div class="flex justify-between items-center mb-1.5">
-                            <div class="font-extrabold text-emerald-400 text-sm">${store}</div>
-                            <div class="text-[11px] text-slate-400">തുടങ്ങിയ തീയതി: <span class="text-white font-bold">${acc.firstTxDate || 'ഇടപാടുകൾ ഇല്ല'}</span></div>
-                        </div>
-                        ${acc.openingBalance !== 0 ? `<div class="text-[11px] text-rose-400 font-bold mb-2">തുടക്കത്തിലെ ബാലൻസ് (Opening): ₹${acc.openingBalance}</div>` : ''}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-slate-300 text-xs border-t border-slate-800 pt-2">
-                            <div>ആകെ സെയിൽസ്: <span class="font-bold text-emerald-400">₹${acc.totalSales}</span></div>
-                            <div>ആകെ പർച്ചേസ്: <span class="font-bold text-blue-400">₹${acc.totalPurchase}</span></div>
-                            <div>ലഭിച്ച തുക: <span class="font-bold text-emerald-400">₹${acc.totalReceived}</span></div>
-                            <div>നൽകിയ തുക: <span class="font-bold text-rose-400">₹${acc.totalGiven}</span></div>
-                        </div>
-                        <div class="flex justify-between font-bold text-rose-400 mt-2.5 border-t border-slate-800 pt-2 text-xs">
-                            <span>ബാക്കി ബാലൻസ് (Closing):</span>
-                            <span>₹${acc.balance}</span>
-                        </div>
-                    </div>`;
-            }
-            container.innerHTML = html || "<p class='text-slate-400 text-center py-4'>കടകൾ ലഭ്യമല്ല</p>";
-        }
-
-        window.loadEditList = async (colName) => {
-            const container = document.getElementById(colName === 'sales' ? 'edit-sales-list' : 'edit-purchase-list');
-            container.innerHTML = "<p class='text-slate-400 text-center py-4'>ലോഡ് ചെയ്യുന്നു...</p>";
-            const q = query(collection(db, colName), where("userId", "==", currentUserId));
-            const snap = await getDocs(q);
-            if(snap.empty) return container.innerHTML = '<p class="text-slate-400 text-center py-4">ഡാറ്റ ലഭ്യമല്ല</p>';
-
-            let html = "";
-            snap.forEach(docSnap => {
-                const data = docSnap.data();
-                html += `
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900 p-3 border border-slate-700/80 rounded-xl mb-2 gap-2">
-                        <div class="text-xs"><b class="text-emerald-400">${data.date}</b> | <span class="text-white">${data.store}</span> (<span class="text-emerald-400 font-bold">₹${data.totalAmount}</span>)</div>
-                        <div class="flex gap-2 w-full sm:w-auto justify-end">
-                            <button onclick="editEntry('${colName}', '${docSnap.id}', '${data.date}', '${data.store}', ${JSON.stringify(data.items).replace(/"/g, '&quot;')}, ${data.paidAmount||0})" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold transition">EDIT</button>
-                            <button onclick="deleteEntry('${colName}', '${docSnap.id}')" class="bg-rose-600 hover:bg-rose-500 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold transition">DELETE</button>
-                        </div>
-                    </div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        window.deleteEntry = async (colName, id) => {
-            if(confirm("ഈ എൻട്രി DELETE ചെയ്യണോ?")) {
-                await deleteDoc(doc(db, colName, id));
-                showAlert("വിജയം", "എൻട്രി DELETE ചെയ്തു!");
-                loadEditList(colName);
-            }
-        }
-
-        window.editEntry = (colName, id, date, store, items, paidAmt) => {
-            switchTab(colName === 'sales' ? 'sales' : 'purchase');
-            if(colName === 'sales') {
-                document.getElementById('edit-sales-id').value = id;
-                document.getElementById('s-date').value = date;
-                document.getElementById('s-store').value = store;
-                updateRatesView('s');
-                ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                    document.getElementById(`s-qty-${item}`).value = items[item] || '';
-                    calculateRowTotal('s', item);
-                });
-                document.getElementById('s-paid-amt').value = paidAmt || '';
-                calculateBalance();
-                document.getElementById('s-form-title').innerText = "സെയിൽസ് EDIT മോഡ്";
-            } else {
-                document.getElementById('edit-purchase-id').value = id;
-                document.getElementById('p-date').value = date;
-                document.getElementById('p-store').value = store;
-                updateRatesView('p');
-                ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                    document.getElementById(`p-qty-${item}`).value = items[item] || '';
-                    calculateRowTotal('p', item);
-                });
-                document.getElementById('p-form-title').innerText = "പർച്ചേസ് EDIT മോഡ്";
-            }
-            showAlert("ശ്രദ്ധിക്കുക", "ഫീൽഡിൽ ഡാറ്റ ലോഡ് ചെയ്തിട്ടുണ്ട്. മാറ്റങ്ങൾ വരുത്തി വീണ്ടും സേവ് ചെയ്യുക.");
-        }
-
-        window.saveTransaction = async (type) => {
-            const editId = document.getElementById(type === 'purchase' ? 'edit-purchase-id' : 'edit-sales-id').value;
-            const dateInput = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-date`);
-            const storeSelect = document.getElementById(`${type === 'purchase' ? 'p' : 's'}-store`);
-            if(!dateInput.value || !storeSelect.value) return showAlert("ശ്രദ്ധിക്കുക", "തീയതിയും കടയും തിരഞ്ഞെടുക്കുക!", false);
-
-            let itemsData = {}, totalAmount = 0;
-            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                let qty = Number(document.getElementById(`${type === 'purchase' ? 'p' : 's'}-qty-${item}`).value) || 0;
-                let rate = Number(document.getElementById(`${type === 'purchase' ? 'p' : 's'}-rate-${item}`).innerText) || 0;
-                itemsData[item] = qty;
-                totalAmount += qty * rate;
-            });
-
-            if(totalAmount === 0) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനത്തിന്റെ എങ്കിലും എണ്ണം നൽകുക!", false);
-
-            let paidAmount = type === 'sales' ? (Number(document.getElementById('s-paid-amt').value) || 0) : (Number(document.getElementById('p-paid-amt').value) || 0);
-            let balanceAmount = totalAmount - paidAmount;
-
-            const colName = type === 'purchase' ? 'purchases' : 'sales';
-            if(editId) {
-                await deleteDoc(doc(db, colName, editId)); 
-            }
-
-            await addDoc(collection(db, colName), {
-                date: dateInput.value, store: storeSelect.value, items: itemsData, totalAmount, paidAmount, balanceAmount, userId: currentUserId, timestamp: new Date()
-            });
-            
-            showAlert("വിജയം", `${type === 'purchase' ? 'പർച്ചേസ്' : 'സെയിൽസ്'} വിജയകരമായി സേവ് ചെയ്തു!`);
-            clearForm(type);
-        }
-
-        window.sendWhatsAppOrder = () => {
-            const storeSelect = document.getElementById('s-store');
-            const store = storeSelect.value;
-            const phone = storeSelect.options[storeSelect.selectedIndex]?.getAttribute('data-phone');
-            if(!phone || !store) return showAlert("ശ്രദ്ധിക്കുക", "കടയും ഫോൺ നമ്പറും തിരഞ്ഞെടുക്കുക!", false);
-
-            let total = 0, msg = `*ന്യൂ ഇടിയപ്പം കമ്പനി*%0Aകട: ${store}%0A------------------%0A`;
-            let hasItems = false;
-            ['idiyappam', 'vellappam', 'palappam', 'pathiri', 'porotta', 'chapati'].forEach(item => {
-                let qty = Number(document.getElementById(`s-qty-${item}`).value) || 0;
-                let rate = Number(document.getElementById(`s-rate-${item}`).innerText) || 0;
-                if(qty > 0) {
-                    hasItems = true;
-                    let amt = qty * rate;
-                    total += amt;
-                    msg += `${item}: ${qty} x ${rate} = ₹${amt}%0A`;
-                }
-            });
-            if(!hasItems) return showAlert("ശ്രദ്ധിക്കുക", "കുറഞ്ഞത് ഒരു സാധനമെങ്കിലും എണ്ണം നൽകുക!", false);
-
-            let paid = Number(document.getElementById('s-paid-amt').value) || 0;
-            let balance = total - paid;
-
-            msg += `------------------%0A*ആകെ തുക: ₹${total}*`;
-            if(paid > 0) msg += `%0Aലഭിച്ചത്: ₹${paid}%0A*ബാക്കി ബാലൻസ്: ₹${balance}*`;
-            msg += `%0Aനന്ദി!`;
-            window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
-        }
-
-        async function fetchFilteredTransactions(duration, selectedDate, selectedMonth, store) {
-            let storeOpeningBalance = 0;
-            if(store && storesDataCache) {
-                for(let id in storesDataCache) {
-                    if(storesDataCache[id].name === store) {
-                        storeOpeningBalance = Number(storesDataCache[id].openingBalance || 0);
-                    }
-                }
-            }
-
-            let allTransactions = [];
-
-            const qP = query(collection(db, "purchases"), where("userId", "==", currentUserId));
-            const pSnap = await getDocs(qP);
-            pSnap.forEach(doc => {
-                let d = doc.data();
-                if(!store || d.store === store) {
-                    allTransactions.push({ ...d, transType: 'Purchase', sortDate: d.timestamp?.seconds || 0 });
-                }
-            });
-
-            const qS = query(collection(db, "sales"), where("userId", "==", currentUserId));
-            const sSnap = await getDocs(qS);
-            sSnap.forEach(doc => {
-                let d = doc.data();
-                if(!store || d.store === store) {
-                    allTransactions.push({ ...d, transType: 'Sales', sortDate: d.timestamp?.seconds || 0 });
-                }
-            });
-
-            const qPay = query(collection(db, "payments"), where("userId", "==", currentUserId));
-            const paySnap = await getDocs(qPay);
-            paySnap.forEach(doc => {
-                let d = doc.data();
-                if(!store || d.store === store) {
-                    allTransactions.push({ ...d, transType: d.type === 'received' ? 'Payment Received' : 'Payment Given', totalAmount: d.amount, sortDate: d.timestamp?.seconds || 0 });
-                }
-            });
-
-            allTransactions.sort((a, b) => a.sortDate - b.sortDate);
-
-            let runningBalance = storeOpeningBalance;
-            let filteredTransactions = [];
-
-            allTransactions.forEach(d => {
-                let include = false;
-                if(duration === 'all') {
-                    include = true;
-                } else if(duration === 'daily' && d.date === selectedDate) {
-                    include = true;
-                } else if(duration === 'monthly' && d.date.startsWith(selectedMonth)) {
-                    include = true;
-                }
-
-                let netChange = 0;
-                if(d.transType === 'Sales') {
-                    netChange = (d.totalAmount || 0);
-                } else if(d.transType === 'Payment Received') {
-                    netChange = -(d.totalAmount || 0);
-                } else if(d.transType === 'Payment Given') {
-                    netChange = (d.totalAmount || 0);
-                } else if(d.transType === 'Purchase') {
-                    netChange = -(d.totalAmount || 0);
-                }
-
-                if(include) {
-                    runningBalance += netChange;
-                    filteredTransactions.push({ ...d, currentBalance: runningBalance });
-                } else {
-                    if(duration === 'monthly' && d.date < (selectedMonth + '-01')) {
-                        runningBalance += netChange;
-                    } else if(duration === 'daily' && d.date < selectedDate) {
-                        runningBalance += netChange;
-                    }
-                }
-            });
-
-            let calculatedInitialBalance = runningBalance;
-            if(duration !== 'all' && filteredTransactions.length > 0) {
-                let firstTx = filteredTransactions[0];
-                let firstNet = 0;
-                if(firstTx.transType === 'Sales') firstNet = (firstTx.totalAmount || 0);
-                else if(firstTx.transType === 'Payment Received') firstNet = -(firstTx.totalAmount || 0);
-                else if(firstTx.transType === 'Payment Given') firstNet = (firstTx.totalAmount || 0);
-                else if(firstTx.transType === 'Purchase') firstNet = -(firstTx.totalAmount || 0);
-
-                calculatedInitialBalance = firstTx.currentBalance - firstNet;
-            } else if(duration === 'all') {
-                calculatedInitialBalance = storeOpeningBalance;
-            }
-
-            return { initialBalance: calculatedInitialBalance, transactions: filteredTransactions, finalBalance: runningBalance };
-        }
-
-        window.previewPDFReport = async () => {
-            const duration = document.getElementById('report-duration').value;
-            const selectedDate = document.getElementById('report-date-input').value;
-            const selectedMonth = document.getElementById('report-month-input').value;
-            const store = document.getElementById('report-store').value;
-            const box = document.getElementById('report-preview-box');
-            const content = document.getElementById('preview-content');
-            box.classList.remove('hidden');
-            content.innerHTML = "<p class='text-slate-400 text-center py-2'>ലോഡ് ചെയ്യുന്നു...</p>";
-
-            const reportData = await fetchFilteredTransactions(duration, selectedDate, selectedMonth, store);
-
-            let tableHtml = `
-                <table class="w-full text-left border-collapse text-[11px] text-slate-200">
-                    <thead>
-                        <tr class="bg-emerald-600 text-white">
-                            <th class="p-1.5 border border-slate-700">തീയതി</th>
-                            <th class="p-1.5 border border-slate-700">കട</th>
-                            <th class="p-1.5 border border-slate-700">തരം</th>
-                            <th class="p-1.5 border border-slate-700 text-right">തുക</th>
-                            <th class="p-1.5 border border-slate-700 text-right">ബാലൻസ്</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b border-slate-800 bg-slate-800/40">
-                            <td class="p-1.5 border border-slate-700/50" colspan="3"><b>തുടക്കത്തിലെ ബാലൻസ് (Opening Balance)</b></td>
-                            <td class="p-1.5 border border-slate-700/50 text-right">-</td>
-                            <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${reportData.initialBalance}</td>
-                        </tr>`;
-
-            reportData.transactions.forEach(d => {
-                let isIncome = (d.transType === 'Sales' || d.transType === 'Payment Given');
-                let colorClass = isIncome ? 'text-emerald-400' : 'text-rose-400';
-                let sign = isIncome ? '+' : '-';
-                tableHtml += `
-                    <tr class="border-b border-slate-800 hover:bg-slate-800/50">
-                        <td class="p-1.5 border border-slate-700/50">${d.date}</td>
-                        <td class="p-1.5 border border-slate-700/50">${d.store}</td>
-                        <td class="p-1.5 border border-slate-700/50">${d.transType}</td>
-                        <td class="p-1.5 border border-slate-700/50 text-right ${colorClass} font-bold">${sign}₹${d.totalAmount}</td>
-                        <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${d.currentBalance}</td>
-                    </tr>`;
-            });
-
-            tableHtml += `
-                <tr class="border-t border-slate-700 bg-slate-800/60">
-                    <td class="p-1.5 border border-slate-700/50" colspan="3"><b>അവസാനത്തെ ബാലൻസ് (Closing Balance)</b></td>
-                    <td class="p-1.5 border border-slate-700/50 text-right">-</td>
-                    <td class="p-1.5 border border-slate-700/50 text-right font-bold text-rose-400">₹${reportData.finalBalance}</td>
-                </tr>
-                </tbody></table>`;
-            content.innerHTML = reportData.transactions.length > 0 ? tableHtml : "<p class='text-slate-400 text-center py-2'>സൂചികയിൽ ഡാറ്റ ലഭ്യമല്ല</p>";
-        }
-
-        window.generatePDFReport = async () => {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const duration = document.getElementById('report-duration').value;
-            const selectedDate = document.getElementById('report-date-input').value;
-            const selectedMonth = document.getElementById('report-month-input').value;
-            const store = document.getElementById('report-store').value;
-
-            let durationText = duration === 'all' ? 'ALL TIME' : duration === 'daily' ? `DATE: ${selectedDate}` : `MONTH: ${selectedMonth}`;
-            let storeText = store ? store : 'All Stores';
-
-            doc.setFontSize(14);
-            doc.text("New Idiyappam Company - Chembrasseri East", 14, 15);
-            doc.setFontSize(10);
-            doc.text(`Store: ${storeText}  |  Report Type: ${durationText}`, 14, 22);
-
-            const reportData = await fetchFilteredTransactions(duration, selectedDate, selectedMonth, store);
-            let tableRows = [];
-            let totalQty = { idiyappam: 0, vellappam: 0, palappam: 0, pathiri: 0, porotta: 0, chapati: 0, amount: 0 };
-
-            tableRows.push(['-', 'Opening Balance', '-', 0, 0, 0, 0, 0, 0, '-', `Rs.${reportData.initialBalance}`]);
-
-            reportData.transactions.forEach(data => {
-                let itm = data.items || {};
-                totalQty.idiyappam += Number(itm.idiyappam || 0);
-                totalQty.vellappam += Number(itm.vellappam || 0);
-                totalQty.palappam += Number(itm.palappam || 0);
-                totalQty.pathiri += Number(itm.pathiri || 0);
-                totalQty.porotta += Number(itm.porotta || 0);
-                totalQty.chapati += Number(itm.chapati || 0);
-                totalQty.amount += Number(data.totalAmount || 0);
-
-                let isIncome = (data.transType === 'Sales' || data.transType === 'Payment Given');
-                let amtPrefix = isIncome ? '+' : '-';
-
-                tableRows.push([
-                    data.date, 
-                    data.store, 
-                    data.transType, 
-                    itm.idiyappam||0, 
-                    itm.vellappam||0, 
-                    itm.palappam||0, 
-                    itm.pathiri||0, 
-                    itm.porotta||0, 
-                    itm.chapati||0, 
-                    `${amtPrefix}Rs.${data.totalAmount}`, 
-                    `Rs.${data.currentBalance}`
-                ]);
-            });
-
-            tableRows.push([
-                'TOTAL', '-', '-', 
-                totalQty.idiyappam, 
-                totalQty.vellappam, 
-                totalQty.palappam, 
-                totalQty.pathiri, 
-                totalQty.porotta, 
-                totalQty.chapati, 
-                `Rs.${totalQty.amount}`, 
-                `Rs.${reportData.finalBalance}`
-            ]);
-
-            tableRows.push(['-', 'Closing Balance', '-', '-', '-', '-', '-', '-', '-', '-', `Rs.${reportData.finalBalance}`]);
-
-            doc.autoTable({ 
-                startY: 28, 
-                head: [['Date', 'Store', 'Type', 'Idiyappam', 'Vellappam', 'Palappam', 'Pathiri', 'Porotta', 'Chapati', 'Amount', 'Balance']], 
-                body: tableRows,
-                styles: { fontSize: 8 },
-                headStyles: { fillColor: [16, 185, 129] },
-                didParseCell: function(data) {
-                    if (data.section === 'body' && data.column.index === 9) {
-                        let transType = data.row.raw[2];
-                        if (transType === 'Sales' || transType === 'Payment Given') {
-                            data.cell.styles.textColor = [16, 185, 129]; 
-                        } else {
-                            data.cell.styles.textColor = [244, 63, 94]; 
-                        }
-                    }
-                }
-            });
-
-            let finalY = doc.lastAutoTable.finalY + 10;
-            doc.text(`Final Ledger Balance: Rs.${reportData.finalBalance}`, 14, finalY);
-            doc.save(`Ledger_Report_${storeText.replace(/\s+/g, '_')}.pdf`);
-        }
-    </script>
+    <!-- Scripts Integration -->
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
