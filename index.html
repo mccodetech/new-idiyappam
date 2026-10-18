@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ന്യൂ ഇടിയപ്പം കമ്പനി - ചെമ്പ്രശ്ശേരി ഈസ്റ്റ്</title>
     
+    <!-- Favicon & App Icon -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#059669">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Favicon (Browser Tab Icon) -->
-<link rel="icon" type="image/png" href="logo.png">
-
-<!-- Apple Mobile Home Screen Icon -->
-<link rel="apple-touch-icon" href="logo.png">
-
-    <!-- Web App Manifest -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#059669">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -126,6 +126,7 @@
                 <button onclick="switchTab('stores')" class="nav-btn text-slate-300">🏪 കടകളും വിലകളും</button>
                 <button onclick="switchTab('store-list')" class="nav-btn text-slate-300">📋 കടകളുടെ ലിസ്റ്റ്</button>
                 <button onclick="switchTab('payments')" class="nav-btn text-blue-400">💵 പണം ഇടപാടുകൾ</button>
+                <button onclick="switchTab('edit-payments')" class="nav-btn text-blue-400">✏️ പണമിടപാട് എഡിറ്റ്</button>
                 <button onclick="switchTab('accounts')" class="nav-btn text-emerald-400">💰 അക്കൗണ്ട്സ്</button>
                 <button onclick="switchTab('edit-sales')" class="nav-btn text-blue-400">✏️ സെയിൽസ് എഡിറ്റ്</button>
                 <button onclick="switchTab('edit-purchase')" class="nav-btn text-emerald-400">✏️ പർച്ചേസ് എഡിറ്റ്</button>
@@ -144,6 +145,7 @@
                         <button onclick="switchTab('stores'); toggleSidebar();" class="sidebar-btn">🏪 കടകളും വിലകളും മാനേജ് ചെയ്യുക</button>
                         <button onclick="switchTab('store-list'); toggleSidebar();" class="sidebar-btn">📋 കടകളുടെ ലിസ്റ്റ്</button>
                         <button onclick="switchTab('payments'); toggleSidebar();" class="sidebar-btn text-blue-400">💵 പണം ഇടപാടുകൾ (Payment Entry)</button>
+                        <button onclick="switchTab('edit-payments'); toggleSidebar();" class="sidebar-btn text-blue-400">✏️ പണമിടപാടുകൾ എഡിറ്റ് ചെയ്യുക</button>
                         <button onclick="switchTab('accounts'); toggleSidebar();" class="sidebar-btn text-emerald-400">💰 അക്കൗണ്ട്സ് & ബാലൻസ്</button>
                         <button onclick="switchTab('edit-sales'); toggleSidebar();" class="sidebar-btn text-blue-400">✏️ സെയിൽസ് എഡിറ്റ് ചെയ്യുക</button>
                         <button onclick="switchTab('edit-purchase'); toggleSidebar();" class="sidebar-btn text-emerald-400">✏️ പർച്ചേസ് എഡിറ്റ് ചെയ്യുക</button>
@@ -358,6 +360,17 @@
                     </div>
                 </div>
 
+                <!-- Edit Payments Section -->
+                <div id="section-edit-payments" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-wide">പണമിടപാടുകൾ എഡിറ്റ് ചെയ്യുക</h4>
+                        <button onclick="switchTab('payments')" class="text-xs text-blue-400 font-bold hover:underline">തിരികെ</button>
+                    </div>
+                    <div id="edit-payments-list" class="space-y-2.5 max-h-96 overflow-y-auto border border-slate-800 p-3 rounded-2xl bg-slate-900/50 text-xs sm:text-sm custom-scrollbar">
+                        <p class="text-slate-500 text-center py-4">ലോഡ് ചെയ്യുന്നു...</p>
+                    </div>
+                </div>
+
                 <!-- Accounts & Balance Section -->
                 <div id="section-accounts" class="space-y-4 hidden">
                     <div class="flex justify-between items-center">
@@ -560,7 +573,7 @@
         };
 
         window.switchTab = (tabName) => {
-            ['purchase', 'sales', 'stores', 'store-list', 'reports', 'edit-sales', 'edit-purchase', 'accounts', 'payments'].forEach(t => {
+            ['purchase', 'sales', 'stores', 'store-list', 'reports', 'edit-sales', 'edit-purchase', 'accounts', 'payments', 'edit-payments'].forEach(t => {
                 const el = document.getElementById(`section-${t}`);
                 if(el) el.classList.add('hidden');
                 const tabEl = document.getElementById(`tab-${t}`);
@@ -583,6 +596,7 @@
                 if(tabName === 'reports') { loadStoresDropdown(); toggleReportInputs(); }
                 if(tabName === 'accounts') loadAccountsSummary();
                 if(tabName === 'payments') loadStoresDropdown();
+                if(tabName === 'edit-payments') loadEditPaymentsList();
                 if(tabName === 'edit-sales') loadEditList('sales');
                 if(tabName === 'edit-purchase') loadEditList('purchases');
             }
@@ -774,7 +788,7 @@
             }
 
             if(confirm("ഈ കട പൂർണ്ണമായി DELETE ചെയ്യണമെന്ന് ഉറപ്പാണോ?")) {
-                await deleteDoc(doc(db, storeId));
+                await deleteDoc(doc(db, "stores", storeId));
                 showAlert("വിജയം", "കട ഡിലീറ്റ് ചെയ്തു!");
                 setStoreMode('delete');
                 loadStoresDropdown();
@@ -909,6 +923,42 @@
 
             showAlert("വിജയം", "പണമിടപാട് വിജയകരമായി സേവ് ചെയ്തു!");
             clearForm('payments');
+        };
+
+        window.loadEditPaymentsList = async () => {
+            const container = document.getElementById('edit-payments-list');
+            container.innerHTML = "<p class='text-slate-500 text-center py-4'>ലോഡ് ചെയ്യുന്നു...</p>";
+            const q = query(collection(db, "payments"), where("userId", "==", currentUserId));
+            const snap = await getDocs(q);
+            if(snap.empty) return container.innerHTML = '<p class="text-slate-500 text-center py-4">ഡാറ്റ ലഭ്യമല്ല</p>';
+
+            let html = "";
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                const typeText = data.type === 'received' ? 'പണം ലഭിച്ചത്' : 'പണം നൽകിയത്';
+                const typeColor = data.type === 'received' ? 'text-emerald-400' : 'text-rose-400';
+                
+                html += `
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900 p-3.5 border border-slate-800 rounded-xl mb-2 gap-2">
+                        <div class="text-xs">
+                            <b class="text-emerald-400">${data.date}</b> | 
+                            <span class="text-white">${data.store}</span> | 
+                            <span class="${typeColor} font-bold">${typeText}: ₹${data.amount}</span>
+                        </div>
+                        <div class="flex gap-2 w-full sm:w-auto justify-end">
+                            <button onclick="deletePaymentEntry('${docSnap.id}')" class="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1 rounded-lg text-[11px] font-bold transition">DELETE</button>
+                        </div>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        };
+
+        window.deletePaymentEntry = async (id) => {
+            if(confirm("ഈ പണമിടപാട് DELETE ചെയ്യണോ?")) {
+                await deleteDoc(doc(db, "payments", id));
+                showAlert("വിജയം", "പണമിടപാട് DELETE ചെയ്തു!");
+                loadEditPaymentsList();
+            }
         };
 
         async function loadAccountsSummary() {
