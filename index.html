@@ -1198,98 +1198,96 @@
         };
 
         async function fetchFilteredTransactions(duration, selectedDate, selectedMonth, store) {
-            let storeOpeningBalance = 0;
-            if(store && storesDataCache) {
-                for(let id in storesDataCache) {
-                    if(storesDataCache[id].name === store) {
-                        storeOpeningBalance = Number(storesDataCache[id].openingBalance || 0);
-                    }
-                }
+    let storeOpeningBalance = 0;
+    if(store && storesDataCache) {
+        for(let id in storesDataCache) {
+            if(storesDataCache[id].name === store) {
+                storeOpeningBalance = Number(storesDataCache[id].openingBalance || 0);
             }
-
-            let allTransactions = [];
-
-            const qP = query(collection(db, "purchases"), where("userId", "==", currentUserId));
-            const pSnap = await getDocs(qP);
-            pSnap.forEach(doc => {
-                let d = doc.data();
-                if(!store || d.store === store) {
-                    allTransactions.push({ ...d, transType: 'Purchase', sortDate: d.timestamp?.seconds || 0 });
-                }
-            });
-
-            const qS = query(collection(db, "sales"), where("userId", "==", currentUserId));
-            const sSnap = await getDocs(qS);
-            sSnap.forEach(doc => {
-                let d = doc.data();
-                if(!store || d.store === store) {
-                    allTransactions.push({ ...d, transType: 'Sales', sortDate: d.timestamp?.seconds || 0 });
-                }
-            });
-
-            const qPay = query(collection(db, "payments"), where("userId", "==", currentUserId));
-            const paySnap = await getDocs(qPay);
-            paySnap.forEach(doc => {
-                let d = doc.data();
-                if(!store || d.store === store) {
-                    allTransactions.push({ ...d, transType: d.type === 'received' ? 'Payment Received' : 'Payment Given', totalAmount: d.amount, sortDate: d.timestamp?.seconds || 0 });
-                }
-            });
-
-            allTransactions.sort((a, b) => a.sortDate - b.sortDate);
-
-            let runningBalance = storeOpeningBalance;
-            let filteredTransactions = [];
-
-            allTransactions.forEach(d => {
-                let include = false;
-                if(duration === 'all') {
-                    include = true;
-                } else if(duration === 'daily' && d.date === selectedDate) {
-                    include = true;
-                } else if(duration === 'monthly' && d.date.startsWith(selectedMonth)) {
-                    include = true;
-                }
-
-                let netChange = 0;
-                if(d.transType === 'Sales') {
-                    netChange = (d.totalAmount || 0);
-                } else if(d.transType === 'Payment Received') {
-                    netChange = -(d.totalAmount || 0);
-                } else if(d.transType === 'Payment Given') {
-                    netChange = (d.totalAmount || 0);
-                } else if(d.transType === 'Purchase') {
-                    netChange = -(d.totalAmount || 0);
-                }
-
-                if(include) {
-                    runningBalance += netChange;
-                    filteredTransactions.push({ ...d, currentBalance: runningBalance });
-                } else {
-                    if(duration === 'monthly' && d.date < (selectedMonth + '-01')) {
-                        runningBalance += netChange;
-                    } else if(duration === 'daily' && d.date < selectedDate) {
-                        runningBalance += netChange;
-                    }
-                }
-            });
-
-            let calculatedInitialBalance = runningBalance;
-            if(duration !== 'all' && filteredTransactions.length > 0) {
-                let firstTx = filteredTransactions[0];
-                let firstNet = 0;
-                if(firstTx.transType === 'Sales') firstNet = (firstTx.totalAmount || 0);
-                else if(firstTx.transType === 'Payment Received') firstNet = -(firstTx.totalAmount || 0);
-                else if(firstTx.transType === 'Payment Given') firstNet = (firstTx.totalAmount || 0);
-                else if(firstTx.transType === 'Purchase') firstNet = -(firstTx.totalAmount || 0);
-
-                calculatedInitialBalance = firstTx.currentBalance - firstNet;
-            } else if(duration === 'all') {
-                calculatedInitialBalance = storeOpeningBalance;
-            }
-
-            return { initialBalance: calculatedInitialBalance, transactions: filteredTransactions, finalBalance: runningBalance };
         }
+    }
+
+    let allTransactions = [];
+
+    // 1. പർച്ചേസ് ഡാറ്റ എടുക്കുന്നു
+    const qP = query(collection(db, "purchases"), where("userId", "==", currentUserId));
+    const pSnap = await getDocs(qP);
+    pSnap.forEach(doc => {
+        let d = doc.data();
+        if(!store || d.store === store) {
+            allTransactions.push({ ...d, transType: 'Purchase' });
+        }
+    });
+
+    // 2. സെയിൽസ് ഡാറ്റ എടുക്കുന്നു
+    const qS = query(collection(db, "sales"), where("userId", "==", currentUserId));
+    const sSnap = await getDocs(qS);
+    sSnap.forEach(doc => {
+        let d = doc.data();
+        if(!store || d.store === store) {
+            allTransactions.push({ ...d, transType: 'Sales' });
+        }
+    });
+
+    // 3. പേയ്മെന്റ് ഡാറ്റ എടുക്കുന്നു
+    const qPay = query(collection(db, "payments"), where("userId", "==", currentUserId));
+    const paySnap = await getDocs(qPay);
+    paySnap.forEach(doc => {
+        let d = doc.data();
+        if(!store || d.store === store) {
+            allTransactions.push({ 
+                ...d, 
+                transType: d.type === 'received' ? 'Payment Received' : 'Payment Given', 
+                totalAmount: d.amount 
+            });
+        }
+    });
+
+    // തീയതി (date) വെച്ച് കൃത്യമായ ക്രമത്തിൽ സോർട്ട് ചെയ്യുന്നു
+    allTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    let runningBalance = storeOpeningBalance;
+    let initialBalance = storeOpeningBalance;
+    let filteredTransactions = [];
+
+    // തിരഞ്ഞെടുത്ത കാലാവധിക്ക് മുമ്പുള്ള തുകകൾ കൂട്ടി ഓപ്പണിങ് ബാലൻസ് കണ്ടെത്തുന്നു
+    allTransactions.forEach(d => {
+        let netChange = 0;
+        if(d.transType === 'Sales' || d.transType === 'Payment Given') {
+            netChange = Number(d.totalAmount || 0);
+        } else if(d.transType === 'Payment Received' || d.transType === 'Purchase') {
+            netChange = -Number(d.totalAmount || 0);
+        }
+
+        let isPrior = false;
+        let isCurrent = false;
+
+        if (duration === 'all') {
+            isCurrent = true;
+        } else if (duration === 'daily') {
+            if (d.date < selectedDate) isPrior = true;
+            else if (d.date === selectedDate) isCurrent = true;
+        } else if (duration === 'monthly') {
+            let monthPrefix = selectedMonth; // ഉദാഹരണത്തിന്: "2026-10"
+            if (d.date < monthPrefix + '-01') isPrior = true;
+            else if (d.date.startsWith(monthPrefix)) isCurrent = true;
+        }
+
+        if (isPrior) {
+            initialBalance += netChange;
+            runningBalance += netChange;
+        } else if (isCurrent) {
+            runningBalance += netChange;
+            filteredTransactions.push({ ...d, currentBalance: runningBalance });
+        }
+    });
+
+    return { 
+        initialBalance: initialBalance, 
+        transactions: filteredTransactions, 
+        finalBalance: runningBalance 
+    };
+}
 
         window.previewPDFReport = async () => {
             const duration = document.getElementById('report-duration').value;
